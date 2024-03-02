@@ -1,0 +1,41 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+#include <HLSLSupport.cginc>
+#include "ColorSpaces.cginc"
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture2D<fixed3> _InputTexture;
+RWStructuredBuffer<int> _OKHSLArray;
+
+uint _InputTextureResolution;
+uint2 _OKHSLArrayResolution;
+uint _PaletteSize;
+float _MinimumSaturation;
+
+// Texture output stuff
+RWTexture2D<float> _OutputArrayTexture;
+
+// Return an array of all converted OKHSL colors
+// Returns an array/"image" of which HSV colors are present within the input screenshot
+// Essentially an "array" of applicable OKHSL colors
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    fixed3 color = _InputTexture[id.xy].rgb;
+    float3 hsl = RGBtoOKHSL(color);
+
+    // TODO: Sat cutoff needs to be replaced
+    float hueIndex = round(clamp(hsl.r, 0, 1) * _OKHSLArrayResolution.x - 1);
+    float lightnessIndex = round(clamp(hsl.b, 0, 1) * _OKHSLArrayResolution.y - 1);
+
+    if (hsl.g > _MinimumSaturation)
+    {
+        // Hue is X, Lightness is Y
+        _OKHSLArray[hueIndex + (lightnessIndex * _OKHSLArrayResolution.y)] = 1;
+
+        // Set output texture for testing
+        _OutputArrayTexture[int2(hueIndex, lightnessIndex)] = 1; 
+    }
+}

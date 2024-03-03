@@ -10,6 +10,7 @@ using UnityEngine.Rendering;
 
 namespace Resat.Cameras
 {
+    // Used for actually interacting with a camera and directly taking renders/photos
     public class ResatCamera : MonoBehaviour
     {
         public Camera? Camera;
@@ -22,13 +23,13 @@ namespace Resat.Cameras
         // 1920x1080 -> 1080x800 (centered, 1080x1080 fine)
         // 1920x1080 -> 1080x800 (offcenter, 1080x1080 fine)
         // 3840x2160 -> 2160x1600 (centered, highres screenshot, need to render directly to 2160x1600 texture)
-        public RenderTexture? Render(CameraResolutionData resolutionData, bool usePointFiltering = false, bool srgb = false)
+        public RenderTexture? Render(CameraResolutionData resolutionData)
         {
             if (Camera == null)
                 return null;
          
-            var nativeRenderTexture = GetCachedRenderTexture(resolutionData.NativeResolution, usePointFiltering, srgb);
-            var renderTexture = GetCachedRenderTexture(resolutionData.Resolution, usePointFiltering, srgb);
+            var nativeRenderTexture = GetCachedRenderTexture(resolutionData.NativeResolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
+            var renderTexture = GetCachedRenderTexture(resolutionData.Resolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
 
             // Do the initial render at native res
             Camera.targetTexture = nativeRenderTexture;
@@ -39,14 +40,14 @@ namespace Resat.Cameras
             return renderTexture;
         }
 
-        public void RenderScreenshot(CameraResolutionData resolutionData, bool usePointFiltering = false)
+        public void RenderScreenshot(CameraResolutionData resolutionData)
         {
             Debug.Log("Taking a screenshot!");
             string directory = Path.Join(Application.persistentDataPath, "Photos");
             Directory.CreateDirectory(directory);
 
             string path = Path.Join(directory, $"{GetUnixTimestamp()}.png");
-            var renderTexture = Render(resolutionData, usePointFiltering, true);
+            var renderTexture = Render(resolutionData);
             if (renderTexture == null)
                 return;
             
@@ -80,25 +81,23 @@ namespace Resat.Cameras
             return (long)(DateTime.UtcNow.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
         }
         
-        private RenderTexture GetCachedRenderTexture(Vector2Int resolution, bool usePointFiltering, bool srgb)
+        private RenderTexture GetCachedRenderTexture(Vector2Int resolution, FilterMode filterMode, RenderTextureReadWrite renderTextureReadWrite)
         {
             if (_renderTexturesByResolution.TryGetValue(resolution, out RenderTexture renderTexture))
                 return renderTexture;
 
-            renderTexture = CreateTextureForCamera(resolution, usePointFiltering, srgb);
+            renderTexture = CreateTextureForCamera(resolution, filterMode, renderTextureReadWrite);
             _renderTexturesByResolution.Add(resolution, renderTexture);
 
             return renderTexture;
         }
         
-        private RenderTexture CreateTextureForCamera(Vector2Int resolution, bool usePointFiltering, bool srgb)
+        private RenderTexture CreateTextureForCamera(Vector2Int resolution, FilterMode filterMode, RenderTextureReadWrite renderTextureReadWrite)
         {
             Debug.Log($"Allocating new RenderTexture for camera with resolution {resolution}.");
-            var renderTexture = new RenderTexture(resolution.x, resolution.y, 0, RenderTextureFormat.Default, srgb ? RenderTextureReadWrite.sRGB : RenderTextureReadWrite.Linear);
+            var renderTexture = new RenderTexture(resolution.x, resolution.y, 0, RenderTextureFormat.Default, renderTextureReadWrite);
             renderTexture.enableRandomWrite = true;
-            
-            if (usePointFiltering)
-                renderTexture.filterMode = FilterMode.Point;
+            renderTexture.filterMode = filterMode;
             
             renderTexture.Create();
 

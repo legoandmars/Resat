@@ -10,7 +10,6 @@
 Texture2D<fixed3> _InputTexture;
 RWStructuredBuffer<int> _OKHSLArray;
 
-uint2 _InputTextureResolution;
 uint2 _OKHSLArrayResolution;
 uint _PaletteSize;
 
@@ -34,7 +33,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 }
 
 // Contains all postprocessing data
-// First, we have a _TopColorsCount amount of top colors in the format: (r, g, b, amount_seen), (h, s, l, 0)
+// First, we have a _TopColorsCount amount of top colors in the format: (r, g, b, amount_seen), (h, s, l, arrayindex)
 // Next, a color with the following data: (TotalUniqueColorsInPhoto, ColorCoveragePercentage, null, null)
 RWStructuredBuffer<float4> _PostProcessArray;
 uint _TopColorsCount;
@@ -76,9 +75,11 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
     {
         float3 okhsl = OKHSLFromArrayIndex(_PostProcessArray[j].g, _OKHSLArrayResolution);
         float3 rgb = OKHSLtoRGB(okhsl);
+        float amountSeen = _PostProcessArray[j].r;
+        float index = _PostProcessArray[j].g;
         // 4th slot is used for frequency instead of alpha 
-        _PostProcessArray[j] = float4(rgb.r, rgb.g, rgb.b, 1);
-        _PostProcessArray[j + 1] = float4(okhsl.r, okhsl.g, okhsl.b, 0);
+        _PostProcessArray[j] = float4(rgb.r, rgb.g, rgb.b, amountSeen);
+        _PostProcessArray[j + 1] = float4(okhsl.r, okhsl.g, okhsl.b, index);
     }
 
     // Add our extra metadata

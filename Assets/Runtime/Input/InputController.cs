@@ -8,11 +8,20 @@ namespace Resat.Input
     {
         [HideInInspector]
         public bool PlayerInputEnabled = false;
-        public ResatInput Input = null!;
-
-        public void Awake()
+        
+        [HideInInspector]
+        public bool CameraInputEnabled = false;
+        
+        private ResatInput? _input = null;
+        public ResatInput Input
         {
-            Input = new ResatInput();
+            get
+            {
+                if (_input == null)
+                    _input = new ResatInput();
+
+                return _input;
+            }
         }
 
         public void EnablePlayerInput()
@@ -20,6 +29,12 @@ namespace Resat.Input
             Input.Player.Enable();
             PlayerInputEnabled = true;
             Cursor.lockState = CursorLockMode.Locked;
+        }
+        
+        public void EnableCameraInput()
+        {
+            Input.Camera.Enable();
+            CameraInputEnabled = true;
         }
 
         public void DisablePlayerInput()

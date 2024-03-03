@@ -7,10 +7,12 @@ namespace Resat.Models
     public class CameraResolutionData
     {
         // Defaults are for a ~4:3 image at 1080p
-        public Vector2Int Resolution = new (1080, 800);
+        public Vector2Int Resolution = new (1088, 800);
         public Vector2Int NativeResolution = new (1920, 1080);
         public Vector2 Center = new Vector2(0.5f, 0.5f);
-
+        public FilterMode FilterMode = FilterMode.Bilinear;
+        public RenderTextureReadWrite RenderTextureReadWrite = RenderTextureReadWrite.Default;
+        
         public Vector2 Scale
         {
             get
@@ -28,11 +30,17 @@ namespace Resat.Models
         {
         }
         
-        public CameraResolutionData(Vector2Int resolution, Vector2Int nativeResolution, Vector2 center)
+        public CameraResolutionData(Vector2Int resolution, Vector2Int nativeResolution, Vector2 center, FilterMode? filterMode = null, RenderTextureReadWrite? renderTextureReadWrite = null)
         {
             Resolution = resolution;
             NativeResolution = nativeResolution;
             Center = center;
+            
+            if (filterMode != null)
+                FilterMode = filterMode.Value;
+            
+            if (renderTextureReadWrite != null)
+                RenderTextureReadWrite = renderTextureReadWrite.Value;
         }
     }
 }

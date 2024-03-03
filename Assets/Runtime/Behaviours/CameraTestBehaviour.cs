@@ -110,7 +110,7 @@ namespace Resat
                 return;
             
             // Get camera preview
-            var inputTexture = _resatCamera.Render(_inputTextureResolutionData, true);
+            var inputTexture = _resatCamera.Render(_inputTextureResolutionData);
             if (inputTexture == null)
                 return;
 

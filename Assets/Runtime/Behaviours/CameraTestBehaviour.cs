@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Resat.Cameras;
 using Resat.Colors;
 using TMPro;
 using UnityEngine;
@@ -13,11 +14,20 @@ namespace Resat
         private ComputeShader _computeShader = null!;
 
         [SerializeField]
-        private Camera _inputCamera = null!;
+        private ResatCamera _resatCamera = null!;
+        
+        [SerializeField]
+        private DesaturationCamera _desaturationCamera = null!;
         
         // Numbers
         [SerializeField]
-        private Vector2Int _inputTextureResolution = new (32, 32);
+        private Vector2Int _inputTextureResolution = new (1080, 800);
+        
+        [SerializeField]
+        private Vector2Int _inputTextureBaseResolution = new (1920, 1080);
+
+        [SerializeField]
+        private Vector2 _inputTextureCenter = new(0.5f, 0.5f);
 
         [SerializeField]
         private Vector2Int _okhslArraySize = new(32, 32);
@@ -44,7 +54,6 @@ namespace Resat
         [SerializeField]
         public TextMeshProUGUI? DebugPhotoVibeText;
 
-        private RenderTexture? _inputTexture;
         private RenderTexture? _outputArrayTexture;
         private ComputeBuffer? _okhslArrayBuffer;
         private ComputeBuffer? _okhslPostProcessBuffer;
@@ -60,20 +69,11 @@ namespace Resat
             _okhslPostProcessBuffer = new ComputeBuffer(GetPostProcessDataLength(), 16);
             _outputArray = new int[_okhslArraySize.x * _okhslArraySize.y];
             _postProcessArray = new Color[GetPostProcessDataLength()];
-            
-            _inputTexture = new RenderTexture(_inputTextureResolution.x, _inputTextureResolution.y, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
-            _inputTexture.enableRandomWrite = true;
-            _inputTexture.filterMode = FilterMode.Point;
-            _inputTexture.Create();
-            _inputCamera.targetTexture = _inputTexture;
 
             _outputArrayTexture = new RenderTexture(_okhslArraySize.x, _okhslArraySize.y, 0, RenderTextureFormat.R8, RenderTextureReadWrite.Linear);
             _outputArrayTexture.enableRandomWrite = true;
             _outputArrayTexture.filterMode = FilterMode.Point;
             _outputArrayTexture.Create();
-
-            if (DebugCameraImage != null)
-                DebugCameraImage.texture = _inputTexture;
             
             if (DebugArrayImage != null)
                 DebugArrayImage.texture = _outputArrayTexture;
@@ -86,12 +86,6 @@ namespace Resat
             _okhslArrayBuffer = null;
             _okhslPostProcessBuffer?.Release();
             _okhslPostProcessBuffer = null;
-            
-            if (_inputTexture != null)
-            {
-                _inputTexture.Release();
-                _inputTexture = null;
-            }
             
             if (_outputArrayTexture != null)
             {
@@ -114,13 +108,28 @@ namespace Resat
             if (_okhslArrayBuffer == null || _outputArray == null || _outputArrayTexture == null) 
                 return;
             
+            // Get camera preview
+            var inputTexture = _resatCamera.Render(_inputTextureResolution, _inputTextureBaseResolution, _inputTextureCenter, true);
+            if (inputTexture == null)
+                return;
+
+            // Set desaturation array
+            // TODO: Only do this when the value changes, instead of in update
+            _desaturationCamera.SetResolution(_inputTextureResolution, _inputTextureBaseResolution, _inputTextureCenter);
+            
+            if (DebugCameraImage != null)
+            {
+                DebugCameraImage.texture = inputTexture;
+                DebugCameraImage.color = Color.white;
+            }
+
             // Reset
             // TODO: Cache empty arrays?
             _okhslArrayBuffer.SetData(new int[_okhslArraySize.x * _okhslArraySize.y]);
             RenderTexture.active = _outputArrayTexture;
             GL.Clear(false, true, Color.black);
             
-            _computeShader.SetTexture(0, "_InputTexture", _inputTexture);
+            _computeShader.SetTexture(0, "_InputTexture", inputTexture);
             _computeShader.SetTexture(0, "_OutputArrayTexture", _outputArrayTexture);
             _computeShader.SetBuffer(0, "_OKHSLArray", _okhslArrayBuffer);
             _computeShader.SetInts("_InputTextureResolution", _inputTextureResolution.x, _inputTextureResolution.y);
@@ -130,8 +139,6 @@ namespace Resat
             _okhslArrayBuffer.GetData(_outputArray);
 
             Postprocess();
-            
-            Debug.Log("AAAAAAAH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         void Postprocess()

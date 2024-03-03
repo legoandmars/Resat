@@ -56,7 +56,6 @@ namespace Resat.Colors
                 case >= 1: return new List<ColorDescription> { White };
             }
 
-            Debug.Log(hsl.r * 360);
             var lightness = l switch
             {
                 < 0.20f => Faint,

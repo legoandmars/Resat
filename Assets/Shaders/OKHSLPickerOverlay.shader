@@ -9,7 +9,8 @@ Shader "Unlit/OKHSLPickerOverlay"
     {
         Tags { "RenderType"="Opaque" }
         LOD 100
-
+        ZTest Off
+        
         Pass
         {
             CGPROGRAM

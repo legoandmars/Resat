@@ -4,7 +4,7 @@ using Input;
 using Resat.Colors;
 using Resat.Input;
 using Resat.Models;
-using Resat.Runtime.UI;
+using Resat.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -83,11 +83,17 @@ namespace Resat.Cameras
                 return;
 
             var okhslData = _okhslController.RunComputeShader(renderTexture);
+
+            if (okhslData == null)
+                return;
+            
             foreach (var topColor in okhslData?.TopColors)
             {
                 // Debug.Log(topColor);
                 break;
             }
+            
+            _cameraPanelController.SetData(okhslData);
         }
 
         private void Start()

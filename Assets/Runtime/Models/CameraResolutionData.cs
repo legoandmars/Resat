@@ -42,5 +42,11 @@ namespace Resat.Models
             if (renderTextureReadWrite != null)
                 RenderTextureReadWrite = renderTextureReadWrite.Value;
         }
+
+        public Vector2 GetRescaledResolution(Vector2 newNativeResolution)
+        {
+            var scale = NativeResolution / newNativeResolution;
+            return new Vector2(Resolution.x / scale.x, Resolution.y / scale.y);
+        }
     }
 }

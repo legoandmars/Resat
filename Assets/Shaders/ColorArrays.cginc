@@ -1,11 +1,16 @@
 ﻿#include "ColorSpaces.cginc"
 
-uint2 ArrayIndexFromOKHSL(float3 okhsl, uint2 arrayResolution)
+uint ArrayIndexFromArrayCoordinates(uint2 arrayCoordinates, uint2 arrayResolution)
+{
+    return arrayCoordinates.x + (arrayCoordinates.y * arrayResolution.y);
+}
+
+uint2 ArrayCoordinatesFromOKHSL(float3 okhsl, uint2 arrayResolution)
 {
     float hueIndex = round(clamp(okhsl.r, 0, 1) * arrayResolution.x - 1);
     float lightnessIndex = round(clamp(okhsl.b, 0, 1) * arrayResolution.y - 1);
 
-    return hueIndex + (lightnessIndex * arrayResolution.y);
+    return uint2(hueIndex, lightnessIndex);
 }
 
 float3 OKHSLFromArrayIndex(float arrayIndex, uint2 arrayResolution)

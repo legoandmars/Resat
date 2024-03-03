@@ -47,7 +47,7 @@ namespace Resat
 
             _outputArrayTexture = new RenderTexture(_okhslArraySize.x, _okhslArraySize.y, 0, RenderTextureFormat.R8, RenderTextureReadWrite.Linear);
             _outputArrayTexture.enableRandomWrite = true;
-            _inputTexture.filterMode = FilterMode.Point;
+            _outputArrayTexture.filterMode = FilterMode.Point;
             _outputArrayTexture.Create();
 
             if (DebugCameraImage != null)
@@ -89,16 +89,13 @@ namespace Resat
         {
             if (_okhslArrayBuffer == null || _outputArray == null || _outputArrayTexture == null) 
                 return;
-            /*
-                Texture2D<fixed3> _InputTexture;
-                RWStructuredBuffer<float3> _OKHSLArray;
-
-                uint _InputTextureResolution;
-                uint _OutputTextureResolution;
-                uint _PaletteSize;
-                float _MinimumSaturation;
-
-             */
+            
+            // Reset
+            // TODO: Cache?
+            _okhslArrayBuffer.SetData(new int[_okhslArraySize.x * _okhslArraySize.y]);
+            RenderTexture.active = _outputArrayTexture;
+            GL.Clear(false, true, Color.black);
+            
             _computeShader.SetTexture(0, "_InputTexture", _inputTexture);
             _computeShader.SetTexture(0, "_OutputArrayTexture", _outputArrayTexture);
             _computeShader.SetBuffer(0, "_OKHSLArray", _okhslArrayBuffer);

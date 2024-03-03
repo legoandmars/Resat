@@ -1,4 +1,6 @@
-﻿using Resat.Cameras;
+﻿using System;
+using System.Linq;
+using Resat.Cameras;
 using Resat.Models;
 using UnityEngine;
 
@@ -34,6 +36,9 @@ namespace Resat.Colors
         private int[]? _emptyIntArray;
         private Color[]? _emptyColorArray;
 
+        // when a picture is taken, the data is serialized here
+        private int[]? _globalOkhslArray;
+
         private void OnEnable()
         {
             // int is 4 bytes and color is four 4-byte floats (4*4)
@@ -47,6 +52,7 @@ namespace Resat.Colors
             
             _outputArray = new int[_okhslArraySize.x * _okhslArraySize.y];
             _postProcessArray = new Color[GetPostProcessDataLength()];
+            ResetGlobalOkhslArray();
             
             // set empty arrays
             _emptyIntArray ??= new int[_okhslArraySize.x * _okhslArraySize.y];
@@ -61,6 +67,43 @@ namespace Resat.Colors
             
             _outputArray = null;
             _postProcessArray = null;
+            _globalOkhslArray = null;
+        }
+
+        private void ResetGlobalOkhslArray()
+        {
+            if (_globalOkhslArray == null)
+            {
+                _globalOkhslArray ??= new int[_okhslArraySize.x * _okhslArraySize.y];
+                return;
+            }
+
+            Array.Clear(_globalOkhslArray, 0, _globalOkhslArray.Length);
+        }
+        
+        private void AddToGlobalOkhslArray(int[]? intArray = null)
+        {
+            if (_globalOkhslArray == null || intArray == null) 
+                return;
+
+            if (_globalOkhslArray.Length != intArray.Length)
+            {
+                Debug.LogWarning("Attempting to add array of different size to the global OKHSL array, returning...");
+            }
+
+            Debug.Log("Adding to global array");
+            
+            for (int i = 0; i < _globalOkhslArray.Length; i++)
+            {
+                _globalOkhslArray[i] += intArray[i];
+            }
+        }
+        
+        // used after a screenshot to add things to the Big Array
+        public void SerializeLastRender()
+        {
+            AddToGlobalOkhslArray(_outputArray);
+            Debug.Log(_globalOkhslArray?.Sum());
         }
         
         // public void RunComputeShader(CameraResolutionData cameraResolutionData, ResatCamera resatCamera)

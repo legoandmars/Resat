@@ -3234,6 +3234,7 @@ MonoBehaviour:
   _computeShader: {fileID: 7200000, guid: 335c959dacd747c44b46dddd41be7b8a, type: 3}
   _okhslArraySize: {x: 64, y: 32}
   _topColorsCount: 8
+  PostProcessing: 1
 --- !u!1 &2106204025
 GameObject:
   m_ObjectHideFlags: 0

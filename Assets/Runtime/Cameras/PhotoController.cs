@@ -69,8 +69,11 @@ namespace Resat.Cameras
             // take a picture!
             if (_cameraAudioSource != null)
                 _cameraAudioSource.Play();
-            
+
             _resatCamera.RenderScreenshot(_screenshotResolutionData);
+
+            // serialize our new color data
+            _okhslController.SerializeLastRender();
         }
 
         public void OnToggleCamera(InputAction.CallbackContext context)

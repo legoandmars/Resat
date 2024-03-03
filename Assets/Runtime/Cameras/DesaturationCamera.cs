@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Resat.Models;
 using UnityEngine;
 
 namespace Resat
@@ -15,16 +16,12 @@ namespace Resat
 
         private Vector2? _resolution;
 
-        public void SetResolution(Vector2Int resolution, Vector2Int nativeResolution, Vector2 center)
+        public void SetResolution(CameraResolutionData resolutionData)
         {
             if (_material == null)
                 return;
 
-            // calculate scale and offset
-            float scaleX = (float) resolution.x / nativeResolution.x;
-            float scaleY = (float) resolution.y / nativeResolution.y;
-            
-            _material.SetVector(CutoutOffsetAndScale, new Vector4(scaleX, scaleY, center.x, center.y));
+            _material.SetVector(CutoutOffsetAndScale, new Vector4(resolutionData.Scale.x, resolutionData.Scale.y, resolutionData.Center.x, resolutionData.Center.y));
         }
         
         private void OnRenderImage(RenderTexture src, RenderTexture dest)

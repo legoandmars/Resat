@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Cysharp.Threading.Tasks;
+using Resat.Models;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
@@ -15,43 +16,37 @@ namespace Resat.Cameras
         
         private Dictionary<Vector2Int, RenderTexture> _renderTexturesByResolution = new();
 
+        // TODO: Prealloc RT method
+        
         // Usecases:
         // 1920x1080 -> 1080x800 (centered, 1080x1080 fine)
         // 1920x1080 -> 1080x800 (offcenter, 1080x1080 fine)
         // 3840x2160 -> 2160x1600 (centered, highres screenshot, need to render directly to 2160x1600 texture)
-        public RenderTexture? Render(Vector2Int resolution, Vector2Int nativeResolution, Vector2? center = null, bool usePointFiltering = false, bool srgb = false)
+        public RenderTexture? Render(CameraResolutionData resolutionData, bool usePointFiltering = false, bool srgb = false)
         {
             if (Camera == null)
                 return null;
          
-            if (center == null)
-                center = new Vector2(0.5f, 0.5f);
-
-            // calculate scale and offset
-            float scaleX = (float) resolution.x / nativeResolution.x;
-            float scaleY = (float) resolution.y / nativeResolution.y;
-            Vector2 offset = new Vector2((1 - scaleX) * center.Value.x, (1 - scaleY) * center.Value.y);
-            
-            var nativeRenderTexture = GetCachedRenderTexture(nativeResolution, usePointFiltering, srgb);
-            var renderTexture = GetCachedRenderTexture(resolution, usePointFiltering, srgb);
+            var nativeRenderTexture = GetCachedRenderTexture(resolutionData.NativeResolution, usePointFiltering, srgb);
+            var renderTexture = GetCachedRenderTexture(resolutionData.Resolution, usePointFiltering, srgb);
 
             // Do the initial render at native res
             Camera.targetTexture = nativeRenderTexture;
             Camera.Render();
 
             // Scale down to intended resolution and return
-            Graphics.Blit(nativeRenderTexture, renderTexture, new Vector2((float)resolution.x / nativeResolution.x, (float)resolution.y / nativeResolution.y), offset);
+            Graphics.Blit(nativeRenderTexture, renderTexture, resolutionData.Scale, resolutionData.Offset);
             return renderTexture;
         }
 
-        public void RenderScreenshot(Vector2Int resolution, Vector2Int nativeResolution, Vector2? center = null, bool usePointFiltering = false)
+        public void RenderScreenshot(CameraResolutionData resolutionData, bool usePointFiltering = false)
         {
             Debug.Log("Taking a screenshot!");
             string directory = Path.Join(Application.persistentDataPath, "Photos");
             Directory.CreateDirectory(directory);
 
             string path = Path.Join(directory, $"{GetUnixTimestamp()}.png");
-            var renderTexture = Render(resolution, nativeResolution, center, usePointFiltering, true);
+            var renderTexture = Render(resolutionData, usePointFiltering, true);
             if (renderTexture == null)
                 return;
             
@@ -85,7 +80,7 @@ namespace Resat.Cameras
             return (long)(DateTime.UtcNow.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
         }
         
-        private RenderTexture GetCachedRenderTexture(Vector2Int resolution, bool usePointFiltering = false, bool srgb = false)
+        private RenderTexture GetCachedRenderTexture(Vector2Int resolution, bool usePointFiltering, bool srgb)
         {
             if (_renderTexturesByResolution.TryGetValue(resolution, out RenderTexture renderTexture))
                 return renderTexture;
@@ -96,8 +91,9 @@ namespace Resat.Cameras
             return renderTexture;
         }
         
-        public RenderTexture CreateTextureForCamera(Vector2Int resolution, bool usePointFiltering = false, bool srgb = false)
+        private RenderTexture CreateTextureForCamera(Vector2Int resolution, bool usePointFiltering, bool srgb)
         {
+            Debug.Log($"Allocating new RenderTexture for camera with resolution {resolution}.");
             var renderTexture = new RenderTexture(resolution.x, resolution.y, 0, RenderTextureFormat.Default, srgb ? RenderTextureReadWrite.sRGB : RenderTextureReadWrite.Linear);
             renderTexture.enableRandomWrite = true;
             

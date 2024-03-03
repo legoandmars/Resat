@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Resat.Cameras;
 using Resat.Colors;
 using Resat.Input;
+using Resat.Models;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,25 +24,11 @@ namespace Resat
         [SerializeField]
         private InputController _inputController = null!;
 
-        // Numbers
         [SerializeField]
-        private Vector2Int _inputTextureResolution = new (1080, 800);
+        private CameraResolutionData _inputTextureResolutionData = new();
         
         [SerializeField]
-        private Vector2Int _inputTextureBaseResolution = new (1920, 1080);
-
-        [SerializeField]
-        private Vector2 _inputTextureCenter = new(0.5f, 0.5f);
-
-        // Screenshot
-        [SerializeField]
-        private Vector2Int _screenshotTextureResolution = new (1080, 800);
-        
-        [SerializeField]
-        private Vector2Int _screenshotTextureBaseResolution = new (1920, 1080);
-
-        [SerializeField]
-        private Vector2 _screenshotTextureCenter = new(0.5f, 0.5f);
+        private CameraResolutionData _screenshotResolutionData = new();
 
         [SerializeField]
         private Vector2Int _okhslArraySize = new(32, 32);
@@ -123,13 +110,13 @@ namespace Resat
                 return;
             
             // Get camera preview
-            var inputTexture = _resatCamera.Render(_inputTextureResolution, _inputTextureBaseResolution, _inputTextureCenter, true);
+            var inputTexture = _resatCamera.Render(_inputTextureResolutionData, true);
             if (inputTexture == null)
                 return;
 
             // Set desaturation array
             // TODO: Only do this when the value changes, instead of in update
-            _desaturationCamera.SetResolution(_inputTextureResolution, _inputTextureBaseResolution, _inputTextureCenter);
+            _desaturationCamera.SetResolution(_inputTextureResolutionData);
             
             if (DebugCameraImage != null)
             {
@@ -146,10 +133,10 @@ namespace Resat
             _computeShader.SetTexture(0, "_InputTexture", inputTexture);
             _computeShader.SetTexture(0, "_OutputArrayTexture", _outputArrayTexture);
             _computeShader.SetBuffer(0, "_OKHSLArray", _okhslArrayBuffer);
-            _computeShader.SetInts("_InputTextureResolution", _inputTextureResolution.x, _inputTextureResolution.y);
+            _computeShader.SetInts("_InputTextureResolution", _inputTextureResolutionData.Resolution.x, _inputTextureResolutionData.Resolution.y);
             _computeShader.SetInts("_OKHSLArrayResolution", _okhslArraySize.x, _okhslArraySize.y);
             
-            _computeShader.Dispatch(0, _inputTextureResolution.x / 8, _inputTextureResolution.y / 8, 1);
+            _computeShader.Dispatch(0, _inputTextureResolutionData.Resolution.x / 8, _inputTextureResolutionData.Resolution.y / 8, 1);
             _okhslArrayBuffer.GetData(_outputArray);
 
             Postprocess();
@@ -157,7 +144,7 @@ namespace Resat
             // screenshot if necessary
             if (_inputController.Input.Player.Photograph.WasPressedThisFrame())
             {
-                _resatCamera.RenderScreenshot(_screenshotTextureResolution, _screenshotTextureBaseResolution, _screenshotTextureCenter);
+                _resatCamera.RenderScreenshot(_screenshotResolutionData);
             }
         }
 

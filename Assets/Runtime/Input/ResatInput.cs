@@ -189,6 +189,54 @@ namespace Input
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Camera"",
+            ""id"": ""cb8382ca-629e-4fa4-9957-962047a99d44"",
+            ""actions"": [
+                {
+                    ""name"": ""TakePicture"",
+                    ""type"": ""Button"",
+                    ""id"": ""b753f2a5-7c59-4d8f-b33e-0af7452cd303"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleCamera"",
+                    ""type"": ""Button"",
+                    ""id"": ""09815662-18c4-4571-85d2-6137f7a1701a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""2caf402c-e164-4de2-87f8-22e921e9cdab"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TakePicture"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2ee22190-52a3-4a6e-936c-f8151129c37c"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -199,6 +247,10 @@ namespace Input
             m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Photograph = m_Player.FindAction("Photograph", throwIfNotFound: true);
+            // Camera
+            m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
+            m_Camera_TakePicture = m_Camera.FindAction("TakePicture", throwIfNotFound: true);
+            m_Camera_ToggleCamera = m_Camera.FindAction("ToggleCamera", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -326,12 +378,71 @@ namespace Input
             }
         }
         public PlayerActions @Player => new PlayerActions(this);
+
+        // Camera
+        private readonly InputActionMap m_Camera;
+        private List<ICameraActions> m_CameraActionsCallbackInterfaces = new List<ICameraActions>();
+        private readonly InputAction m_Camera_TakePicture;
+        private readonly InputAction m_Camera_ToggleCamera;
+        public struct CameraActions
+        {
+            private @ResatInput m_Wrapper;
+            public CameraActions(@ResatInput wrapper) { m_Wrapper = wrapper; }
+            public InputAction @TakePicture => m_Wrapper.m_Camera_TakePicture;
+            public InputAction @ToggleCamera => m_Wrapper.m_Camera_ToggleCamera;
+            public InputActionMap Get() { return m_Wrapper.m_Camera; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(CameraActions set) { return set.Get(); }
+            public void AddCallbacks(ICameraActions instance)
+            {
+                if (instance == null || m_Wrapper.m_CameraActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_CameraActionsCallbackInterfaces.Add(instance);
+                @TakePicture.started += instance.OnTakePicture;
+                @TakePicture.performed += instance.OnTakePicture;
+                @TakePicture.canceled += instance.OnTakePicture;
+                @ToggleCamera.started += instance.OnToggleCamera;
+                @ToggleCamera.performed += instance.OnToggleCamera;
+                @ToggleCamera.canceled += instance.OnToggleCamera;
+            }
+
+            private void UnregisterCallbacks(ICameraActions instance)
+            {
+                @TakePicture.started -= instance.OnTakePicture;
+                @TakePicture.performed -= instance.OnTakePicture;
+                @TakePicture.canceled -= instance.OnTakePicture;
+                @ToggleCamera.started -= instance.OnToggleCamera;
+                @ToggleCamera.performed -= instance.OnToggleCamera;
+                @ToggleCamera.canceled -= instance.OnToggleCamera;
+            }
+
+            public void RemoveCallbacks(ICameraActions instance)
+            {
+                if (m_Wrapper.m_CameraActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            public void SetCallbacks(ICameraActions instance)
+            {
+                foreach (var item in m_Wrapper.m_CameraActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_CameraActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        public CameraActions @Camera => new CameraActions(this);
         public interface IPlayerActions
         {
             void OnMove(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnPhotograph(InputAction.CallbackContext context);
+        }
+        public interface ICameraActions
+        {
+            void OnTakePicture(InputAction.CallbackContext context);
+            void OnToggleCamera(InputAction.CallbackContext context);
         }
     }
 }

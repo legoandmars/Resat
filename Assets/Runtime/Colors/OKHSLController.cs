@@ -21,6 +21,9 @@ namespace Resat.Colors
         [SerializeField]
         private uint _topColorsCount = 8;
 
+        [SerializeField]
+        public bool PostProcessing = true;
+        
         private RenderTexture? _outputArrayTexture;
         private ComputeBuffer? _okhslArrayBuffer;
         private ComputeBuffer? _okhslPostProcessBuffer;
@@ -88,7 +91,7 @@ namespace Resat.Colors
             _computeShader.Dispatch(0, renderTexture.width / 8, renderTexture.height / 8, 1);
             _okhslArrayBuffer.GetData(_outputArray);
 
-            return PostProcess();
+            return PostProcessing ? PostProcess() : null;
         }
         
         // TODO: Combine this all into one pass. it's probably possible (maybe just minus the sorting?)

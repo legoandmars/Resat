@@ -42,7 +42,22 @@ namespace Resat.UI
                 TotalColorCoveragePercentText.text = $"Total color coverage: {okhslData.TotalColorCoveragePercent:0.##}%";
             if (PhotoVibeText != null)
                 PhotoVibeText.text = $"Photo vibes: N/A"; // TODO
-
+        }
+        
+        public void SetPreviewTexture(RenderTexture renderTexture)
+        {
+            if (CameraImage == null)
+                return;
+            
+            CameraImage.texture = renderTexture;
+        }
+        
+        public void SetArrayTexture(RenderTexture renderTexture)
+        {
+            if (ArrayTextureImage == null)
+                return;
+            
+            ArrayTextureImage.texture = renderTexture;
         }
     }
 }

@@ -30,5 +30,15 @@ namespace Resat.UI
         {
             _debugPanel.SetData(okhslData);
         }
+
+        public void SetPreviewTexture(RenderTexture renderTexture)
+        {
+            _debugPanel.SetPreviewTexture(renderTexture);
+        }
+        
+        public void SetArrayTexture(RenderTexture renderTexture)
+        {
+            _debugPanel.SetArrayTexture(renderTexture);
+        }
     }
 }

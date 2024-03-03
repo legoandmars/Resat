@@ -90,10 +90,21 @@ namespace Resat.Cameras
             if (!_enabled) 
                 return;
 
+            RenderPreview();
+        }
+
+        private void RenderPreview()
+        {
+            if (!_enabled) 
+                return;
+
             var renderTexture = _resatCamera.Render(_currentResolutionData);
             if (renderTexture == null)
                 return;
 
+            // set debug camera preview 
+            _cameraPanelController.SetPreviewTexture(renderTexture);
+            
             var okhslData = _okhslController.RunComputeShader(renderTexture);
 
             if (okhslData == null)
@@ -106,6 +117,9 @@ namespace Resat.Cameras
         {
             _inputController.EnableCameraInput();
             EnableCamera();
+            
+            if (_okhslController.OutputArrayTexture != null)
+                _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);
         }
 
         private void OnEnable()

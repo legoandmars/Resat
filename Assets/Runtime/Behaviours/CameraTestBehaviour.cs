@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Resat.Cameras;
 using Resat.Colors;
+using Resat.Input;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,9 @@ namespace Resat
         [SerializeField]
         private DesaturationCamera _desaturationCamera = null!;
         
+        [SerializeField]
+        private InputController _inputController = null!;
+
         // Numbers
         [SerializeField]
         private Vector2Int _inputTextureResolution = new (1080, 800);
@@ -28,6 +32,16 @@ namespace Resat
 
         [SerializeField]
         private Vector2 _inputTextureCenter = new(0.5f, 0.5f);
+
+        // Screenshot
+        [SerializeField]
+        private Vector2Int _screenshotTextureResolution = new (1080, 800);
+        
+        [SerializeField]
+        private Vector2Int _screenshotTextureBaseResolution = new (1920, 1080);
+
+        [SerializeField]
+        private Vector2 _screenshotTextureCenter = new(0.5f, 0.5f);
 
         [SerializeField]
         private Vector2Int _okhslArraySize = new(32, 32);
@@ -139,6 +153,12 @@ namespace Resat
             _okhslArrayBuffer.GetData(_outputArray);
 
             Postprocess();
+            
+            // screenshot if necessary
+            if (_inputController.Input.Player.Photograph.WasPressedThisFrame())
+            {
+                _resatCamera.RenderScreenshot(_screenshotTextureResolution, _screenshotTextureBaseResolution, _screenshotTextureCenter);
+            }
         }
 
         void Postprocess()

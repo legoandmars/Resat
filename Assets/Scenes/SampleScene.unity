@@ -3169,9 +3169,13 @@ MonoBehaviour:
   _computeShader: {fileID: 7200000, guid: 335c959dacd747c44b46dddd41be7b8a, type: 3}
   _resatCamera: {fileID: 1410187356}
   _desaturationCamera: {fileID: 551777550}
+  _inputController: {fileID: 1656060608}
   _inputTextureResolution: {x: 270, y: 200}
   _inputTextureBaseResolution: {x: 480, y: 270}
   _inputTextureCenter: {x: 0.5, y: 0.5}
+  _screenshotTextureResolution: {x: 2160, y: 1600}
+  _screenshotTextureBaseResolution: {x: 3840, y: 2160}
+  _screenshotTextureCenter: {x: 0.5, y: 0.5}
   _okhslArraySize: {x: 64, y: 32}
   _topColorsCount: 5
   DebugCameraImage: {fileID: 245442606}

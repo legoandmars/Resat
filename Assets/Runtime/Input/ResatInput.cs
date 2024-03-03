@@ -55,6 +55,15 @@ namespace Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Photograph"",
+                    ""type"": ""Button"",
+                    ""id"": ""ec378e73-ab70-4d54-8309-cd3f14c66575"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -167,6 +176,17 @@ namespace Input
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6d0e2c90-c721-44b7-904f-23a47672ccb0"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Photograph"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -178,6 +198,7 @@ namespace Input
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
             m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+            m_Player_Photograph = m_Player.FindAction("Photograph", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -242,6 +263,7 @@ namespace Input
         private readonly InputAction m_Player_Move;
         private readonly InputAction m_Player_Look;
         private readonly InputAction m_Player_Jump;
+        private readonly InputAction m_Player_Photograph;
         public struct PlayerActions
         {
             private @ResatInput m_Wrapper;
@@ -249,6 +271,7 @@ namespace Input
             public InputAction @Move => m_Wrapper.m_Player_Move;
             public InputAction @Look => m_Wrapper.m_Player_Look;
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
+            public InputAction @Photograph => m_Wrapper.m_Player_Photograph;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -267,6 +290,9 @@ namespace Input
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Photograph.started += instance.OnPhotograph;
+                @Photograph.performed += instance.OnPhotograph;
+                @Photograph.canceled += instance.OnPhotograph;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -280,6 +306,9 @@ namespace Input
                 @Jump.started -= instance.OnJump;
                 @Jump.performed -= instance.OnJump;
                 @Jump.canceled -= instance.OnJump;
+                @Photograph.started -= instance.OnPhotograph;
+                @Photograph.performed -= instance.OnPhotograph;
+                @Photograph.canceled -= instance.OnPhotograph;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -302,6 +331,7 @@ namespace Input
             void OnMove(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
+            void OnPhotograph(InputAction.CallbackContext context);
         }
     }
 }

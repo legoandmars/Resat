@@ -1,16 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering;
 
 namespace Resat.Cameras
 {
     public class ResatCamera : MonoBehaviour
     {
-        
         public Camera? Camera;
-
-        [SerializeField]
-        private Vector2Int _baseResolution = new Vector2Int(1920, 1080);
         
         private Dictionary<Vector2Int, RenderTexture> _renderTexturesByResolution = new();
 
@@ -18,7 +19,7 @@ namespace Resat.Cameras
         // 1920x1080 -> 1080x800 (centered, 1080x1080 fine)
         // 1920x1080 -> 1080x800 (offcenter, 1080x1080 fine)
         // 3840x2160 -> 2160x1600 (centered, highres screenshot, need to render directly to 2160x1600 texture)
-        public RenderTexture? Render(Vector2Int resolution, Vector2Int nativeResolution, Vector2? center = null, bool usePointFiltering = false)
+        public RenderTexture? Render(Vector2Int resolution, Vector2Int nativeResolution, Vector2? center = null, bool usePointFiltering = false, bool srgb = false)
         {
             if (Camera == null)
                 return null;
@@ -31,8 +32,8 @@ namespace Resat.Cameras
             float scaleY = (float) resolution.y / nativeResolution.y;
             Vector2 offset = new Vector2((1 - scaleX) * center.Value.x, (1 - scaleY) * center.Value.y);
             
-            var nativeRenderTexture = GetCachedRenderTexture(nativeResolution, usePointFiltering);
-            var renderTexture = GetCachedRenderTexture(resolution, usePointFiltering);
+            var nativeRenderTexture = GetCachedRenderTexture(nativeResolution, usePointFiltering, srgb);
+            var renderTexture = GetCachedRenderTexture(resolution, usePointFiltering, srgb);
 
             // Do the initial render at native res
             Camera.targetTexture = nativeRenderTexture;
@@ -43,20 +44,61 @@ namespace Resat.Cameras
             return renderTexture;
         }
 
-        private RenderTexture GetCachedRenderTexture(Vector2Int resolution, bool usePointFiltering = false)
+        public void RenderScreenshot(Vector2Int resolution, Vector2Int nativeResolution, Vector2? center = null, bool usePointFiltering = false)
+        {
+            Debug.Log("Taking a screenshot!");
+            string directory = Path.Join(Application.persistentDataPath, "Photos");
+            Directory.CreateDirectory(directory);
+
+            string path = Path.Join(directory, $"{GetUnixTimestamp()}.png");
+            var renderTexture = Render(resolution, nativeResolution, center, usePointFiltering, true);
+            if (renderTexture == null)
+                return;
+            
+            SaveRenderTexture(renderTexture, path);
+        }
+        
+        private void SaveRenderTexture(RenderTexture renderTexture, string path)
+        {
+            AsyncGPUReadback.Request(renderTexture, 0, TextureFormat.RGBA32, (request) =>
+            {
+                if (request.hasError)
+                {
+                    Debug.Log("Saving render texture failed.");
+                    return;
+                }
+                
+                var imageBytes = request.GetData<byte>().ToArray();
+                SaveImageByteArrayOnNewThread(imageBytes, path, new Vector2Int(renderTexture.width, renderTexture.height), renderTexture.graphicsFormat).Forget();
+            });
+        }
+
+        private async UniTask SaveImageByteArrayOnNewThread(byte[] imageBytes, string path, Vector2Int resolution, GraphicsFormat graphicsFormat)
+        {
+            await UniTask.SwitchToThreadPool();
+            
+            await File.WriteAllBytesAsync(path,ImageConversion.EncodeArrayToPNG(imageBytes, graphicsFormat, (uint)resolution.x, (uint)resolution.y));
+        }
+        
+        public static long GetUnixTimestamp()
+        {
+            return (long)(DateTime.UtcNow.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+        }
+        
+        private RenderTexture GetCachedRenderTexture(Vector2Int resolution, bool usePointFiltering = false, bool srgb = false)
         {
             if (_renderTexturesByResolution.TryGetValue(resolution, out RenderTexture renderTexture))
                 return renderTexture;
 
-            renderTexture = CreateCameraForTexture(resolution, usePointFiltering);
+            renderTexture = CreateTextureForCamera(resolution, usePointFiltering, srgb);
             _renderTexturesByResolution.Add(resolution, renderTexture);
 
             return renderTexture;
         }
         
-        public RenderTexture CreateCameraForTexture(Vector2Int resolution, bool usePointFiltering = false)
+        public RenderTexture CreateTextureForCamera(Vector2Int resolution, bool usePointFiltering = false, bool srgb = false)
         {
-            var renderTexture = new RenderTexture(resolution.x, resolution.y, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+            var renderTexture = new RenderTexture(resolution.x, resolution.y, 0, RenderTextureFormat.Default, srgb ? RenderTextureReadWrite.sRGB : RenderTextureReadWrite.Linear);
             renderTexture.enableRandomWrite = true;
             
             if (usePointFiltering)

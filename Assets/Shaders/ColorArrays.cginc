@@ -2,7 +2,7 @@
 
 uint ArrayIndexFromArrayCoordinates(uint2 arrayCoordinates, uint2 arrayResolution)
 {
-    return arrayCoordinates.x + (arrayCoordinates.y * arrayResolution.y);
+    return arrayCoordinates.x + (arrayCoordinates.y * arrayResolution.x);
 }
 
 uint2 ArrayCoordinatesFromOKHSL(float3 okhsl, uint2 arrayResolution)

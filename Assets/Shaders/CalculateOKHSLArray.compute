@@ -1,5 +1,6 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
+#pragma kernel CSPostProcess
 
 #include <HLSLSupport.cginc>
 #include "ColorArrays.cginc"
@@ -9,7 +10,7 @@
 Texture2D<fixed3> _InputTexture;
 RWStructuredBuffer<int> _OKHSLArray;
 
-uint _InputTextureResolution;
+uint2 _InputTextureResolution;
 uint2 _OKHSLArrayResolution;
 uint _PaletteSize;
 
@@ -30,4 +31,48 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     InterlockedAdd(_OKHSLArray[arrayIndex], 1);
 
     _OutputArrayTexture[arrayCoordinates] = 1; 
+}
+
+// Contains all postprocessing data
+// First, we have _TopColorsCount top colors in the format (r, g, b, amount_seen)
+RWStructuredBuffer<float4> _PostProcessArray;
+uint _TopColorsCount;
+
+// needs _OKHSLArray, _OKHSLArrayResolution
+// TODO: Not be single threaded...
+[numthreads(8,8,1)]
+void CSPostProcess (uint3 id : SV_DispatchThreadID)
+{
+    // use PostProcessArray as a temporary array
+    for (int i = 0; i < (int)(_OKHSLArrayResolution.x * _OKHSLArrayResolution.y); i++)
+    {
+        float colorCount = _OKHSLArray[i];
+
+        if (colorCount == 0)
+            continue;
+        
+        for (int j = 0; j < (int)_TopColorsCount; j++)
+        {
+            if (_PostProcessArray[j].r > colorCount)
+                continue;
+
+            if (j + 1 < (int)_TopColorsCount)
+            {
+                _PostProcessArray[j + 1] = _PostProcessArray[j];
+            }
+            
+            _PostProcessArray[j].r = colorCount;
+            _PostProcessArray[j].g = i;
+            break;
+        }
+    }
+
+    // Convert our temporary array to proper colors
+    for (int j = 0; j < (int)_TopColorsCount; j++) 
+    {
+        float3 okhsl = OKHSLFromArrayIndex(_PostProcessArray[j].g, _OKHSLArrayResolution);
+        float3 rgb = OKHSLtoRGB(okhsl);
+        // 4th slot is used for frequency instead of alpha 
+        _PostProcessArray[j] = float4(rgb.r, rgb.g, rgb.b, 1);
+    }
 }

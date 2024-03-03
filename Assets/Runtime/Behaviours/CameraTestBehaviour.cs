@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,6 +33,12 @@ namespace Resat
         
         [SerializeField]
         public List<RawImage>? DebugTopColorImages;
+        
+        [SerializeField]
+        public TextMeshProUGUI? DebugUniqueColorCountText;
+        
+        [SerializeField]
+        public TextMeshProUGUI? DebugColorCoveragePercentText;
 
         private RenderTexture? _inputTexture;
         private RenderTexture? _outputArrayTexture;
@@ -146,12 +153,21 @@ namespace Resat
                 Color topColor = _postProcessArray[i];
                 debugTopColorImage.color = new Color(topColor.r, topColor.g, topColor.b, 1);
             }
-            Debug.Log(_postProcessArray[0].a);
+            
+            // handle other metadata
+            var otherMetadata = _postProcessArray[(int) _topColorsCount];
+            int uniqueColorCount = (int)otherMetadata.r;
+            float totalColorCoverage = otherMetadata.g;
+            
+            if (DebugColorCoveragePercentText != null)
+                DebugColorCoveragePercentText.text = $"Total color coverage: {totalColorCoverage:0.##}%";
+            if (DebugUniqueColorCountText != null)
+                DebugUniqueColorCountText.text = $"Total new colors: {uniqueColorCount}";
         }
 
         private int GetPostProcessDataLength()
         {
-            return (int)_topColorsCount;
+            return (int)_topColorsCount + 1;
         }
     }
 }

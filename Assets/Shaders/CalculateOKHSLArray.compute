@@ -34,7 +34,8 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 }
 
 // Contains all postprocessing data
-// First, we have _TopColorsCount top colors in the format (r, g, b, amount_seen)
+// First, we have a _TopColorsCount amount of top colors in the format (r, g, b, amount_seen)
+// Next, a color with the following data: (TotalUniqueColorsInPhoto, ColorCoveragePercentage, null, null)
 RWStructuredBuffer<float4> _PostProcessArray;
 uint _TopColorsCount;
 
@@ -43,6 +44,8 @@ uint _TopColorsCount;
 [numthreads(8,8,1)]
 void CSPostProcess (uint3 id : SV_DispatchThreadID)
 {
+    int totalUniqueColors = 0;
+    
     // use PostProcessArray as a temporary array
     for (int i = 0; i < (int)(_OKHSLArrayResolution.x * _OKHSLArrayResolution.y); i++)
     {
@@ -50,7 +53,8 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
 
         if (colorCount == 0)
             continue;
-        
+
+        totalUniqueColors++;
         for (int j = 0; j < (int)_TopColorsCount; j++)
         {
             if (_PostProcessArray[j].r > colorCount)
@@ -75,4 +79,7 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
         // 4th slot is used for frequency instead of alpha 
         _PostProcessArray[j] = float4(rgb.r, rgb.g, rgb.b, 1);
     }
+
+    // Add our extra metadata
+    _PostProcessArray[_TopColorsCount] = float4(totalUniqueColors, ((float)totalUniqueColors / (_OKHSLArrayResolution.x * _OKHSLArrayResolution.y)) * 100, 0, 0);
 }

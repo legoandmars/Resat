@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Resat.Colors;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +41,9 @@ namespace Resat
         [SerializeField]
         public TextMeshProUGUI? DebugColorCoveragePercentText;
 
+        [SerializeField]
+        public TextMeshProUGUI? DebugPhotoVibeText;
+
         private RenderTexture? _inputTexture;
         private RenderTexture? _outputArrayTexture;
         private ComputeBuffer? _okhslArrayBuffer;
@@ -47,6 +51,8 @@ namespace Resat
         private int[]? _outputArray; // reused for performance
         private Color[]? _postProcessArray; // reused for performance
 
+        private VibeUtilites _vibeUtilites = new();
+        
         // setup all necessary re-usable datatypes for compute shader
         private void OnEnable()
         {
@@ -144,30 +150,46 @@ namespace Resat
             _computeShader.Dispatch(1, 1, 1, 1);
             _okhslPostProcessBuffer.GetData(_postProcessArray);
 
-            for (int i = 0; i < DebugTopColorImages?.Count || i > (int)_topColorsCount; i++)
+            for (int i = 0; i < DebugTopColorImages?.Count && i < (int)_topColorsCount; i++)
             {
                 var debugTopColorImage = DebugTopColorImages?[i];
                 if (debugTopColorImage == null)
                     continue;
 
-                Color topColor = _postProcessArray[i];
+                Color topColor = _postProcessArray[i * 2];
                 debugTopColorImage.color = new Color(topColor.r, topColor.g, topColor.b, 1);
             }
             
             // handle other metadata
-            var otherMetadata = _postProcessArray[(int) _topColorsCount];
+            var otherMetadata = _postProcessArray[GetPostProcessDataLength() - 1];
             int uniqueColorCount = (int)otherMetadata.r;
             float totalColorCoverage = otherMetadata.g;
             
+            // vibe check
+            var vibe = _vibeUtilites.GetVibe(GetOKHSLTopColorsFromPostProcessData(_postProcessArray, _topColorsCount));
+
             if (DebugColorCoveragePercentText != null)
                 DebugColorCoveragePercentText.text = $"Total color coverage: {totalColorCoverage:0.##}%";
             if (DebugUniqueColorCountText != null)
                 DebugUniqueColorCountText.text = $"Total new colors: {uniqueColorCount}";
+            if (DebugPhotoVibeText != null)
+                DebugPhotoVibeText.text = $"Photo vibes: {vibe}";
         }
 
+        private List<Color> GetOKHSLTopColorsFromPostProcessData(Color[] postProcessArray, uint topColorsCount)
+        {
+            List<Color> okhslColors = new();
+            for (int i = 0; i < topColorsCount; i++)
+            {
+                okhslColors.Add(postProcessArray[i + 1]);
+            }
+
+            return okhslColors;
+        }
+        
         private int GetPostProcessDataLength()
         {
-            return (int)_topColorsCount + 1;
+            return ((int)_topColorsCount * 2) + 1;
         }
     }
 }

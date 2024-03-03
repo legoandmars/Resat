@@ -34,7 +34,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 }
 
 // Contains all postprocessing data
-// First, we have a _TopColorsCount amount of top colors in the format (r, g, b, amount_seen)
+// First, we have a _TopColorsCount amount of top colors in the format: (r, g, b, amount_seen), (h, s, l, 0)
 // Next, a color with the following data: (TotalUniqueColorsInPhoto, ColorCoveragePercentage, null, null)
 RWStructuredBuffer<float4> _PostProcessArray;
 uint _TopColorsCount;
@@ -55,14 +55,14 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
             continue;
 
         totalUniqueColors++;
-        for (int j = 0; j < (int)_TopColorsCount; j++)
+        for (int j = 0; j < (int)_TopColorsCount * 2; j+= 2)
         {
             if (_PostProcessArray[j].r > colorCount)
                 continue;
 
-            if (j + 1 < (int)_TopColorsCount)
+            if (j + 2 < (int)_TopColorsCount)
             {
-                _PostProcessArray[j + 1] = _PostProcessArray[j];
+                _PostProcessArray[j + 2] = _PostProcessArray[j];
             }
             
             _PostProcessArray[j].r = colorCount;
@@ -72,14 +72,15 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
     }
 
     // Convert our temporary array to proper colors
-    for (int j = 0; j < (int)_TopColorsCount; j++) 
+    for (int j = 0; j < (int)_TopColorsCount * 2; j += 2) 
     {
         float3 okhsl = OKHSLFromArrayIndex(_PostProcessArray[j].g, _OKHSLArrayResolution);
         float3 rgb = OKHSLtoRGB(okhsl);
         // 4th slot is used for frequency instead of alpha 
         _PostProcessArray[j] = float4(rgb.r, rgb.g, rgb.b, 1);
+        _PostProcessArray[j + 1] = float4(okhsl.r, okhsl.g, okhsl.b, 0);
     }
 
     // Add our extra metadata
-    _PostProcessArray[_TopColorsCount] = float4(totalUniqueColors, ((float)totalUniqueColors / (_OKHSLArrayResolution.x * _OKHSLArrayResolution.y)) * 100, 0, 0);
+    _PostProcessArray[_TopColorsCount * 2] = float4(totalUniqueColors, ((float)totalUniqueColors / (_OKHSLArrayResolution.x * _OKHSLArrayResolution.y)) * 100, 0, 0);
 }

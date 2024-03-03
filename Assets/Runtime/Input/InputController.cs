@@ -10,7 +10,7 @@ namespace Resat.Input
         public bool PlayerInputEnabled = false;
         public ResatInput Input = null!;
 
-        public void Start()
+        public void Awake()
         {
             Input = new ResatInput();
         }

@@ -21,6 +21,9 @@ namespace Resat.Cameras
 
         [SerializeField]
         private ResatCamera _resatCamera = null!;
+
+        [SerializeField]
+        private AudioSource? _cameraAudioSource;
         
         [SerializeField]
         private CameraPanelController _cameraPanelController = null!;
@@ -31,6 +34,9 @@ namespace Resat.Cameras
         
         [SerializeField]
         private CameraResolutionData _minimizedResolutionData = new();
+
+        [SerializeField]
+        private CameraResolutionData _screenshotResolutionData = new();
 
         [NonSerialized]
         private bool _enabled;
@@ -59,6 +65,12 @@ namespace Resat.Cameras
         {
             if (!_enabled || !context.performed) 
                 return;
+            
+            // take a picture!
+            if (_cameraAudioSource != null)
+                _cameraAudioSource.Play();
+            
+            _resatCamera.RenderScreenshot(_screenshotResolutionData);
         }
 
         public void OnToggleCamera(InputAction.CallbackContext context)
@@ -86,12 +98,6 @@ namespace Resat.Cameras
 
             if (okhslData == null)
                 return;
-            
-            foreach (var topColor in okhslData?.TopColors)
-            {
-                // Debug.Log(topColor);
-                break;
-            }
             
             _cameraPanelController.SetData(okhslData);
         }

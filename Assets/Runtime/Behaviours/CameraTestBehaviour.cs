@@ -20,9 +20,6 @@ namespace Resat
         
         [SerializeField]
         private DesaturationCamera _desaturationCamera = null!;
-        
-        [SerializeField]
-        private InputController _inputController = null!;
 
         [SerializeField]
         private CameraResolutionData _inputTextureResolutionData = new();
@@ -142,10 +139,10 @@ namespace Resat
             Postprocess();
             
             // screenshot if necessary
-            if (_inputController.Input.Player.Photograph.WasPressedThisFrame())
+            /*if (_inputController.Input.Player.Photograph.WasPressedThisFrame())
             {
                 _resatCamera.RenderScreenshot(_screenshotResolutionData);
-            }
+            }*/
         }
 
         void Postprocess()

@@ -48,9 +48,6 @@ namespace Resat.Colors
             // set empty arrays
             _emptyIntArray ??= new int[_okhslArraySize.x * _okhslArraySize.y];
             _emptyColorArray ??= new Color[GetPostProcessDataLength()];
-            
-            // if (DebugArrayImage != null)
-            //   DebugArrayImage.texture = _outputArrayTexture;
         }
         
         private void OnDisable()
@@ -75,12 +72,6 @@ namespace Resat.Colors
                 // TODO: See if non-power of eights actually break anything, or if we can just continue fine
                 return null;
             }
-            
-            /* if (DebugCameraImage != null)
-            {
-                DebugCameraImage.texture = inputTexture;
-                DebugCameraImage.color = Color.white;
-            }*/
             
             // Reset arrays to avoid data leaking from old textures
             _okhslArrayBuffer.SetData(_emptyIntArray);
@@ -134,29 +125,10 @@ namespace Resat.Colors
             int totalColorCount = (int)otherMetadata.r;
             float totalColorCoverage = otherMetadata.g;
             
-            return new OKHSLData(topColors, totalColorCount, totalColorCoverage);
             // vibe check
             // var vibe = _vibeUtilites.GetVibe(GetOKHSLTopColorsFromPostProcessData(_postProcessArray, _topColorsCount));
 
-            /*
-            if (DebugColorCoveragePercentText != null)
-                DebugColorCoveragePercentText.text = $"Total color coverage: {totalColorCoverage:0.##}%";
-            if (DebugUniqueColorCountText != null)
-                DebugUniqueColorCountText.text = $"Total new colors: {uniqueColorCount}";
-            if (DebugPhotoVibeText != null)
-                DebugPhotoVibeText.text = $"Photo vibes: {vibe}";
-            */
-
-/*            for (int i = 0; i < DebugTopColorImages?.Count && i < (int)_topColorsCount; i++)
-            {
-                var debugTopColorImage = DebugTopColorImages?[i];
-                if (debugTopColorImage == null)
-                    continue;
-
-                Color topColor = _postProcessArray[i * 2];
-                debugTopColorImage.color = new Color(topColor.r, topColor.g, topColor.b, 1);
-            }*/
-
+            return new OKHSLData(topColors, totalColorCount, totalColorCoverage);
         }
 
         private void ReleaseResource(ref ComputeBuffer? buffer)

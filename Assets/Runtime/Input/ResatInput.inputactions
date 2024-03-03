@@ -31,15 +31,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Photograph",
-                    "type": "Button",
-                    "id": "ec378e73-ab70-4d54-8309-cd3f14c66575",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -152,17 +143,6 @@
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6d0e2c90-c721-44b7-904f-23a47672ccb0",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Photograph",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         },
@@ -193,7 +173,7 @@
                 {
                     "name": "",
                     "id": "2caf402c-e164-4de2-87f8-22e921e9cdab",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

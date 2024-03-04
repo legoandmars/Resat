@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Resat.Cameras;
 using Resat.Models;
@@ -15,6 +16,9 @@ namespace Resat.Colors
         [Header("Dependencies")]
         [SerializeField]
         private ComputeShader _computeShader = null!;
+        
+        [SerializeField]
+        private ComputeShader _sortingShader = null!;
 
         [Header("Settings")]
         [SerializeField]
@@ -35,6 +39,7 @@ namespace Resat.Colors
         private ComputeBuffer? _okhslArrayBuffer;
         private ComputeBuffer? _globalOkhslArrayBuffer;
         private ComputeBuffer? _okhslPostProcessBuffer;
+        private ComputeBuffer? _topColorIndexesBuffer;
 
         private int _calculateArrayIndex;
         private int _postProcessIndex;
@@ -42,20 +47,25 @@ namespace Resat.Colors
         private int _getGlobalTextureIndex;
         private int _getMergedTextureIndex;
         private int _mergeArrayIndex;
+        private int _clearGlobalArrayIndex;
+        private int _clearPreviewArrayIndex;
+        private int _getLargestElementsInArrayIndex;
         
         // arrays reused to avoid allocating every capture
-        private int[]? _outputArray;
         private Color[]? _postProcessArray;
-        private int[]? _emptyIntArray;
         private Color[]? _emptyColorArray;
-
-        // when a picture is taken, the data is serialized here
-        private int[]? _globalOkhslArray;
 
         private void OnEnable()
         {
+            if (_topColorsCount > _okhslArraySize.y)
+            {
+                Debug.LogError("Top color count must be less than the OKHSL array Y size.");
+                return;
+            }
+            
             // int is 4 bytes and color is four 4-byte floats (4*4)
             _okhslArrayBuffer = new ComputeBuffer(_okhslArraySize.x * _okhslArraySize.y, 4);
+            _topColorIndexesBuffer = new ComputeBuffer(_okhslArraySize.y, 4);
             _globalOkhslArrayBuffer = new ComputeBuffer(_okhslArraySize.x * _okhslArraySize.y, 4);
             _okhslPostProcessBuffer = new ComputeBuffer(GetPostProcessDataLength(), 4 * 4);
 
@@ -64,9 +74,8 @@ namespace Resat.Colors
             _outputArrayTexture.filterMode = FilterMode.Point;
             _outputArrayTexture.Create();
             
-            _outputArray = new int[_okhslArraySize.x * _okhslArraySize.y];
+            // _outputArray = new uint[_okhslArraySize.x * _okhslArraySize.y];
             _postProcessArray = new Color[GetPostProcessDataLength()];
-            ResetGlobalOkhslArray();
             
             // set indexes used for setting variables
             _calculateArrayIndex = _computeShader.FindKernel("CSCalculateArray");
@@ -75,50 +84,38 @@ namespace Resat.Colors
             _getGlobalTextureIndex = _computeShader.FindKernel("CSGetGlobalTexture");
             _getMergedTextureIndex = _computeShader.FindKernel("CSGetMergedTexture");
             _mergeArrayIndex = _computeShader.FindKernel("CSMergeArrays");
+            _clearGlobalArrayIndex = _computeShader.FindKernel("CSClearGlobalArray");
+            _clearPreviewArrayIndex = _computeShader.FindKernel("CSClearPreviewArray");
+            _getLargestElementsInArrayIndex = _sortingShader.FindKernel("CSGetLargestElementsInArray");
             
             // set empty arrays
-            _emptyIntArray ??= new int[_okhslArraySize.x * _okhslArraySize.y];
             _emptyColorArray ??= new Color[GetPostProcessDataLength()];
+            
+            // reset global array to be empty
+            ClearGlobalArray();
         }
         
         private void OnDisable()
         {
             ReleaseResource(ref _okhslArrayBuffer);
+            ReleaseResource(ref _globalOkhslArrayBuffer);
             ReleaseResource(ref _okhslPostProcessBuffer);
+            ReleaseResource(ref _topColorIndexesBuffer);
             ReleaseResource(ref _outputArrayTexture);
             
-            _outputArray = null;
             _postProcessArray = null;
-            _globalOkhslArray = null;
         }
 
-        private void ResetGlobalOkhslArray()
+        private void ClearGlobalArray()
         {
-            if (_globalOkhslArray == null)
-            {
-                _globalOkhslArray ??= new int[_okhslArraySize.x * _okhslArraySize.y];
-                return;
-            }
-
-            Array.Clear(_globalOkhslArray, 0, _globalOkhslArray.Length);
+            _computeShader.SetBuffer(_clearGlobalArrayIndex, "_GlobalOKHSLArray", _globalOkhslArrayBuffer);
+            _computeShader.Dispatch(_clearGlobalArrayIndex, _okhslArraySize.x / 8, _okhslArraySize.y / 8, 1);
         }
         
-        private void AddToGlobalOkhslArray(int[]? intArray = null)
+        private void ClearPreviewArray()
         {
-            if (_globalOkhslArray == null || intArray == null) 
-                return;
-
-            if (_globalOkhslArray.Length != intArray.Length)
-            {
-                Debug.LogWarning("Attempting to add array of different size to the global OKHSL array, returning...");
-            }
-
-            Debug.Log("Adding to global array");
-            
-            for (int i = 0; i < _globalOkhslArray.Length; i++)
-            {
-                _globalOkhslArray[i] += intArray[i];
-            }
+            _computeShader.SetBuffer(_clearPreviewArrayIndex, "_OKHSLArray", _okhslArrayBuffer);
+            _computeShader.Dispatch(_clearPreviewArrayIndex, _okhslArraySize.x / 8, _okhslArraySize.y / 8, 1);
         }
         
         // used after a screenshot to add things to the Big Array
@@ -142,9 +139,7 @@ namespace Resat.Colors
             }
             
             // Reset arrays to avoid data leaking from old textures
-            _okhslArrayBuffer.SetData(_emptyIntArray);
-            // RenderTexture.active = _outputArrayTexture;
-            // GL.Clear(false, true, Color.black);
+            ClearPreviewArray();
             
             // Setup compute shader
             _computeShader.SetTexture(_calculateArrayIndex, "_InputTexture", renderTexture);
@@ -153,7 +148,7 @@ namespace Resat.Colors
 
             // Dispatch initial patch to get OKHSL array info
             _computeShader.Dispatch(_calculateArrayIndex, renderTexture.width / 8, renderTexture.height / 8, 1);
-            _okhslArrayBuffer.GetData(_outputArray);
+            // _okhslArrayBuffer.GetData(_outputArray);
 
             // Get preview texture now that array is filled
             GetArrayTexture(_outputArrayTexture, PreviewImageArrayType);
@@ -184,32 +179,43 @@ namespace Resat.Colors
         // could just remove the sorting, or add a seperate dedicated compute shader/shader for that
         private OKHSLData? PostProcess()
         {
+            // Sort to Length.Y largest elements
+
             if (_okhslPostProcessBuffer == null || _postProcessArray == null) 
                 return null;
 
             // Reset arrays to avoid data leaking from old textures
             _okhslPostProcessBuffer.SetData(_emptyColorArray);
             
+            // Sort to Length.Y largest elements
+            Sort();
+
             // Setup compute shader
             _computeShader.SetBuffer(_postProcessIndex, "_OKHSLArray", _okhslArrayBuffer);
             _computeShader.SetBuffer(_postProcessIndex, "_PostProcessArray", _okhslPostProcessBuffer);
+            _computeShader.SetBuffer(_postProcessIndex, "_LargestElementIndexesArray", _topColorIndexesBuffer);
             _computeShader.SetInts("_OKHSLArrayResolution", _okhslArraySize.x, _okhslArraySize.y);
-            _computeShader.SetInt("_TopColorsCount", (int)_topColorsCount);
+            _computeShader.SetInt("_TopColorsCount", _okhslArraySize.y);
 
             _computeShader.Dispatch(_postProcessIndex, 1, 1, 1);
             _okhslPostProcessBuffer.GetData(_postProcessArray);
 
             // Get top colors
-            TopColor[] topColors = new TopColor[_topColorsCount];
-            for (int i = 0; i < (int) _topColorsCount; i++)
+            List<TopColor> topColors = new();
+            for (int i = 0; i < _okhslArraySize.y; i++)
             {
                 var rgb = _postProcessArray[i * 2];
                 var okhsl = _postProcessArray[(i * 2) + 1];
                 
                 var topColor = new TopColor(new Color(rgb.r, rgb.g, rgb.b, 1), new Color(okhsl.r, okhsl.g, okhsl.b, 1), (int)okhsl.a, (int)rgb.a);
-                topColors[i] = topColor;
+                topColors.Add(topColor);
             }
 
+            // Sort on CPU
+            var topColorsArray = topColors.OrderByDescending(x => x.Count).Take((int)_topColorsCount).ToArray();
+
+            Debug.Log(topColorsArray[0]);
+            
             // handle other metadata
             var otherMetadata = _postProcessArray[GetPostProcessDataLength() - 1];
             int totalColorCount = (int)otherMetadata.r;
@@ -218,9 +224,21 @@ namespace Resat.Colors
             // vibe check
             // var vibe = _vibeUtilites.GetVibe(GetOKHSLTopColorsFromPostProcessData(_postProcessArray, _topColorsCount));
 
-            return new OKHSLData(topColors, totalColorCount, totalColorCoverage);
+            Debug.Log(totalColorCount);
+            
+            return new OKHSLData(topColorsArray, totalColorCount, totalColorCoverage);
         }
 
+        private void Sort()
+        {
+            _sortingShader.SetInt("_BufferWidth", _okhslArraySize.x);
+            _sortingShader.SetInts("_OKHSLArrayResolution", _okhslArraySize.x, _okhslArraySize.y);
+            _sortingShader.SetBuffer(_getLargestElementsInArrayIndex, "_OKHSLArray", _okhslArrayBuffer);
+            _sortingShader.SetBuffer(_getLargestElementsInArrayIndex, "_LargestElementIndexesArray", _topColorIndexesBuffer);
+
+            _sortingShader.Dispatch(_getLargestElementsInArrayIndex, _okhslArraySize.y / 8, 1, 1);
+        }
+        
         private void ReleaseResource(ref ComputeBuffer? buffer)
         {
             if (buffer == null)
@@ -241,7 +259,9 @@ namespace Resat.Colors
 
         private int GetPostProcessDataLength()
         {
-            return ((int)_topColorsCount * 2) + 1;
+            // NOTE: Top color count interfacing with the GPU is clamped to OKHSLscale.y
+            // return ((int)_topColorsCount * 2) + 1;
+            return (_okhslArraySize.y * 2) + 1;
         }
     }
 }

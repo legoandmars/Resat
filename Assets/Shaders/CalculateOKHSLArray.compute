@@ -5,15 +5,20 @@
 #pragma kernel CSGetPreviewTexture
 #pragma kernel CSGetGlobalTexture
 #pragma kernel CSGetMergedTexture
+#pragma kernel CSClearPreviewArray
+#pragma kernel CSClearGlobalArray
 
 #include <HLSLSupport.cginc>
 #include "ColorArrays.cginc"
 
 // Input texture, okhsl array, and global okhsl array
 Texture2D<fixed3> _InputTexture;
-RWStructuredBuffer<int> _OKHSLArray;
-RWStructuredBuffer<int> _GlobalOKHSLArray;
+RWStructuredBuffer<uint> _OKHSLArray;
+RWStructuredBuffer<uint> _GlobalOKHSLArray;
+RWStructuredBuffer<uint> _LargestElementIndexesArray;
+RWStructuredBuffer<float4> _PostProcessArray;
 
+uint _TopColorsCount;
 uint2 _OKHSLArrayResolution;
 
 // Texture output stuff
@@ -53,6 +58,22 @@ void CSMergeArrays (uint3 id : SV_DispatchThreadID)
     _GlobalOKHSLArray[GetIndexFromId(id)] = MergeArrays(id);
 }
 
+// Zero out global array
+// _GlobalOKHSLArray
+[numthreads(8,8,1)]
+void CSClearGlobalArray (uint3 id : SV_DispatchThreadID)
+{
+    _GlobalOKHSLArray[GetIndexFromId(id)] = 0;
+}
+
+// Zero out preview array
+// _OKHSLArray
+[numthreads(8,8,1)]
+void CSClearPreviewArray (uint3 id : SV_DispatchThreadID)
+{
+    _OKHSLArray[GetIndexFromId(id)] = 0;
+}
+
 // Get the preview texture (preview array only)
 // _OutputArrayTexture, _OKHSLArray, _OKHSLArrayResolution
 [numthreads(8,8,1)]
@@ -80,8 +101,6 @@ void CSGetMergedTexture (uint3 id : SV_DispatchThreadID)
 // Contains all postprocessing data
 // First, we have a _TopColorsCount amount of top colors in the format: (r, g, b, amount_seen), (h, s, l, arrayindex)
 // Next, a color with the following data: (TotalUniqueColorsInPhoto, ColorCoveragePercentage, null, null)
-RWStructuredBuffer<float4> _PostProcessArray;
-uint _TopColorsCount;
 
 // _OKHSLArray, _OKHSLArrayResolution
 // TODO: Not be single threaded...
@@ -89,42 +108,31 @@ uint _TopColorsCount;
 void CSPostProcess (uint3 id : SV_DispatchThreadID)
 {
     int totalUniqueColors = 0;
-    
-    // use PostProcessArray as a temporary array
-    for (int i = 0; i < (int)(_OKHSLArrayResolution.x * _OKHSLArrayResolution.y); i++)
+
+    // final sort pass over our "top colors" array
+    /*for (int i = 0; i < _OKHSLArrayResolution.y - 1; i++)
     {
-        float colorCount = _OKHSLArray[i];
-
-        if (colorCount == 0)
-            continue;
-
-        totalUniqueColors++;
-        for (int j = 0; j < (int)_TopColorsCount * 2; j+= 2)
+        for (int j = i + 1; j > 0; j--)
         {
-            if (_PostProcessArray[j].r > colorCount)
-                continue;
-
-            if (j + 2 < (int)_TopColorsCount)
+            if (_OKHSLArray[_LargestElementIndexesArray[j - 1]]  > _OKHSLArray[_LargestElementIndexesArray[j]])
             {
-                _PostProcessArray[j + 2] = _PostProcessArray[j];
+                int newItem = _LargestElementIndexesArray[j - 1];
+                _LargestElementIndexesArray[j - 1] = _LargestElementIndexesArray[j];
+                _LargestElementIndexesArray[j] = newItem;
             }
-            
-            _PostProcessArray[j].r = colorCount;
-            _PostProcessArray[j].g = i;
-            break;
         }
-    }
+    }*/
 
     // Convert our temporary array to proper colors
-    for (int j = 0; j < (int)_TopColorsCount * 2; j += 2) 
+    for (int i = 0; i < (int)_TopColorsCount; i++)
     {
-        float3 okhsl = OKHSLFromArrayIndex(_PostProcessArray[j].g, _OKHSLArrayResolution);
+        float index = _LargestElementIndexesArray[i];
+        float amountSeen = _OKHSLArray[index];
+        float3 okhsl = OKHSLFromArrayIndex(index, _OKHSLArrayResolution);
         float3 rgb = OKHSLtoRGB(okhsl);
-        float amountSeen = _PostProcessArray[j].r;
-        float index = _PostProcessArray[j].g;
-        // 4th slot is used for frequency instead of alpha 
-        _PostProcessArray[j] = float4(rgb.r, rgb.g, rgb.b, amountSeen);
-        _PostProcessArray[j + 1] = float4(okhsl.r, okhsl.g, okhsl.b, index);
+
+        _PostProcessArray[(i * 2)] = float4(rgb.r, rgb.g, rgb.b, amountSeen);
+        _PostProcessArray[(i * 2) + 1] = float4(okhsl.r, okhsl.g, okhsl.b, index);
     }
 
     // Add our extra metadata

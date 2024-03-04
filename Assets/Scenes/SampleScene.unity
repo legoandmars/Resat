@@ -2544,7 +2544,7 @@ MonoBehaviour:
   _inputController: {fileID: 1656060608}
   _characterController: {fileID: 1117427582}
   _camera: {fileID: 551777549}
-  _lookSensitivity: 1
+  _lookSensitivity: 0
   _speed: 4
   _jumpHeight: 1.25
   _fallSpeed: 15
@@ -3307,9 +3307,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _computeShader: {fileID: 7200000, guid: 335c959dacd747c44b46dddd41be7b8a, type: 3}
-  _okhslArraySize: {x: 512, y: 512}
-  _topColorsCount: 8
+  _sortingShader: {fileID: 7200000, guid: 3086f79e8964a8a45afc5bc111e50830, type: 3}
+  _okhslArraySize: {x: 64, y: 64}
+  _topColorsCount: 64
   PostProcessing: 1
+  PreviewImageArrayType: 0
 --- !u!1 &2106204025
 GameObject:
   m_ObjectHideFlags: 0

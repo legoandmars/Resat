@@ -5,7 +5,7 @@ namespace Resat.Models
     public class OKHSLData
     {
         public TopColor[] TopColors;
-        public int TotalColorCount;
+        public uint TotalColorCount;
         public float TotalColorCoveragePercent;
         
         // for debuggin
@@ -13,7 +13,7 @@ namespace Resat.Models
         // public int UniqueColorCount;
         // public int RemainingColorCoveragePercentage;
         
-        public OKHSLData(TopColor[] topColors, int totalColorCount, float totalColorCoveragePercent)
+        public OKHSLData(TopColor[] topColors, uint totalColorCount, float totalColorCoveragePercent)
         {
             TopColors = topColors;
             TotalColorCount = totalColorCount;

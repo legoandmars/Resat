@@ -2544,7 +2544,7 @@ MonoBehaviour:
   _inputController: {fileID: 1656060608}
   _characterController: {fileID: 1117427582}
   _camera: {fileID: 551777549}
-  _lookSensitivity: 0
+  _lookSensitivity: 1
   _speed: 4
   _jumpHeight: 1.25
   _fallSpeed: 15

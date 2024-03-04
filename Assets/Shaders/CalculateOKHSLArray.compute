@@ -7,6 +7,7 @@
 #pragma kernel CSGetMergedTexture
 #pragma kernel CSClearPreviewArray
 #pragma kernel CSClearGlobalArray
+#pragma kernel CSClearMetadataArray
 
 #include <HLSLSupport.cginc>
 #include "ColorArrays.cginc"
@@ -16,9 +17,9 @@ Texture2D<fixed3> _InputTexture;
 RWStructuredBuffer<uint> _OKHSLArray;
 RWStructuredBuffer<uint> _GlobalOKHSLArray;
 RWStructuredBuffer<uint> _LargestElementIndexesArray;
-RWStructuredBuffer<float4> _PostProcessArray;
+RWStructuredBuffer<float4> _TopColorArray;
+RWStructuredBuffer<uint> _OtherMetadataArray; // bit annoying needing a second GetData call but whatever man, no InterlockedAdd for floats
 
-uint _TopColorsCount;
 uint2 _OKHSLArrayResolution;
 
 // Texture output stuff
@@ -74,6 +75,15 @@ void CSClearPreviewArray (uint3 id : SV_DispatchThreadID)
     _OKHSLArray[GetIndexFromId(id)] = 0;
 }
 
+// Zero out metadata array
+// _OtherMetadataArray
+[numthreads(1,1,1)]
+void CSClearMetadataArray (uint3 id : SV_DispatchThreadID)
+{
+    _OtherMetadataArray[0] = 0;
+    _OtherMetadataArray[1] = 0;
+}
+
 // Get the preview texture (preview array only)
 // _OutputArrayTexture, _OKHSLArray, _OKHSLArrayResolution
 [numthreads(8,8,1)]
@@ -98,43 +108,56 @@ void CSGetMergedTexture (uint3 id : SV_DispatchThreadID)
     _OutputArrayTexture[id.xy] = MergeArrays(id);
 }
 
+
 // Contains all postprocessing data
 // First, we have a _TopColorsCount amount of top colors in the format: (r, g, b, amount_seen), (h, s, l, arrayindex)
 // Next, a color with the following data: (TotalUniqueColorsInPhoto, ColorCoveragePercentage, null, null)
 
-// _OKHSLArray, _OKHSLArrayResolution
-// TODO: Not be single threaded...
-[numthreads(1,1,1)]
+// uses a scuffed sort
+// first thread is set to image Y length
+// returns unsorted (y_length) elements, guaranteed to be the largest (y_length) elements in the list
+[numthreads(8,1,1)]
 void CSPostProcess (uint3 id : SV_DispatchThreadID)
 {
-    int totalUniqueColors = 0;
+    // TODO: way to not return existing global colors as top colors?
+    uint newColorCount = 0;
+    uint colorCount = 0;
+    
+    int startIndex = id.x * _OKHSLArrayResolution.x;
 
-    // final sort pass over our "top colors" array
-    /*for (int i = 0; i < _OKHSLArrayResolution.y - 1; i++)
+    uint maxValue = 0;
+    uint maxIndex = 0;
+    
+    for (int i = 0; i < (int)_OKHSLArrayResolution.x; i++)
     {
-        for (int j = i + 1; j > 0; j--)
+        uint index = startIndex + i;
+        uint value = _OKHSLArray[index];
+        
+        if (value > maxValue)
         {
-            if (_OKHSLArray[_LargestElementIndexesArray[j - 1]]  > _OKHSLArray[_LargestElementIndexesArray[j]])
+            maxValue = value;
+            maxIndex = index;
+        }
+
+        if (value != 0)
+        {
+            colorCount += 1;
+            
+            // TODO: Do the below bit as a merge before to save perf
+            if (_GlobalOKHSLArray[index] == 0)
             {
-                int newItem = _LargestElementIndexesArray[j - 1];
-                _LargestElementIndexesArray[j - 1] = _LargestElementIndexesArray[j];
-                _LargestElementIndexesArray[j] = newItem;
+                newColorCount += 1;
             }
         }
-    }*/
-
-    // Convert our temporary array to proper colors
-    for (int i = 0; i < (int)_TopColorsCount; i++)
-    {
-        float index = _LargestElementIndexesArray[i];
-        float amountSeen = _OKHSLArray[index];
-        float3 okhsl = OKHSLFromArrayIndex(index, _OKHSLArrayResolution);
-        float3 rgb = OKHSLtoRGB(okhsl);
-
-        _PostProcessArray[(i * 2)] = float4(rgb.r, rgb.g, rgb.b, amountSeen);
-        _PostProcessArray[(i * 2) + 1] = float4(okhsl.r, okhsl.g, okhsl.b, index);
     }
 
+    float3 okhsl = OKHSLFromArrayIndex(maxIndex, _OKHSLArrayResolution);
+    float3 rgb = OKHSLtoRGB(okhsl);
+    
+    _TopColorArray[(id.x * 2)] = float4(rgb.r, rgb.g, rgb.b, maxValue);
+    _TopColorArray[(id.x * 2) + 1] = float4(okhsl.r, okhsl.g, okhsl.b, maxIndex);
+
     // Add our extra metadata
-    _PostProcessArray[_TopColorsCount * 2] = float4(totalUniqueColors, ((float)totalUniqueColors / (_OKHSLArrayResolution.x * _OKHSLArrayResolution.y)) * 100, 0, 0);
+    InterlockedAdd(_OtherMetadataArray[0], colorCount);
+    InterlockedAdd(_OtherMetadataArray[1], newColorCount);
 }

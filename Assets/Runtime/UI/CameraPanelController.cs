@@ -24,6 +24,9 @@ namespace Resat.UI
             
             // get "difference" between 1080p canvas scaler
             _mainPanel.sizeDelta = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
+            
+            // TEMPORARY!!!
+            // _debugPanel.CameraImage.rectTransform.sizeDelta = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
         }
 
         public void SetData(OKHSLData okhslData)

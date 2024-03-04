@@ -25,7 +25,11 @@ namespace Resat.Models
         }
 
         public Vector2 Offset => new Vector2((1 - Scale.x) * Center.x, (1 - Scale.y) * Center.y);
-
+        
+        // used to calculate camera "fake" aspect ratio
+        public float NativeAspectRatio => (float) NativeResolution.x / (float) NativeResolution.y;
+        public float AspectRatio => (float) Resolution.x / (float) Resolution.y;
+        
         public CameraResolutionData()
         {
         }

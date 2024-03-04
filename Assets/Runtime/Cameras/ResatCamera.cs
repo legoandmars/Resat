@@ -14,9 +14,18 @@ namespace Resat.Cameras
     public class ResatCamera : MonoBehaviour
     {
         public Camera? Camera;
-        
-        private Dictionary<Vector2Int, RenderTexture> _renderTexturesByResolution = new();
 
+        public bool Small;
+        public bool Scale;
+        private Dictionary<Vector2Int, RenderTexture> _renderTexturesByResolution = new();
+        public Vector2 ScaleMult = Vector2.one;
+        public Vector2 Center = new Vector2(0.5f, 0.5f);
+        
+        // *shrug*
+        public float AmountMultiplier = 1.35f;
+        public float XOffsetMultiplier = 4.8f;
+        public float YOffsetMultiplier = 4.8f;
+        
         // TODO: Prealloc RT method
         
         // Usecases:
@@ -27,19 +36,61 @@ namespace Resat.Cameras
         {
             if (Camera == null)
                 return null;
-         
-            var nativeRenderTexture = GetCachedRenderTexture(resolutionData.NativeResolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
+            
+            Camera.ResetProjectionMatrix();
+            Camera.projectionMatrix = CalculateZoomedProjectionMatrix(Camera, resolutionData);
+            //Camera.aspect = resolutionData.NativeAspectRatio;
+
             var renderTexture = GetCachedRenderTexture(resolutionData.Resolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
 
             // Do the initial render at native res
-            Camera.targetTexture = nativeRenderTexture;
+            Camera.targetTexture = renderTexture;
             Camera.Render();
 
             // Scale down to intended resolution and return
-            Graphics.Blit(nativeRenderTexture, renderTexture, resolutionData.Scale, resolutionData.Offset);
             return renderTexture;
         }
 
+        public Matrix4x4 CalculateZoomedProjectionMatrix(Camera camera, CameraResolutionData resolutionData)
+        {
+            // no idea how exactly this works, or why it's necessary, but we are jamming
+            float amount = Mathf.Tan((camera.fieldOfView / 2f) * Mathf.Deg2Rad) * camera.nearClipPlane / AmountMultiplier;
+
+            // 0 = -xOffset
+            // 0.5 = 0
+            // 1 = xOffset
+            float xOffsetMax = amount * XOffsetMultiplier;
+            float yOffsetMax = amount * YOffsetMultiplier;
+            
+            // calc center
+            float xOffset = (resolutionData.Center.x - 0.5f) * xOffsetMax;
+            float yOffset = (resolutionData.Center.y - 0.5f) * yOffsetMax / resolutionData.NativeAspectRatio;
+
+            // Matrix4x4 scaledMatrix = Matrix4x4.Scale(new Vector3(1 / resolutionData.Scale.x, 1 / resolutionData.Scale.y, 1));
+            Matrix4x4 offsetMatrix = PerspectiveOffCenter((-amount * resolutionData.AspectRatio) + xOffset, (amount * resolutionData.AspectRatio) + xOffset, -amount + yOffset, amount + yOffset, camera.nearClipPlane, camera.farClipPlane);
+            
+            return offsetMatrix;
+        }
+
+        // https://forum.unity.com/threads/how-to-render-just-part-of-a-cams-view-to-the-full-screen.6486/
+        private Matrix4x4 PerspectiveOffCenter(float left, float right, float bottom, float top, float near, float far)
+        {
+            float x = (2.0f * near) / (right - left);
+            float y = (2.0f * near) / (top - bottom);
+            float a = (right + left) / (right - left);
+            float b = (top + bottom) / (top - bottom);
+            float c = -(far + near) / (far - near);
+            float d = -(2.0f * far * near) / (far - near);
+            float e = -1.0f;
+
+            var m = new Matrix4x4();
+            m[0,0] = x; m[0,1] = 0; m[0,2] = a; m[0,3] = 0;
+            m[1,0] = 0; m[1,1] = y; m[1,2] = b; m[1,3] = 0;
+            m[2,0] = 0; m[2,1] = 0; m[2,2] = c; m[2,3] = d;
+            m[3,0] = 0; m[3,1] = 0; m[3,2] = e; m[3,3] = 0;
+            return m;
+        }
+        
         public void RenderScreenshot(CameraResolutionData resolutionData)
         {
             Debug.Log("Taking a screenshot!");
@@ -109,6 +160,7 @@ namespace Resat.Cameras
             if (Camera != null)
                 Camera.enabled = false;
         }
+        
         void OnDisable()
         {
             foreach (var renderTexture in _renderTexturesByResolution.Values)

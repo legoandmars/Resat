@@ -2151,7 +2151,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 2125634634}
-  AmountMultiplier: 1.35
   XOffsetMultiplier: 4.8
   YOffsetMultiplier: 4.8
 --- !u!1 &1414464721
@@ -3308,7 +3307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _computeShader: {fileID: 7200000, guid: 335c959dacd747c44b46dddd41be7b8a, type: 3}
-  _okhslArraySize: {x: 64, y: 32}
+  _okhslArraySize: {x: 512, y: 512}
   _topColorsCount: 8
   PostProcessing: 1
 --- !u!1 &2106204025

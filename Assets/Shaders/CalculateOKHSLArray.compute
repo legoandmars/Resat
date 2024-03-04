@@ -1,17 +1,20 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel CSCalculateArray
 #pragma kernel CSPostProcess
+#pragma kernel CSMergeArrays
+#pragma kernel CSGetPreviewTexture
+#pragma kernel CSGetGlobalTexture
+#pragma kernel CSGetMergedTexture
 
 #include <HLSLSupport.cginc>
 #include "ColorArrays.cginc"
 
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
+// Input texture, okhsl array, and global okhsl array
 Texture2D<fixed3> _InputTexture;
 RWStructuredBuffer<int> _OKHSLArray;
+RWStructuredBuffer<int> _GlobalOKHSLArray;
 
 uint2 _OKHSLArrayResolution;
-uint _PaletteSize;
 
 // Texture output stuff
 RWTexture2D<float> _OutputArrayTexture;
@@ -20,16 +23,58 @@ RWTexture2D<float> _OutputArrayTexture;
 // Returns an array/"image" of which HSV colors are present within the input screenshot
 // Essentially an "array" of applicable OKHSL colors
 [numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void CSCalculateArray (uint3 id : SV_DispatchThreadID)
 {
-    fixed3 color = _InputTexture[id.xy].rgb;
+    fixed3 color = _InputTexture[id.xy].rgb; 
     float3 okhsl = RGBtoOKHSL(color);
     
     uint2 arrayCoordinates = ArrayCoordinatesFromOKHSL(okhsl, _OKHSLArrayResolution);
     uint arrayIndex = ArrayIndexFromArrayCoordinates(arrayCoordinates, _OKHSLArrayResolution);
     InterlockedAdd(_OKHSLArray[arrayIndex], 1);
 
-    _OutputArrayTexture[arrayCoordinates] = 1; 
+    // _OutputArrayTexture[arrayCoordinates] = 1; 
+}
+
+int GetIndexFromId(uint3 id)
+{
+    return id.x + (id.y * _OKHSLArrayResolution);
+}
+
+int MergeArrays(uint3 id)
+{
+    return _OKHSLArray[GetIndexFromId(id)] + _GlobalOKHSLArray[GetIndexFromId(id)];  
+}
+
+// Permanently merge the preview array into the global array
+// _OKHSLArray, _GlobalOKHSLArray
+[numthreads(8,8,1)]
+void CSMergeArrays (uint3 id : SV_DispatchThreadID)
+{
+    _GlobalOKHSLArray[GetIndexFromId(id)] = MergeArrays(id);
+}
+
+// Get the preview texture (preview array only)
+// _OutputArrayTexture, _OKHSLArray, _OKHSLArrayResolution
+[numthreads(8,8,1)]
+void CSGetPreviewTexture (uint3 id : SV_DispatchThreadID)
+{
+    _OutputArrayTexture[id.xy] = _OKHSLArray[GetIndexFromId(id)];
+}
+
+// Get the global texture (global array only)
+// _OutputArrayTexture, _GlobalOKHSLArray, _OKHSLArrayResolution
+[numthreads(8,8,1)]
+void CSGetGlobalTexture (uint3 id : SV_DispatchThreadID)
+{
+    _OutputArrayTexture[id.xy] = _GlobalOKHSLArray[GetIndexFromId(id)];
+}
+
+// Get the merged texture (a combination of the preview array and global array)
+// _OutputArrayTexture, _OKHSLArray, _GlobalOKHSLArray, _OKHSLArrayResolution
+[numthreads(8,8,1)]
+void CSGetMergedTexture (uint3 id : SV_DispatchThreadID)
+{
+    _OutputArrayTexture[id.xy] = MergeArrays(id);
 }
 
 // Contains all postprocessing data
@@ -38,9 +83,9 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 RWStructuredBuffer<float4> _PostProcessArray;
 uint _TopColorsCount;
 
-// needs _OKHSLArray, _OKHSLArrayResolution
+// _OKHSLArray, _OKHSLArrayResolution
 // TODO: Not be single threaded...
-[numthreads(8,8,1)]
+[numthreads(1,1,1)]
 void CSPostProcess (uint3 id : SV_DispatchThreadID)
 {
     int totalUniqueColors = 0;

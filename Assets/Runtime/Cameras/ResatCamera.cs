@@ -18,7 +18,6 @@ namespace Resat.Cameras
         private Dictionary<Vector2Int, RenderTexture> _renderTexturesByResolution = new();
         
         // *shrug*
-        public float AmountMultiplier = 1.35f;
         public float XOffsetMultiplier = 4.8f;
         public float YOffsetMultiplier = 4.8f;
 

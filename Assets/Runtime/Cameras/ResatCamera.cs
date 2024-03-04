@@ -21,8 +21,22 @@ namespace Resat.Cameras
         public float AmountMultiplier = 1.35f;
         public float XOffsetMultiplier = 4.8f;
         public float YOffsetMultiplier = 4.8f;
+
+        private Vector4? _lastResolutionDataScaleAndOffset;
+        private float? _lastFieldOfView;
+        private bool _needsProjectionMatrixRecalculation = true;
         
         // TODO: Prealloc RT method
+
+        public void SetFieldOfView(float fieldOfView)
+        {
+            if (Camera == null || _lastFieldOfView == fieldOfView)
+                return;
+
+            _lastFieldOfView = fieldOfView;
+            Camera.fieldOfView = fieldOfView;
+            _needsProjectionMatrixRecalculation = true;
+        }
         
         // Usecases:
         // 1920x1080 -> 1080x800 (centered, 1080x1080 fine)
@@ -32,11 +46,15 @@ namespace Resat.Cameras
         {
             if (Camera == null)
                 return null;
-            
-            Camera.ResetProjectionMatrix();
-            Camera.projectionMatrix = CalculateZoomedProjectionMatrix(Camera, resolutionData);
-            //Camera.aspect = resolutionData.NativeAspectRatio;
 
+            Vector4 resolutionDataScaleAndOffset = resolutionData.RatioAndOffsetVector;
+            if (_lastResolutionDataScaleAndOffset == null || _lastResolutionDataScaleAndOffset != resolutionDataScaleAndOffset || _needsProjectionMatrixRecalculation)
+            {
+                _lastResolutionDataScaleAndOffset = resolutionDataScaleAndOffset;
+                _needsProjectionMatrixRecalculation = false;
+                RecalculateProjectionMatrix(Camera, resolutionData);
+            }
+            
             var renderTexture = GetCachedRenderTexture(resolutionData.Resolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
 
             // Do the initial render at native res
@@ -47,11 +65,19 @@ namespace Resat.Cameras
             return renderTexture;
         }
 
+        private void RecalculateProjectionMatrix(Camera camera, CameraResolutionData resolutionData)
+        {
+            Debug.Log("Recalculating projection matrix...");
+            
+            camera.ResetProjectionMatrix();
+            camera.projectionMatrix = CalculateZoomedProjectionMatrix(camera, resolutionData);
+        }
+        
         public Matrix4x4 CalculateZoomedProjectionMatrix(Camera camera, CameraResolutionData resolutionData)
         {
             // IMPORTANT TODO: Scaling native resolution X does NOT work properly! Any non 16:9 values will probably not work right
             float heightRatio =  (float)resolutionData.NativeResolution.y / (float)resolutionData.Resolution.y;
-            Debug.Log(heightRatio);
+            
             // no idea how exactly this works, or why it's necessary, but we are jamming
             float amount = Mathf.Tan((camera.fieldOfView / 2f) * Mathf.Deg2Rad) * camera.nearClipPlane / heightRatio;
 

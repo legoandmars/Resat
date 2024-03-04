@@ -38,6 +38,11 @@ namespace Resat.UI
             // _debugPanel.CameraImage.rectTransform.sizeDelta = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
         }
 
+        public void SetFieldOfView(float fieldOfView)
+        {
+            _desaturationCamera.SetFieldOfView(fieldOfView);
+        }
+
         public void SetData(OKHSLData okhslData)
         {
             _debugPanel.SetData(okhslData);

@@ -766,6 +766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _material: {fileID: 2100000, guid: 94121ecb9c02d5845af81fae53e3a012, type: 2}
+  _camera: {fileID: 551777549}
 --- !u!1 &581070170
 GameObject:
   m_ObjectHideFlags: 0
@@ -1053,12 +1054,8 @@ MonoBehaviour:
     Center: {x: 0.5, y: 0.5}
     FilterMode: 0
     RenderTextureReadWrite: 0
-  _screenshotResolutionData:
-    Resolution: {x: 2176, y: 1600}
-    NativeResolution: {x: 3840, y: 2160}
-    Center: {x: 0.5, y: 0.5}
-    FilterMode: 1
-    RenderTextureReadWrite: 2
+  _screenshotNativeResolution: {x: 3840, y: 2160}
+  _fieldOfView: 60
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1828,7 +1825,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9339623, g: 0.022027409, b: 0.022027409, a: 0.2509804}
+  m_Color: {r: 0.9339623, g: 0.022027409, b: 0.022027409, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

@@ -36,8 +36,11 @@ namespace Resat.Cameras
         private CameraResolutionData _minimizedResolutionData = new();
 
         [SerializeField]
-        private CameraResolutionData _screenshotResolutionData = new();
+        private Vector2Int _screenshotNativeResolution = new(1920, 1080);
 
+        [SerializeField]
+        private float _fieldOfView = 60f;
+        
         [NonSerialized]
         private bool _enabled;
 
@@ -47,6 +50,13 @@ namespace Resat.Cameras
         {
             _currentResolutionData = resolutionData;
             _cameraPanelController.SetResolution(resolutionData);
+        }
+
+        private void SetFieldOfView(float fieldOfView)
+        {
+            _fieldOfView = fieldOfView;
+            _cameraPanelController.SetFieldOfView(fieldOfView);
+            _resatCamera.SetFieldOfView(fieldOfView);
         }
         
         private void EnableCamera()
@@ -70,7 +80,12 @@ namespace Resat.Cameras
             if (_cameraAudioSource != null)
                 _cameraAudioSource.Play();
 
-            _resatCamera.RenderScreenshot(_screenshotResolutionData);
+            // TODO: This assumes native res will always cleanly divide into the screenshot's native res
+            var scaleMultiplier = new Vector2((float)_screenshotNativeResolution.x / (float)_currentResolutionData.NativeResolution.x, (float)_screenshotNativeResolution.y / (float)_currentResolutionData.NativeResolution.y);
+            var screenshotResolution = new Vector2Int((int)(_currentResolutionData.Resolution.x * scaleMultiplier.x), (int)(_currentResolutionData.Resolution.y * scaleMultiplier.y));
+            
+            var screenshotResolutionData = new CameraResolutionData(screenshotResolution, _screenshotNativeResolution, _currentResolutionData.Center, FilterMode.Bilinear, RenderTextureReadWrite.sRGB);
+            _resatCamera.RenderScreenshot(screenshotResolutionData);
 
             // serialize our new color data
             _okhslController.SerializeLastRender();
@@ -95,6 +110,7 @@ namespace Resat.Cameras
 
             RenderPreview();
             EnableCamera(); // temporary; meant so i can see resolution changes when debuggin
+            SetFieldOfView(_fieldOfView);
         }
 
         private void RenderPreview()

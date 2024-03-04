@@ -13,6 +13,9 @@ namespace Resat
 
         [SerializeField]
         private Material? _material;
+        
+        [SerializeField]
+        private Camera? _camera;
 
         private Vector2? _resolution;
 
@@ -22,6 +25,14 @@ namespace Resat
                 return;
 
             _material.SetVector(CutoutOffsetAndScale, new Vector4(resolutionData.Scale.x, resolutionData.Scale.y, resolutionData.Center.x, resolutionData.Center.y));
+        }
+
+        public void SetFieldOfView(float fieldOfView)
+        {
+            if (_camera == null)
+                return;
+
+            _camera.fieldOfView = fieldOfView;
         }
         
         private void OnRenderImage(RenderTexture src, RenderTexture dest)

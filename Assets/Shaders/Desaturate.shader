@@ -53,12 +53,26 @@ Shader "Unlit/Desaturate"
                 float3 hsl = RGBtoOKHSL(col);
                 hsl.g = 0;
                 float4 rgb = float4(OKHSLtoRGB(hsl), 0);
+
+                // rescale space to clamp like centered UI
+                float newX = i.uv.x;
+                float ratioAdjustment = 1.77777778f / (_ScreenResolution.x / _ScreenResolution.y);
+
+                // 0 when low aspect ratio
+                // up to 0.5 when high aspect ratio
+                // this is the left edge
+                float idealWidth = (1.7777778f * _ScreenResolution.y);
+
+                // clamp higher aspect ratios to 16:9 to match canvas scaling
+                float width = ((_ScreenResolution.x - idealWidth) / _ScreenResolution.x) / 2;
+                newX -= width;
+                newX /= ratioAdjustment;
                 
-                float ratioAdjustment = 1.77777778 / (_ScreenResolution.x / _ScreenResolution.y);
                 float2 center = float2(_CutoutOffsetAndScale.z, _CutoutOffsetAndScale.w);
-                float2 pos = i.uv - center;
-                pos.x /= _CutoutOffsetAndScale.x * ratioAdjustment;
+                float2 pos = float2(newX, i.uv.y) - center;
+                pos.x /= _CutoutOffsetAndScale.x;
                 pos.y /= _CutoutOffsetAndScale.y;
+
                 pos = abs(pos);
                 float cut = 1 - step(0.5, max(pos.x, pos.y)); // Decides whether it's within the cutout or not
 

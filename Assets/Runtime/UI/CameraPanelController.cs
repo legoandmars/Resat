@@ -28,8 +28,6 @@ namespace Resat.UI
             
             _mainPanel.sizeDelta = resolution;
 
-            Debug.Log(resolution);
-            Debug.Log(nativeResolution);
             float xOffset = (resolutionData.Center.x - 0.5f) * nativeResolution.x;
             float yOffset = (resolutionData.Center.y - 0.5f) * nativeResolution.y;
 

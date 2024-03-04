@@ -49,6 +49,7 @@ namespace Resat.Cameras
 
         public Matrix4x4 CalculateZoomedProjectionMatrix(Camera camera, CameraResolutionData resolutionData)
         {
+            // IMPORTANT TODO: Scaling native resolution X does NOT work properly! Any non 16:9 values will probably not work right
             float heightRatio =  (float)resolutionData.NativeResolution.y / (float)resolutionData.Resolution.y;
             Debug.Log(heightRatio);
             // no idea how exactly this works, or why it's necessary, but we are jamming

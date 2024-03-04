@@ -23,8 +23,19 @@ namespace Resat.UI
             _desaturationCamera.SetResolution(resolutionData);
             
             // get "difference" between 1080p canvas scaler
-            _mainPanel.sizeDelta = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
+            var resolution = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
+            var nativeResolution = resolutionData.NativeResolution / resolutionData.GetNativeResolutionScale(_canvasScaler.referenceResolution);
             
+            _mainPanel.sizeDelta = resolution;
+
+            Debug.Log(resolution);
+            Debug.Log(nativeResolution);
+            float xOffset = (resolutionData.Center.x - 0.5f) * nativeResolution.x;
+            float yOffset = (resolutionData.Center.y - 0.5f) * nativeResolution.y;
+
+            _mainPanel.anchoredPosition = new Vector2(xOffset, yOffset);
+
+            _debugPanel.SetPreviewTextureResolution(resolutionData, _canvasScaler);
             // TEMPORARY!!!
             // _debugPanel.CameraImage.rectTransform.sizeDelta = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
         }

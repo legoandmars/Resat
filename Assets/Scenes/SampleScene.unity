@@ -407,7 +407,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &245442605
 RectTransform:
   m_ObjectHideFlags: 0
@@ -518,7 +518,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7174821753040d194fdedba1cefa0c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraImage: {fileID: 581070172}
+  CameraImage: {fileID: 245442606}
+  ResizedCameraImage: {fileID: 581070172}
   ArrayTextureImage: {fileID: 1753977113}
   TotalColorCountText: {fileID: 1956180931}
   TotalColorCoveragePercentText: {fileID: 525457318}
@@ -529,6 +530,7 @@ MonoBehaviour:
   - {fileID: 830008077}
   - {fileID: 1025152833}
   - {fileID: 1869046698}
+  ResizeCameraImage: 0
 --- !u!1 &525457316
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,12 +778,12 @@ GameObject:
   - component: {fileID: 581070173}
   - component: {fileID: 581070172}
   m_Layer: 5
-  m_Name: CameraPreview (1)
+  m_Name: FullSizeMirrorCameraPreview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &581070171
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1040,9 +1042,9 @@ MonoBehaviour:
   _cameraAudioSource: {fileID: 1955244114}
   _cameraPanelController: {fileID: 641632286}
   _photoResolutionData:
-    Resolution: {x: 1088, y: 800}
-    NativeResolution: {x: 1920, y: 1080}
-    Center: {x: 1, y: 0}
+    Resolution: {x: 272, y: 200}
+    NativeResolution: {x: 480, y: 270}
+    Center: {x: 0.5, y: 0.5}
     FilterMode: 0
     RenderTextureReadWrite: 0
   _minimizedResolutionData:
@@ -2152,10 +2154,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 2125634634}
-  Small: 1
-  Scale: 0
-  ScaleMult: {x: 0, y: 0}
-  Center: {x: 1, y: 0.5}
   AmountMultiplier: 1.35
   XOffsetMultiplier: 4.8
   YOffsetMultiplier: 4.8

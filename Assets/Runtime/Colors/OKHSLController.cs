@@ -114,9 +114,8 @@ namespace Resat.Colors
 
             if (renderTexture.width % 8 != 0 || renderTexture.height % 8 != 0)
             {
-                Debug.LogError("Passed RenderTexture was not a power of eight!");
+                Debug.LogWarning("Passed RenderTexture was not a power of eight! Image will be truncated!");
                 // TODO: See if non-power of eights actually break anything, or if we can just continue fine
-                return null;
             }
             
             // Reset arrays to avoid data leaking from old textures

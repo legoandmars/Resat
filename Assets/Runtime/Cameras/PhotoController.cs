@@ -94,6 +94,7 @@ namespace Resat.Cameras
                 return;
 
             RenderPreview();
+            EnableCamera(); // temporary; meant so i can see resolution changes when debuggin
         }
 
         private void RenderPreview()
@@ -128,7 +129,6 @@ namespace Resat.Cameras
         private void OnEnable()
         {
             _inputController.Input.Camera.AddCallbacks(this);
-            EnableCamera(); // temporary; meant so i can redisable the camera when debugging
         }
 
         private void OnDisable()

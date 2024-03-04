@@ -13,6 +13,9 @@ namespace Resat.UI
         public RawImage? CameraImage;
         
         [SerializeField]
+        public RawImage? ResizedCameraImage;
+
+        [SerializeField]
         public RawImage? ArrayTextureImage;
         
         [SerializeField]
@@ -27,6 +30,9 @@ namespace Resat.UI
         [SerializeField]
         public List<RawImage>? TopColorImages;
 
+        [SerializeField]
+        public bool ResizeCameraImage = false;
+        
         public void SetData(OKHSLData okhslData)
         {
             for (int i = 0; i < TopColorImages?.Count && i < okhslData.TopColors.Length; i++)
@@ -50,6 +56,9 @@ namespace Resat.UI
                 return;
             
             CameraImage.texture = renderTexture;
+
+            if (ResizeCameraImage && ResizedCameraImage != null)
+                ResizedCameraImage.texture = renderTexture;
         }
         
         public void SetArrayTexture(RenderTexture renderTexture)
@@ -58,6 +67,29 @@ namespace Resat.UI
                 return;
             
             ArrayTextureImage.texture = renderTexture;
+        }
+
+        public void SetPreviewTextureResolution(CameraResolutionData resolutionData, CanvasScaler canvasScaler)
+        {
+            if (!ResizeCameraImage && ResizedCameraImage != null)
+                ResizedCameraImage.gameObject.SetActive(false);
+            
+            if (ResizedCameraImage == null || !ResizeCameraImage)
+                return;
+
+            ResizedCameraImage.gameObject.SetActive(true);
+            
+            // get "difference" between 1080p canvas scaler
+            var resolution = resolutionData.GetRescaledResolution(canvasScaler.referenceResolution);
+            var nativeResolution = resolutionData.NativeResolution / resolutionData.GetNativeResolutionScale(canvasScaler.referenceResolution);
+            
+            ResizedCameraImage.rectTransform.sizeDelta = resolution;
+
+            float xOffset = (resolutionData.Center.x - 0.5f) * nativeResolution.x;
+            float yOffset = (resolutionData.Center.y - 0.5f) * nativeResolution.y;
+
+            ResizedCameraImage.rectTransform.anchoredPosition = new Vector2(xOffset, yOffset);
+
         }
     }
 }

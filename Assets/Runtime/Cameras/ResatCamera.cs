@@ -15,11 +15,7 @@ namespace Resat.Cameras
     {
         public Camera? Camera;
 
-        public bool Small;
-        public bool Scale;
         private Dictionary<Vector2Int, RenderTexture> _renderTexturesByResolution = new();
-        public Vector2 ScaleMult = Vector2.one;
-        public Vector2 Center = new Vector2(0.5f, 0.5f);
         
         // *shrug*
         public float AmountMultiplier = 1.35f;
@@ -53,8 +49,10 @@ namespace Resat.Cameras
 
         public Matrix4x4 CalculateZoomedProjectionMatrix(Camera camera, CameraResolutionData resolutionData)
         {
+            float heightRatio =  (float)resolutionData.NativeResolution.y / (float)resolutionData.Resolution.y;
+            Debug.Log(heightRatio);
             // no idea how exactly this works, or why it's necessary, but we are jamming
-            float amount = Mathf.Tan((camera.fieldOfView / 2f) * Mathf.Deg2Rad) * camera.nearClipPlane / AmountMultiplier;
+            float amount = Mathf.Tan((camera.fieldOfView / 2f) * Mathf.Deg2Rad) * camera.nearClipPlane / heightRatio;
 
             // 0 = -xOffset
             // 0.5 = 0

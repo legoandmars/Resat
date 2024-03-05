@@ -1,29 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Resat.Models
 {
-    public struct TopColor
+    public struct TopColor : IComparable<TopColor>
     {
-        public Color Color;
-        public Color Okhsl;
-        public int ArrayIndex;
-        public int Count;
-        
-        public float R => Color.r;
-        public float G => Color.g;
-        public float B => Color.b;
-        public float H => Okhsl.r;
-        public float S => Okhsl.g;
-        public float L => Okhsl.b;
-        
-        public TopColor(Color color, Color okhsl, int arrayIndex, int count)
-        {
-            Color = color;
-            Okhsl = okhsl;
-            ArrayIndex = arrayIndex;
-            Count = count;
-        }
+        // takes up 16 bytes
+        // structured this way to directly deserialize from the buffer
+        private float R;
+        private float G;
+        private float B;
+        public float Count;
+        private float H;
+        private float S;
+        private float L;
+        public float ArrayIndex;
 
+        public Color Color => new Color(R, G, B, 1f);
+        public Color Okhsl => new Color(H, S, L, 1f);
+        
         private string ColorToString(Color color, string? prefix = null)
         {
             if (prefix == null)
@@ -35,6 +30,11 @@ namespace Resat.Models
         public override string ToString()
         {
             return $"{ColorToString(Color)}, {ColorToString(Okhsl, "OKHSL")}, (Count: {Count}, Index: {ArrayIndex})";
+        }
+
+        public int CompareTo(TopColor other)
+        {
+            return (int)(other.Count - Count);
         }
     }
 }

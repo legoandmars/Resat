@@ -48,9 +48,10 @@ namespace Resat.Colors
         private int _clearMetadataArrayIndex;
         
         // arrays reused to avoid allocating every capture
-        private Color[]? _topColorArray;
+        private TopColor[]? _topColorArray;
         private uint[]? _otherMetadataArray;
-
+        private TopColor[]? _sortingArray;
+        
         private void OnEnable()
         {
             if (_topColorsCount > _okhslArraySize.y)
@@ -71,9 +72,10 @@ namespace Resat.Colors
             _outputArrayTexture.Create();
             
             // _outputArray = new uint[_okhslArraySize.x * _okhslArraySize.y];
-            _topColorArray = new Color[GetPostProcessDataLength()];
+            _topColorArray = new TopColor[GetPostProcessDataLength() / 2];
             _otherMetadataArray = new uint[2];
-            
+            _sortingArray = new TopColor[_topColorsCount];
+
             // set indexes used for setting variables
             _calculateArrayIndex = _computeShader.FindKernel("CSCalculateArray");
             _postProcessIndex = _computeShader.FindKernel("CSPostProcess");
@@ -182,7 +184,7 @@ namespace Resat.Colors
         {
             // Sort to Length.Y largest elements
 
-            if (_topColorArrayBuffer == null || _metadataBuffer == null || _topColorArray == null) 
+            if (_topColorArrayBuffer == null || _metadataBuffer == null || _topColorArray == null || _otherMetadataArray == null) 
                 return null;
 
             // Reset arrays to avoid data leaking from old textures
@@ -196,10 +198,11 @@ namespace Resat.Colors
             _computeShader.SetInts("_OKHSLArrayResolution", _okhslArraySize.x, _okhslArraySize.y);
 
             _computeShader.Dispatch(_postProcessIndex, _okhslArraySize.y / 8, 1, 1);
-            _topColorArrayBuffer.GetData(_topColorArray);
-            _metadataBuffer.GetData(_otherMetadataArray);
-
+            
             // Get top colors
+            _topColorArrayBuffer.GetData(_topColorArray);
+            
+            /*
             List<TopColor> topColors = new();
             for (int i = 0; i < _okhslArraySize.y; i++)
             {
@@ -209,24 +212,58 @@ namespace Resat.Colors
                 var topColor = new TopColor(new Color(rgb.r, rgb.g, rgb.b, 1), new Color(okhsl.r, okhsl.g, okhsl.b, 1), (int)okhsl.a, (int)rgb.a);
                 topColors.Add(topColor);
             }
-
-            // Sort on CPU
-            var topColorsArray = topColors.OrderByDescending(x => x.Count).Take((int)_topColorsCount).ToArray();
-
-            Debug.Log(topColorsArray[0]);
+            */
             
-            // handle other metadata
+            // Sort on CPU
+            // var topColorsArray = _topColorArray.OrderByDescending(x => x.Count).Take((int)_topColorsCount).ToArray();
+            // Array.Sort(_topColorArray, (color, topColor) => (int)(topColor.Count - color.Count)); // doesn't allocate; IComparer does
+            var sortedTopColorArray = SortTopColorArray(_topColorArray);
+            
+            // Handle other non-topcolor metadata
+            _metadataBuffer.GetData(_otherMetadataArray);
             uint totalColorCount = _otherMetadataArray[0];
             float totalColorCoverage = ((float)totalColorCount / (_okhslArraySize.x * _okhslArraySize.y)) * 100f;
 
             // vibe check
             // var vibe = _vibeUtilites.GetVibe(GetOKHSLTopColorsFromPostProcessData(_postProcessArray, _topColorsCount));
 
-            Debug.Log(totalColorCount);
-            
-            return new OKHSLData(topColorsArray, totalColorCount, totalColorCoverage);
+            return new OKHSLData(sortedTopColorArray, totalColorCount, totalColorCoverage);
         }
-        
+
+        // Made specifically to truncate and sort an array in one swoop
+        // Probably possible to use a more efficient algorithm if we're really squeezing performance
+        private TopColor[] SortTopColorArray(TopColor[] topColors)
+        {
+            if (_sortingArray == null)
+                _sortingArray = new TopColor[_topColorsCount];
+            
+            Array.Clear(_sortingArray, 0, _sortingArray.Length);
+            
+            float lowestInArray = 0f;
+            for (int i = 0; i < topColors.Length; i++)
+            {
+                var topColor = topColors[i];
+                if (topColor.Count < lowestInArray) 
+                    continue;
+
+                for (int j = 0; j < _sortingArray.Length; j++)
+                {
+                    var arrayTopColor = _sortingArray[j];
+                    if (topColor.Count > arrayTopColor.Count)
+                    {
+                        if (j + 1 < _sortingArray.Length)
+                            Array.Copy(_sortingArray, j, _sortingArray, j + 1, _sortingArray.Length - (j + 1));
+                        else
+                            lowestInArray = arrayTopColor.Count;
+
+                        _sortingArray[j] = topColor;
+                        break;
+                    }
+                }
+            }
+
+            return _sortingArray.ToArray();
+        }
         private void ReleaseResource(ref ComputeBuffer? buffer)
         {
             if (buffer == null)

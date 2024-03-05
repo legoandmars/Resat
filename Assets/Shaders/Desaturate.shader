@@ -84,12 +84,13 @@ Shader "Unlit/Desaturate"
                 float cut = 1 - step(0.5, max(pos.x, pos.y)); // Decides whether it's within the cutout or not
 
                 // apply outside color first, because we want a slight darkening outside of the viewport always
-                col = lerp(col, col * _OutsideCutoutColor, 1 - cut); 
+                // col = lerp(col, col * _OutsideCutoutColor, 1 - cut); 
 
                 // get desaturated color
                 float3 okhsl = RGBtoOKHSL(col);
                 okhsl.g = 0;
                 float4 desaturatedCol = float4(OKHSLtoRGB(okhsl), 0);
+                desaturatedCol = lerp(desaturatedCol, desaturatedCol * _OutsideCutoutColor, 1 - cut); 
 
                 uint2 arrayCoordinates = ArrayCoordinatesFromOKHSL(okhsl, _OKHSLArrayResolution);
                 uint arrayIndex = ArrayIndexFromArrayCoordinates(arrayCoordinates, _OKHSLArrayResolution);

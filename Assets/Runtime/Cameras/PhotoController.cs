@@ -2,6 +2,7 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Input;
+using Resat.Audio;
 using Resat.Colors;
 using Resat.Input;
 using Resat.Models;
@@ -27,7 +28,7 @@ namespace Resat.Cameras
         private DesaturationCamera _desaturationCamera = null!;
 
         [SerializeField]
-        private AudioSource? _cameraAudioSource;
+        private CameraAudioController _cameraAudioController = null!;
         
         [SerializeField]
         private CameraPanelController _cameraPanelController = null!;
@@ -51,9 +52,8 @@ namespace Resat.Cameras
         [Header("Animation")]
         [SerializeField]
         private float _animationSpeed = 1f;
-        
-        private bool _enabled;
-        private bool _canTakePhotos = true;
+
+        private CameraState _cameraState = CameraState.Minimized;
         private float _animationPercent = 0f;
         
         private CameraResolutionData _currentResolutionData = new();
@@ -78,43 +78,67 @@ namespace Resat.Cameras
             _desaturationCamera.SetAnimationPercent(_animationPercent);
         }
 
+        private void SetCameraState(CameraState cameraState, string? message = null)
+        {
+            if (message != null)
+                Debug.Log(message);
+
+            _cameraState = cameraState;
+        }
+        
         private async UniTask AnimateAfterPicture()
         {
             SetAnimationPercent(0f);
-            _canTakePhotos = false;
-
+            SetCameraState(CameraState.TakingPhoto, "Taking photo!");
+            
             while (_animationPercent < 1f)
             {
                 await UniTask.NextFrame();
                 SetAnimationPercent(_animationPercent + (Time.deltaTime * _animationSpeed));
-                Debug.Log(_animationPercent);
             }
 
             SetAnimationPercent(1f);
-            _canTakePhotos = true;
+            SetCameraState(CameraState.InView, "Finished taking photo!");
         }
         
         private void EnableCamera()
         {
-            _enabled = true;
             SetResolution(_photoResolutionData);
+            
+            _cameraAudioController.PlaySoundEffect(SoundEffect.MenuOpen);
+            
+            // TODO: Animation
+            SetCameraState(CameraState.InView, "Enabling camera!");
         }
         
-        private void DisableCamera()
+        private void DisableCamera(bool soundEffects = true)
         {
-            _enabled = false;
             SetResolution(_minimizedResolutionData);
+            
+            if (soundEffects)
+                _cameraAudioController.PlaySoundEffect(SoundEffect.MenuClose);
+
+            // TODO: Animation
+            SetCameraState(CameraState.Minimized, "Disabling camera!");
         }
         
         public void OnTakePicture(InputAction.CallbackContext context)
         {
-            // TODO: Animation when a picture was attempted too soon
-            if (!_enabled || !context.performed || !_canTakePhotos) 
+            // TODO: Improve "Can't take picture" effect
+            if (!context.performed)
                 return;
+
+            if (!CanTakePhoto())
+            {
+                if (_cameraState == CameraState.TakingPhoto)
+                {
+                    _cameraAudioController.PlaySoundEffect(SoundEffect.InvalidOperation);
+                }
+                return;
+            }
             
             // take a picture!
-            if (_cameraAudioSource != null)
-                _cameraAudioSource.Play();
+            _cameraAudioController.PlaySoundEffect(SoundEffect.CameraShutter);
             
             // serialize our new color data
             _okhslController.SerializeLastRender();
@@ -136,27 +160,20 @@ namespace Resat.Cameras
         {
             if (!context.performed)
                 return;
-            
-            Debug.Log("TOGGLING!");
-            if (!_enabled)
+
+            if (_cameraState == CameraState.Minimized)
+            {
                 EnableCamera();
-            else
+            }
+            else if (_cameraState == CameraState.InView)
+            {
                 DisableCamera();
-        }
-
-        private void Update()
-        {
-            if (!_enabled) 
-                return;
-
-            RenderPreview();
-            EnableCamera(); // temporary; meant so i can see resolution changes when debuggin
-            SetFieldOfView(_fieldOfView);
+            }
         }
 
         private void RenderPreview()
         {
-            if (!_enabled) 
+            if (_cameraState != CameraState.InView) 
                 return;
 
             var renderTexture = _resatCamera.Render(_currentResolutionData);
@@ -174,10 +191,25 @@ namespace Resat.Cameras
             _cameraPanelController.SetData(okhslData);
         }
 
+        private bool CanTakePhoto()
+        {
+            // TODO: Hook this up to ammo or something
+            return _cameraState == CameraState.InView;
+        }
+        
+        private void Update()
+        {
+            if (_cameraState != CameraState.InView) 
+                return;
+
+            RenderPreview();
+            SetFieldOfView(_fieldOfView); // temporary
+        }
+        
         private void Start()
         {
             _inputController.EnableCameraInput();
-            EnableCamera();
+            DisableCamera(false);
             
             if (_okhslController.OutputArrayTexture != null)
                 _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);

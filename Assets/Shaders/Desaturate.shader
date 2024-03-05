@@ -101,7 +101,7 @@ Shader "Unlit/Desaturate"
 
                 // IMPORTANT: when camera ratio changes, so does the gradient!!
                 // lerp between the last photo and the current photo, based on the animation speed
-                float animationPercent = _AnimationPercent == 1 ? _AnimationPercent : gradient * _AnimationPercent;
+                float animationPercent = _AnimationPercent == 1 ? _AnimationPercent : gradient * _AnimationPercent; // temporary fix for gradient cancelling all colors when camera minimized
                 float desaturationLerp = lerp(_PreviousGlobalOKHSLBuffer[arrayIndex] > 0, _GlobalOKHSLBuffer[arrayIndex] > 0, animationPercent);
 
                 // TODO: Partial resaturation? Maybe you need to see a color 100 times to fully resat?

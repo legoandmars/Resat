@@ -1040,7 +1040,7 @@ MonoBehaviour:
   _inputController: {fileID: 1656060608}
   _resatCamera: {fileID: 1410187356}
   _desaturationCamera: {fileID: 551777550}
-  _cameraAudioSource: {fileID: 1955244114}
+  _cameraAudioController: {fileID: 1955244115}
   _cameraPanelController: {fileID: 641632286}
   _photoResolutionData:
     Resolution: {x: 272, y: 200}
@@ -3010,9 +3010,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1955244113}
+  - component: {fileID: 1955244115}
   - component: {fileID: 1955244114}
   m_Layer: 0
-  m_Name: CameraAudioSource
+  m_Name: CameraAudioController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3043,7 +3044,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: fb3a4331656274f46b460cd3ee1d2ada, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -3129,6 +3130,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1955244115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955244112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d253afcb55bc44c7a218fd2b693fd5b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cameraAudioSource: {fileID: 1955244114}
+  _cameraShutterClip: {fileID: 8300000, guid: fb3a4331656274f46b460cd3ee1d2ada, type: 3}
 --- !u!1 &1956180929
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,6 +16,7 @@
 Texture2D<fixed3> _InputTexture;
 RWStructuredBuffer<uint> _OKHSLArray;
 RWStructuredBuffer<uint> _GlobalOKHSLArray;
+RWStructuredBuffer<uint> _PreviousGlobalOKHSLArray; // exclusively used for a shader variable so animations can be interpolated after a picture is taken
 RWStructuredBuffer<uint> _LargestElementIndexesArray;
 RWStructuredBuffer<float4> _TopColorArray;
 RWStructuredBuffer<uint> _OtherMetadataArray; // bit annoying needing a second GetData call but whatever man, no InterlockedAdd for floats
@@ -56,6 +57,8 @@ int MergeArrays(uint3 id)
 [numthreads(8,8,1)]
 void CSMergeArrays (uint3 id : SV_DispatchThreadID)
 {
+    // set previous global data so we can animate things
+    _PreviousGlobalOKHSLArray[GetIndexFromId(id)] = _GlobalOKHSLArray[GetIndexFromId(id)];
     _GlobalOKHSLArray[GetIndexFromId(id)] = MergeArrays(id);
 }
 
@@ -64,6 +67,7 @@ void CSMergeArrays (uint3 id : SV_DispatchThreadID)
 [numthreads(8,8,1)]
 void CSClearGlobalArray (uint3 id : SV_DispatchThreadID)
 {
+    _PreviousGlobalOKHSLArray[GetIndexFromId(id)] = 0;
     _GlobalOKHSLArray[GetIndexFromId(id)] = 0;
 }
 

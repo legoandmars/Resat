@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Input;
 using Resat.Colors;
 using Resat.Input;
@@ -21,6 +22,9 @@ namespace Resat.Cameras
 
         [SerializeField]
         private ResatCamera _resatCamera = null!;
+        
+        [SerializeField]
+        private DesaturationCamera _desaturationCamera = null!;
 
         [SerializeField]
         private AudioSource? _cameraAudioSource;
@@ -41,22 +45,53 @@ namespace Resat.Cameras
         [SerializeField]
         private float _fieldOfView = 60f;
         
-        [NonSerialized]
-        private bool _enabled;
+        [SerializeField]
+        private bool _savePhotosToDisk = true;
 
+        [Header("Animation")]
+        [SerializeField]
+        private float _animationSpeed = 1f;
+        
+        private bool _enabled;
+        private bool _canTakePhotos = true;
+        private float _animationPercent = 0f;
+        
         private CameraResolutionData _currentResolutionData = new();
         
         private void SetResolution(CameraResolutionData resolutionData)
         {
             _currentResolutionData = resolutionData;
+            _desaturationCamera.SetResolution(resolutionData);
             _cameraPanelController.SetResolution(resolutionData);
         }
 
         private void SetFieldOfView(float fieldOfView)
         {
             _fieldOfView = fieldOfView;
-            _cameraPanelController.SetFieldOfView(fieldOfView);
+            _desaturationCamera.SetFieldOfView(fieldOfView);
             _resatCamera.SetFieldOfView(fieldOfView);
+        }
+
+        private void SetAnimationPercent(float animationPercent)
+        {
+            _animationPercent = Mathf.Clamp01(animationPercent);
+            _desaturationCamera.SetAnimationPercent(_animationPercent);
+        }
+
+        private async UniTask AnimateAfterPicture()
+        {
+            SetAnimationPercent(0f);
+            _canTakePhotos = false;
+
+            while (_animationPercent < 1f)
+            {
+                await UniTask.NextFrame();
+                SetAnimationPercent(_animationPercent + (Time.deltaTime * _animationSpeed));
+                Debug.Log(_animationPercent);
+            }
+
+            SetAnimationPercent(1f);
+            _canTakePhotos = true;
         }
         
         private void EnableCamera()
@@ -73,22 +108,28 @@ namespace Resat.Cameras
         
         public void OnTakePicture(InputAction.CallbackContext context)
         {
-            if (!_enabled || !context.performed) 
+            // TODO: Animation when a picture was attempted too soon
+            if (!_enabled || !context.performed || !_canTakePhotos) 
                 return;
             
             // take a picture!
             if (_cameraAudioSource != null)
                 _cameraAudioSource.Play();
+            
+            // serialize our new color data
+            _okhslController.SerializeLastRender();
 
+            AnimateAfterPicture().Forget();
+            
+            if (!_savePhotosToDisk) 
+                return;
+            
             // TODO: This assumes native res will always cleanly divide into the screenshot's native res
             var scaleMultiplier = new Vector2((float)_screenshotNativeResolution.x / (float)_currentResolutionData.NativeResolution.x, (float)_screenshotNativeResolution.y / (float)_currentResolutionData.NativeResolution.y);
             var screenshotResolution = new Vector2Int((int)(_currentResolutionData.Resolution.x * scaleMultiplier.x), (int)(_currentResolutionData.Resolution.y * scaleMultiplier.y));
             
             var screenshotResolutionData = new CameraResolutionData(screenshotResolution, _screenshotNativeResolution, _currentResolutionData.Center, FilterMode.Bilinear, RenderTextureReadWrite.sRGB);
             _resatCamera.RenderScreenshot(screenshotResolutionData);
-
-            // serialize our new color data
-            _okhslController.SerializeLastRender();
         }
 
         public void OnToggleCamera(InputAction.CallbackContext context)

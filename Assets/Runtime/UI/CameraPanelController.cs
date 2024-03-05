@@ -7,9 +7,6 @@ namespace Resat.UI
     public class CameraPanelController : MonoBehaviour
     {
         [SerializeField]
-        private DesaturationCamera _desaturationCamera = null!;
-
-        [SerializeField]
         private CanvasScaler _canvasScaler = null!;
         
         [SerializeField]
@@ -20,8 +17,6 @@ namespace Resat.UI
         
         public void SetResolution(CameraResolutionData resolutionData)
         {
-            _desaturationCamera.SetResolution(resolutionData);
-            
             // get "difference" between 1080p canvas scaler
             var resolution = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
             var nativeResolution = resolutionData.NativeResolution / resolutionData.GetNativeResolutionScale(_canvasScaler.referenceResolution);
@@ -36,11 +31,6 @@ namespace Resat.UI
             _debugPanel.SetPreviewTextureResolution(resolutionData, _canvasScaler);
             // TEMPORARY!!!
             // _debugPanel.CameraImage.rectTransform.sizeDelta = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
-        }
-
-        public void SetFieldOfView(float fieldOfView)
-        {
-            _desaturationCamera.SetFieldOfView(fieldOfView);
         }
 
         public void SetData(OKHSLData okhslData)

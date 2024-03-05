@@ -10,6 +10,7 @@ namespace Resat
     {
         private static readonly int ScreenResolution = Shader.PropertyToID("_ScreenResolution");
         private static readonly int CutoutOffsetAndScale = Shader.PropertyToID("_CutoutOffsetAndScale");
+        private static readonly int AnimationPercent = Shader.PropertyToID("_AnimationPercent");
 
         [SerializeField]
         private Material? _material;
@@ -33,6 +34,14 @@ namespace Resat
                 return;
 
             _camera.fieldOfView = fieldOfView;
+        }
+
+        public void SetAnimationPercent(float animationPercent)
+        {
+            if (_material == null)
+                return;
+
+            _material.SetFloat(AnimationPercent, animationPercent);
         }
         
         private void OnRenderImage(RenderTexture src, RenderTexture dest)

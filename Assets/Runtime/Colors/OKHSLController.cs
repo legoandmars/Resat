@@ -34,6 +34,7 @@ namespace Resat.Colors
         
         private ComputeBuffer? _okhslArrayBuffer;
         private ComputeBuffer? _globalOkhslArrayBuffer;
+        private ComputeBuffer? _previousGlobalOkhslArrayBuffer; // exclusively used for a shader variable so animations can be interpolated after a picture is taken
         private ComputeBuffer? _topColorArrayBuffer;
         private ComputeBuffer? _metadataBuffer;
 
@@ -63,11 +64,13 @@ namespace Resat.Colors
             // int is 4 bytes and color is four 4-byte floats (4*4)
             _okhslArrayBuffer = new ComputeBuffer(_okhslArraySize.x * _okhslArraySize.y, 4);
             _globalOkhslArrayBuffer = new ComputeBuffer(_okhslArraySize.x * _okhslArraySize.y, 4);
+            _previousGlobalOkhslArrayBuffer = new ComputeBuffer(_okhslArraySize.x * _okhslArraySize.y, 4);
             _topColorArrayBuffer = new ComputeBuffer(GetPostProcessDataLength(), 4 * 4);
             _metadataBuffer = new ComputeBuffer(2, 4); // almost certainly an unnecessary thing for 2 ints
 
             // used for desat
             Shader.SetGlobalBuffer("_GlobalOKHSLBuffer", _globalOkhslArrayBuffer);
+            Shader.SetGlobalBuffer("_PreviousGlobalOKHSLBuffer", _previousGlobalOkhslArrayBuffer);
             Shader.SetGlobalVector("_OKHSLArrayResolution", new Vector4(_okhslArraySize.x, _okhslArraySize.y, 1, 1));
             
             _outputArrayTexture = new RenderTexture(_okhslArraySize.x, _okhslArraySize.y, 0, RenderTextureFormat.R8, RenderTextureReadWrite.Linear);
@@ -91,14 +94,16 @@ namespace Resat.Colors
             _clearPreviewArrayIndex = _computeShader.FindKernel("CSClearPreviewArray");
             _clearMetadataArrayIndex = _computeShader.FindKernel("CSClearMetadataArray");
             
-            // reset global array to be empty
+            // reset global and preview array to be empty
             ClearGlobalArray();
+            ClearPreviewArray();
         }
         
         private void OnDisable()
         {
             ReleaseResource(ref _okhslArrayBuffer);
             ReleaseResource(ref _globalOkhslArrayBuffer);
+            ReleaseResource(ref _previousGlobalOkhslArrayBuffer);
             ReleaseResource(ref _topColorArrayBuffer);
             ReleaseResource(ref _metadataBuffer);
             ReleaseResource(ref _outputArrayTexture);
@@ -109,6 +114,7 @@ namespace Resat.Colors
         private void ClearGlobalArray()
         {
             _computeShader.SetBuffer(_clearGlobalArrayIndex, "_GlobalOKHSLArray", _globalOkhslArrayBuffer);
+            _computeShader.SetBuffer(_clearGlobalArrayIndex, "_PreviousGlobalOKHSLArray", _globalOkhslArrayBuffer);
             _computeShader.Dispatch(_clearGlobalArrayIndex, _okhslArraySize.x / 8, _okhslArraySize.y / 8, 1);
         }
         
@@ -130,6 +136,7 @@ namespace Resat.Colors
         {
             _computeShader.SetBuffer(_mergeArrayIndex, "_OKHSLArray", _okhslArrayBuffer);
             _computeShader.SetBuffer(_mergeArrayIndex, "_GlobalOKHSLArray", _globalOkhslArrayBuffer);
+            _computeShader.SetBuffer(_mergeArrayIndex, "_PreviousGlobalOKHSLArray", _previousGlobalOkhslArrayBuffer);
             _computeShader.Dispatch(_mergeArrayIndex, _okhslArraySize.x / 8, _okhslArraySize.y / 8, 1);
         }
         

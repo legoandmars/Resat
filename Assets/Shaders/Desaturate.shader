@@ -6,6 +6,8 @@ Shader "Unlit/Desaturate"
         _ScreenResolution ("Screen Resolution (W, H)", Vector) = (1,1,1,1)
         _CutoutOffsetAndCenter ("Cutout Offset and Center (W, H, X, Y)", Vector) = (0,0,0,0)
         _OutsideCutoutColor ("Outside Cutout Color", Color) = (1,1,1,1)
+        _AnimationPercent ("Post-photo animation timer", Range(0.0, 1.0)) = 1.0
+        _GradientSettings ("Gradient (Mult, Power, MinScale, MaxScale)", Vector) = (2,2,2,1)
     }
     SubShader
     {
@@ -39,8 +41,11 @@ Shader "Unlit/Desaturate"
             float4 _ScreenResolution;
             float4 _CutoutOffsetAndScale;
             float4 _OutsideCutoutColor;
+            float _AnimationPercent;
+            float4 _GradientSettings;
             
             StructuredBuffer<int> _GlobalOKHSLBuffer;
+            StructuredBuffer<int> _PreviousGlobalOKHSLBuffer;
             float2 _OKHSLArrayResolution;
             
             v2f vert (appdata v)
@@ -78,8 +83,8 @@ Shader "Unlit/Desaturate"
                 pos = abs(pos);
                 float cut = 1 - step(0.5, max(pos.x, pos.y)); // Decides whether it's within the cutout or not
 
-                col = lerp(col, col * _OutsideCutoutColor, 1 - cut); 
                 // apply outside color first, because we want a slight darkening outside of the viewport always
+                col = lerp(col, col * _OutsideCutoutColor, 1 - cut); 
 
                 // get desaturated color
                 float3 okhsl = RGBtoOKHSL(col);
@@ -89,8 +94,16 @@ Shader "Unlit/Desaturate"
                 uint2 arrayCoordinates = ArrayCoordinatesFromOKHSL(okhsl, _OKHSLArrayResolution);
                 uint arrayIndex = ArrayIndexFromArrayCoordinates(arrayCoordinates, _OKHSLArrayResolution);
 
+                // Create gradient to make animation smoother
+                float scalingFactor = lerp(_GradientSettings.z, _GradientSettings.w, _AnimationPercent);
+                float2 scaledCoordinates = float2(clamp(1 - pos.x * scalingFactor, 0, 1), clamp(1 - pos.y * scalingFactor, 0, 1));
+                float gradient = clamp(pow(min(scaledCoordinates.x, scaledCoordinates.y) * _GradientSettings.x, _GradientSettings.y), 0, 1);
+
+                // lerp between the last photo and the current photo, based on the animation speed
+                float desaturationLerp = lerp(_PreviousGlobalOKHSLBuffer[arrayIndex] > 0, _GlobalOKHSLBuffer[arrayIndex] > 0, gradient * _AnimationPercent);
+
                 // TODO: Partial resaturation? Maybe you need to see a color 100 times to fully resat?
-                cut = lerp(cut, 1, _GlobalOKHSLBuffer[arrayIndex] > 0);
+                cut = lerp(cut, 1, desaturationLerp);
                 
                 return lerp(desaturatedCol, col, cut);
             }

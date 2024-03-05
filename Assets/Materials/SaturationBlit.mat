@@ -58,6 +58,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AnimationPercent: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -69,6 +70,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _PhotographAnimation: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -79,5 +81,8 @@ Material:
     - _CutoutOffsetAndCenter: {r: 0, g: 0, b: 0, a: 0}
     - _CutoutOffsetAndScale: {r: 0.56666666, g: 0.7407407, b: 0.5, a: 0.5}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ScreenResolution: {r: 1458, g: 719, b: 0, a: 0}
+    - _GradientSettings: {r: 2, g: 2, b: 2, a: 0.25}
+    - _OutsideCutoutColor: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
+    - _ScreenResolution: {r: 1920, g: 1080, b: 0, a: 0}
+    - _Smoothstep: {r: 2, g: 2, b: 2, a: 0.25}
   m_BuildTextureStacks: []

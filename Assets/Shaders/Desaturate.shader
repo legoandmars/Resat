@@ -99,12 +99,13 @@ Shader "Unlit/Desaturate"
                 float2 scaledCoordinates = float2(clamp(1 - pos.x * scalingFactor, 0, 1), clamp(1 - pos.y * scalingFactor, 0, 1));
                 float gradient = clamp(pow(min(scaledCoordinates.x, scaledCoordinates.y) * _GradientSettings.x, _GradientSettings.y), 0, 1);
 
+                // IMPORTANT: when camera ratio changes, so does the gradient!!
                 // lerp between the last photo and the current photo, based on the animation speed
-                float desaturationLerp = lerp(_PreviousGlobalOKHSLBuffer[arrayIndex] > 0, _GlobalOKHSLBuffer[arrayIndex] > 0, gradient * _AnimationPercent);
+                float animationPercent = _AnimationPercent == 1 ? _AnimationPercent : gradient * _AnimationPercent;
+                float desaturationLerp = lerp(_PreviousGlobalOKHSLBuffer[arrayIndex] > 0, _GlobalOKHSLBuffer[arrayIndex] > 0, animationPercent);
 
                 // TODO: Partial resaturation? Maybe you need to see a color 100 times to fully resat?
                 cut = lerp(cut, 1, desaturationLerp);
-                
                 return lerp(desaturatedCol, col, cut);
             }
             ENDCG

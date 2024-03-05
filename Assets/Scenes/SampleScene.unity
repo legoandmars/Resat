@@ -1057,6 +1057,7 @@ MonoBehaviour:
   _screenshotNativeResolution: {x: 3840, y: 2160}
   _fieldOfView: 60
   _savePhotosToDisk: 0
+  _startWithCameraEnabled: 1
   _animationSpeed: 2.5
 --- !u!1 &705507993
 GameObject:
@@ -3144,6 +3145,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cameraAudioSource: {fileID: 1955244114}
   _cameraShutterClip: {fileID: 8300000, guid: fb3a4331656274f46b460cd3ee1d2ada, type: 3}
+  _menuOpenClip: {fileID: 8300000, guid: 2729e72f3c14c264585d7a3788ed5c52, type: 3}
+  _menuCloseClip: {fileID: 8300000, guid: b5285efc86b466f47b73db1ed402dd0c, type: 3}
+  _invalidOperationClip: {fileID: 8300000, guid: 874b51f92b8bd4747a3fdd6915ad46ef, type: 3}
 --- !u!1 &1956180929
 GameObject:
   m_ObjectHideFlags: 0

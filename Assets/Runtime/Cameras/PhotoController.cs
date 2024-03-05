@@ -46,8 +46,12 @@ namespace Resat.Cameras
         [SerializeField]
         private float _fieldOfView = 60f;
         
+        [Header("Settings")]
         [SerializeField]
         private bool _savePhotosToDisk = true;
+
+        [SerializeField]
+        private bool _startWithCameraEnabled = false;
 
         [Header("Animation")]
         [SerializeField]
@@ -101,11 +105,12 @@ namespace Resat.Cameras
             SetCameraState(CameraState.InView, "Finished taking photo!");
         }
         
-        private void EnableCamera()
+        private void EnableCamera(bool soundEffects = true)
         {
             SetResolution(_photoResolutionData);
             
-            _cameraAudioController.PlaySoundEffect(SoundEffect.MenuOpen);
+            if (soundEffects)
+                _cameraAudioController.PlaySoundEffect(SoundEffect.MenuOpen);
             
             // TODO: Animation
             SetCameraState(CameraState.InView, "Enabling camera!");
@@ -209,7 +214,11 @@ namespace Resat.Cameras
         private void Start()
         {
             _inputController.EnableCameraInput();
-            DisableCamera(false);
+            
+            if (_startWithCameraEnabled)
+                EnableCamera(false);
+            else
+                DisableCamera(false);
             
             if (_okhslController.OutputArrayTexture != null)
                 _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);

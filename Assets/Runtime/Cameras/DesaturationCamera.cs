@@ -46,6 +46,7 @@ namespace Resat
         
         private void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
+            Debug.Log(src.format);
             Graphics.Blit(src, dest, _material);
         }
 

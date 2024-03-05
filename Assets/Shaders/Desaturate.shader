@@ -5,6 +5,7 @@ Shader "Unlit/Desaturate"
         _MainTex ("Texture", 2D) = "white" {}
         _ScreenResolution ("Screen Resolution (W, H)", Vector) = (1,1,1,1)
         _CutoutOffsetAndCenter ("Cutout Offset and Center (W, H, X, Y)", Vector) = (0,0,0,0)
+        _OutsideCutoutColor ("Outside Cutout Color", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -37,6 +38,7 @@ Shader "Unlit/Desaturate"
             float4 _MainTex_ST;
             float4 _ScreenResolution;
             float4 _CutoutOffsetAndScale;
+            float4 _OutsideCutoutColor;
             
             StructuredBuffer<int> _GlobalOKHSLBuffer;
             float2 _OKHSLArrayResolution;
@@ -53,9 +55,6 @@ Shader "Unlit/Desaturate"
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
-                float3 okhsl = RGBtoOKHSL(col);
-                okhsl.g = 0;
-                float4 rgb = float4(OKHSLtoRGB(okhsl), 0);
 
                 // rescale space to clamp like centered UI
                 float newX = i.uv.x;
@@ -79,13 +78,21 @@ Shader "Unlit/Desaturate"
                 pos = abs(pos);
                 float cut = 1 - step(0.5, max(pos.x, pos.y)); // Decides whether it's within the cutout or not
 
+                col = lerp(col, col * _OutsideCutoutColor, 1 - cut); 
+                // apply outside color first, because we want a slight darkening outside of the viewport always
+
+                // get desaturated color
+                float3 okhsl = RGBtoOKHSL(col);
+                okhsl.g = 0;
+                float4 desaturatedCol = float4(OKHSLtoRGB(okhsl), 0);
+
                 uint2 arrayCoordinates = ArrayCoordinatesFromOKHSL(okhsl, _OKHSLArrayResolution);
                 uint arrayIndex = ArrayIndexFromArrayCoordinates(arrayCoordinates, _OKHSLArrayResolution);
 
                 // TODO: Partial resaturation? Maybe you need to see a color 100 times to fully resat?
                 cut = lerp(cut, 1, _GlobalOKHSLBuffer[arrayIndex] > 0);
                 
-                return lerp(rgb, col, cut);
+                return lerp(desaturatedCol, col, cut);
             }
             ENDCG
         }

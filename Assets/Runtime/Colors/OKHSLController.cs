@@ -66,6 +66,10 @@ namespace Resat.Colors
             _topColorArrayBuffer = new ComputeBuffer(GetPostProcessDataLength(), 4 * 4);
             _metadataBuffer = new ComputeBuffer(2, 4); // almost certainly an unnecessary thing for 2 ints
 
+            // used for desat
+            Shader.SetGlobalBuffer("_GlobalOKHSLBuffer", _globalOkhslArrayBuffer);
+            Shader.SetGlobalVector("_OKHSLArrayResolution", new Vector4(_okhslArraySize.x, _okhslArraySize.y, 1, 1));
+            
             _outputArrayTexture = new RenderTexture(_okhslArraySize.x, _okhslArraySize.y, 0, RenderTextureFormat.R8, RenderTextureReadWrite.Linear);
             _outputArrayTexture.enableRandomWrite = true;
             _outputArrayTexture.filterMode = FilterMode.Point;
@@ -170,9 +174,14 @@ namespace Resat.Colors
             };
 
             if (arrayType != OKHSLArrayType.Global)
+            {
                 _computeShader.SetBuffer(index, "_OKHSLArray", _okhslArrayBuffer);
+            }
             if (arrayType != OKHSLArrayType.Preview)
+            {
                 _computeShader.SetBuffer(index, "_GlobalOKHSLArray", _globalOkhslArrayBuffer);
+            }
+            
             _computeShader.SetTexture(index, "_OutputArrayTexture", renderTexture);
             
             _computeShader.Dispatch(index, _okhslArraySize.x / 8, _okhslArraySize.y / 8, 1);

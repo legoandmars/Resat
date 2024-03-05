@@ -116,6 +116,8 @@ void CSGetMergedTexture (uint3 id : SV_DispatchThreadID)
 // uses a scuffed sort
 // first thread is set to image Y length
 // returns unsorted (y_length) elements, guaranteed to be the largest (y_length) elements in the list
+
+// TECHNICALLY this will only return one color per row, so if every good color is crammed into one row it might not be quite right
 [numthreads(8,1,1)]
 void CSPostProcess (uint3 id : SV_DispatchThreadID)
 {

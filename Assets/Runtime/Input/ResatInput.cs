@@ -217,6 +217,114 @@ namespace Input
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Debugging"",
+            ""id"": ""94237826-a629-49ef-ab10-3347cf5b10d7"",
+            ""actions"": [
+                {
+                    ""name"": ""DefaultCamView"",
+                    ""type"": ""Button"",
+                    ""id"": ""1b571058-70dd-4a39-a48b-d4de984525fc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OKHSLView"",
+                    ""type"": ""Button"",
+                    ""id"": ""465f84b2-0312-4a4f-aa1c-cde5a1b69d1c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DesaturatedView"",
+                    ""type"": ""Button"",
+                    ""id"": ""beeec1dc-08a0-4de5-a881-da3c9f0f564d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ResaturatedView"",
+                    ""type"": ""Button"",
+                    ""id"": ""53bfc7c6-8083-481b-aafe-e811d8894107"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ResetGlobalArray"",
+                    ""type"": ""Button"",
+                    ""id"": ""eb13b52f-dfe5-42a2-8c50-ab42c2fcd9c8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b7a88e8c-21f0-4569-99b2-6e4263c68f4a"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OKHSLView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fba8e1ed-2108-4d48-8c9e-bdc5d7974e79"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DesaturatedView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e1159e3d-0bbc-48ac-8f64-5235c6f0bb83"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DefaultCamView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4b322bcb-61a1-4e9e-bf5d-80120f97ef94"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResaturatedView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6e77b81e-60f6-4b37-9859-23800d126ed4"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResetGlobalArray"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -230,6 +338,13 @@ namespace Input
             m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
             m_Camera_TakePicture = m_Camera.FindAction("TakePicture", throwIfNotFound: true);
             m_Camera_ToggleCamera = m_Camera.FindAction("ToggleCamera", throwIfNotFound: true);
+            // Debugging
+            m_Debugging = asset.FindActionMap("Debugging", throwIfNotFound: true);
+            m_Debugging_DefaultCamView = m_Debugging.FindAction("DefaultCamView", throwIfNotFound: true);
+            m_Debugging_OKHSLView = m_Debugging.FindAction("OKHSLView", throwIfNotFound: true);
+            m_Debugging_DesaturatedView = m_Debugging.FindAction("DesaturatedView", throwIfNotFound: true);
+            m_Debugging_ResaturatedView = m_Debugging.FindAction("ResaturatedView", throwIfNotFound: true);
+            m_Debugging_ResetGlobalArray = m_Debugging.FindAction("ResetGlobalArray", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -403,6 +518,84 @@ namespace Input
             }
         }
         public CameraActions @Camera => new CameraActions(this);
+
+        // Debugging
+        private readonly InputActionMap m_Debugging;
+        private List<IDebuggingActions> m_DebuggingActionsCallbackInterfaces = new List<IDebuggingActions>();
+        private readonly InputAction m_Debugging_DefaultCamView;
+        private readonly InputAction m_Debugging_OKHSLView;
+        private readonly InputAction m_Debugging_DesaturatedView;
+        private readonly InputAction m_Debugging_ResaturatedView;
+        private readonly InputAction m_Debugging_ResetGlobalArray;
+        public struct DebuggingActions
+        {
+            private @ResatInput m_Wrapper;
+            public DebuggingActions(@ResatInput wrapper) { m_Wrapper = wrapper; }
+            public InputAction @DefaultCamView => m_Wrapper.m_Debugging_DefaultCamView;
+            public InputAction @OKHSLView => m_Wrapper.m_Debugging_OKHSLView;
+            public InputAction @DesaturatedView => m_Wrapper.m_Debugging_DesaturatedView;
+            public InputAction @ResaturatedView => m_Wrapper.m_Debugging_ResaturatedView;
+            public InputAction @ResetGlobalArray => m_Wrapper.m_Debugging_ResetGlobalArray;
+            public InputActionMap Get() { return m_Wrapper.m_Debugging; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(DebuggingActions set) { return set.Get(); }
+            public void AddCallbacks(IDebuggingActions instance)
+            {
+                if (instance == null || m_Wrapper.m_DebuggingActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_DebuggingActionsCallbackInterfaces.Add(instance);
+                @DefaultCamView.started += instance.OnDefaultCamView;
+                @DefaultCamView.performed += instance.OnDefaultCamView;
+                @DefaultCamView.canceled += instance.OnDefaultCamView;
+                @OKHSLView.started += instance.OnOKHSLView;
+                @OKHSLView.performed += instance.OnOKHSLView;
+                @OKHSLView.canceled += instance.OnOKHSLView;
+                @DesaturatedView.started += instance.OnDesaturatedView;
+                @DesaturatedView.performed += instance.OnDesaturatedView;
+                @DesaturatedView.canceled += instance.OnDesaturatedView;
+                @ResaturatedView.started += instance.OnResaturatedView;
+                @ResaturatedView.performed += instance.OnResaturatedView;
+                @ResaturatedView.canceled += instance.OnResaturatedView;
+                @ResetGlobalArray.started += instance.OnResetGlobalArray;
+                @ResetGlobalArray.performed += instance.OnResetGlobalArray;
+                @ResetGlobalArray.canceled += instance.OnResetGlobalArray;
+            }
+
+            private void UnregisterCallbacks(IDebuggingActions instance)
+            {
+                @DefaultCamView.started -= instance.OnDefaultCamView;
+                @DefaultCamView.performed -= instance.OnDefaultCamView;
+                @DefaultCamView.canceled -= instance.OnDefaultCamView;
+                @OKHSLView.started -= instance.OnOKHSLView;
+                @OKHSLView.performed -= instance.OnOKHSLView;
+                @OKHSLView.canceled -= instance.OnOKHSLView;
+                @DesaturatedView.started -= instance.OnDesaturatedView;
+                @DesaturatedView.performed -= instance.OnDesaturatedView;
+                @DesaturatedView.canceled -= instance.OnDesaturatedView;
+                @ResaturatedView.started -= instance.OnResaturatedView;
+                @ResaturatedView.performed -= instance.OnResaturatedView;
+                @ResaturatedView.canceled -= instance.OnResaturatedView;
+                @ResetGlobalArray.started -= instance.OnResetGlobalArray;
+                @ResetGlobalArray.performed -= instance.OnResetGlobalArray;
+                @ResetGlobalArray.canceled -= instance.OnResetGlobalArray;
+            }
+
+            public void RemoveCallbacks(IDebuggingActions instance)
+            {
+                if (m_Wrapper.m_DebuggingActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            public void SetCallbacks(IDebuggingActions instance)
+            {
+                foreach (var item in m_Wrapper.m_DebuggingActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_DebuggingActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        public DebuggingActions @Debugging => new DebuggingActions(this);
         public interface IPlayerActions
         {
             void OnMove(InputAction.CallbackContext context);
@@ -413,6 +606,14 @@ namespace Input
         {
             void OnTakePicture(InputAction.CallbackContext context);
             void OnToggleCamera(InputAction.CallbackContext context);
+        }
+        public interface IDebuggingActions
+        {
+            void OnDefaultCamView(InputAction.CallbackContext context);
+            void OnOKHSLView(InputAction.CallbackContext context);
+            void OnDesaturatedView(InputAction.CallbackContext context);
+            void OnResaturatedView(InputAction.CallbackContext context);
+            void OnResetGlobalArray(InputAction.CallbackContext context);
         }
     }
 }

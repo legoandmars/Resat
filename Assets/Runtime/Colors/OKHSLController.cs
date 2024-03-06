@@ -111,7 +111,7 @@ namespace Resat.Colors
             _topColorArray = null;
         }
 
-        private void ClearGlobalArray()
+        public void ClearGlobalArray()
         {
             _computeShader.SetBuffer(_clearGlobalArrayIndex, "_GlobalOKHSLArray", _globalOkhslArrayBuffer);
             _computeShader.SetBuffer(_clearGlobalArrayIndex, "_PreviousGlobalOKHSLArray", _globalOkhslArrayBuffer);

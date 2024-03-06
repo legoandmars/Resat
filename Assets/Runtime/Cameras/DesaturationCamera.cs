@@ -8,6 +8,8 @@ namespace Resat
 {
     public class DesaturationCamera : MonoBehaviour
     {
+        public Material? Material => _material;
+        
         private static readonly int ScreenResolution = Shader.PropertyToID("_ScreenResolution");
         private static readonly int CutoutOffsetAndScale = Shader.PropertyToID("_CutoutOffsetAndScale");
         private static readonly int AnimationPercent = Shader.PropertyToID("_AnimationPercent");
@@ -46,7 +48,6 @@ namespace Resat
         
         private void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
-            Debug.Log(src.format);
             Graphics.Blit(src, dest, _material);
         }
 

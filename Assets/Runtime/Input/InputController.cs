@@ -37,6 +37,11 @@ namespace Resat.Input
             CameraInputEnabled = true;
         }
 
+        public void EnableDebugInput()
+        {
+            Input.Debugging.Enable();
+        }
+
         public void DisablePlayerInput()
         {
             Input.Player.Disable();

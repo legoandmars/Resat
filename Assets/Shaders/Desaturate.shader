@@ -8,6 +8,7 @@ Shader "Unlit/Desaturate"
         _OutsideCutoutColor ("Outside Cutout Color", Color) = (1,1,1,1)
         _AnimationPercent ("Post-photo animation timer", Range(0.0, 1.0)) = 1.0
         _GradientSettings ("Gradient (Mult, Power, MinScale, MaxScale)", Vector) = (2,2,2,1)
+        [Toggle(DISABLE_SHOW_OKHSL_VIEW)] _DisableShowOKHSLView("Disable Debug OKHSL View", Float) = 0 // should be 1 in prod
     }
     SubShader
     {
@@ -19,6 +20,8 @@ Shader "Unlit/Desaturate"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+
+            #pragma shader_feature DISABLE_SHOW_OKHSL_VIEW 
 
             #include "UnityCG.cginc"
             #include "ColorArrays.cginc"
@@ -61,6 +64,15 @@ Shader "Unlit/Desaturate"
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
 
+                // inverted so rider doesn't throw a fit
+                #ifndef DISABLE_SHOW_OKHSL_VIEW
+                    uint tempArrayIndex = ArrayIndexFromArrayCoordinates(ArrayCoordinatesFromOKHSL(RGBtoOKHSL(col), _OKHSLArrayResolution), _OKHSLArrayResolution);
+                    float3 parsedOkhsl = OKHSLFromArrayIndex(tempArrayIndex, _OKHSLArrayResolution);
+                    float3 parsedCol = OKHSLtoRGB(parsedOkhsl);
+
+                    return float4(parsedCol.r, parsedCol.g, parsedCol.b, 1);
+                #endif
+                // else is annoying but needed for rider to not black everything out
                 // rescale space to clamp like centered UI
                 float newX = i.uv.x;
                 float ratioAdjustment = 1.77777778f / (_ScreenResolution.x / _ScreenResolution.y);
@@ -74,7 +86,8 @@ Shader "Unlit/Desaturate"
                 float width = ((_ScreenResolution.x - idealWidth) / _ScreenResolution.x) / 2;
                 newX -= width;
                 newX /= ratioAdjustment;
-                
+
+                // calculate cutout
                 float2 center = float2(_CutoutOffsetAndScale.z, _CutoutOffsetAndScale.w);
                 float2 pos = float2(newX, i.uv.y) - center;
                 pos.x /= _CutoutOffsetAndScale.x;
@@ -83,17 +96,17 @@ Shader "Unlit/Desaturate"
                 pos = abs(pos);
                 float cut = 1 - step(0.5, max(pos.x, pos.y)); // Decides whether it's within the cutout or not
 
-                // apply outside color first, because we want a slight darkening outside of the viewport always
-                // col = lerp(col, col * _OutsideCutoutColor, 1 - cut); 
-
-                // get desaturated color
+                // setup okhsl
                 float3 okhsl = RGBtoOKHSL(col);
-                okhsl.g = 0;
-                float4 desaturatedCol = float4(OKHSLtoRGB(okhsl), 0);
-                desaturatedCol = lerp(desaturatedCol, desaturatedCol * _OutsideCutoutColor, 1 - cut); 
-
                 uint2 arrayCoordinates = ArrayCoordinatesFromOKHSL(okhsl, _OKHSLArrayResolution);
                 uint arrayIndex = ArrayIndexFromArrayCoordinates(arrayCoordinates, _OKHSLArrayResolution);
+                
+                // get desaturated color
+                okhsl.g = 0;
+                float4 desaturatedCol = float4(OKHSLtoRGB(okhsl), 0);
+                
+                // apply outside color, because we want a slight darkening outside of the viewport always
+                desaturatedCol = lerp(desaturatedCol, desaturatedCol * _OutsideCutoutColor, 1 - cut); 
 
                 // Create gradient to make animation smoother
                 float scalingFactor = lerp(_GradientSettings.z, _GradientSettings.w, _AnimationPercent);
@@ -105,9 +118,11 @@ Shader "Unlit/Desaturate"
                 float animationPercent = _AnimationPercent == 1 ? _AnimationPercent : gradient * _AnimationPercent; // temporary fix for gradient cancelling all colors when camera minimized
                 float desaturationLerp = lerp(_PreviousGlobalOKHSLBuffer[arrayIndex] > 0, _GlobalOKHSLBuffer[arrayIndex] > 0, animationPercent);
 
+                // adjusts all colors outside the camera viewport
+                float4 multiplier = lerp(float4(1,1,1,1), _OutsideCutoutColor, 1 - cut);
+                
                 // TODO: Partial resaturation? Maybe you need to see a color 100 times to fully resat?
-                cut = lerp(cut, 1, desaturationLerp);
-                return lerp(desaturatedCol, col, cut);
+                return lerp(desaturatedCol, col, lerp(cut, 1, desaturationLerp)) * multiplier;
             }
             ENDCG
         }

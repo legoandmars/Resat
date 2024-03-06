@@ -9,8 +9,10 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: SaturationBlit
   m_Shader: {fileID: 4800000, guid: 7fb928362f605f148baa31344a8f2155, type: 3}
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_ValidKeywords:
+  - DISABLE_SHOW_OKHSL_VIEW
+  m_InvalidKeywords:
+  - SHOW_OKHSL_VIEW
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -62,6 +64,7 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DisableShowOKHSLView: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -71,6 +74,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _PhotographAnimation: 1
+    - _ShowOKHSLView: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

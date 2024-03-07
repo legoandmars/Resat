@@ -9,7 +9,10 @@ Properties {
     _MainTex ("Main Texture", 2D) = "white" {}
     _DetailTex ("Detail Texture", 2D) = "clear" {}
     _LightingStrength ("Lighting Strength", Range(0, 1)) = 1
-    [Toggle(DETAIL_TEXTURE)] _DisableShowOKHSLView("Use detail texture", Float) = 0 // should be 1 in prod
+    _ShadowBoostCutoff ("Shadow boost cutoff", Range(0, 2)) = 1
+    _ShadowBoostStrength ("Shadow boost strength", Range(0, 2)) = 1
+    [Toggle(DETAIL_TEXTURE)] _UseDetailTexture("Use detail texture", Float) = 0
+    [Toggle(SHADOW_BOOST)] _BoostShadows("Use shadow boost", Float) = 0
 }
     
 SubShader {
@@ -19,7 +22,8 @@ SubShader {
 CGPROGRAM
 #pragma surface surf LambertOverride
 
-#pragma shader_feature DETAIL_TEXTURE 
+#pragma shader_feature DETAIL_TEXTURE
+#pragma shader_feature SHADOW_BOOST
 
 fixed _LightingStrength;
 fixed4 _Color;
@@ -31,6 +35,11 @@ sampler2D _MainTex;
 sampler2D _DetailTex;
 #endif
 
+#ifdef SHADOW_BOOST
+fixed _ShadowBoostCutoff;
+fixed _ShadowBoostStrength;
+#endif
+
 inline fixed4 LightingLambertOverride (SurfaceOutput s, UnityGI gi)
 {
     fixed diff = max (0, dot (s.Normal, gi.light.dir));
@@ -39,9 +48,16 @@ inline fixed4 LightingLambertOverride (SurfaceOutput s, UnityGI gi)
     c.rgb = s.Albedo * gi.light.color * lerp(_LightingColor, diff, _LightingStrength); // multiply diff by lighting strength
     c.a = 1;
 
-    #ifdef UNITY_LIGHT_FUNCTION_APPLY_INDIRECT
+#ifdef UNITY_LIGHT_FUNCTION_APPLY_INDIRECT
         c.rgb += s.Albedo * gi.indirect.diffuse; // TODO: This part might need to be lerped, but it looks fine as-is IMO
-    #endif
+#endif
+
+#ifdef SHADOW_BOOST
+    if(c.rgb.r < _ShadowBoostCutoff)
+    {
+        c.rgb *= c.rgb * _ShadowBoostStrength;
+    }
+#endif
     
     return c;
 }

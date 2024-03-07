@@ -42,6 +42,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: TestWall
+    second: {fileID: 2100000, guid: 9db602a4416f9744eb8d358b90b4333b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Well
     second: {fileID: 2100000, guid: b53122b9fc1ea2e439da935fe9e30755, type: 2}
   - first:

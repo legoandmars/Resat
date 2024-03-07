@@ -214,7 +214,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &77886061
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2144,6 +2144,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2504701179578810061, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e405aa4488df09647b4d73ff0d40b018, type: 2}
     - target: {fileID: -587969410734753987, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

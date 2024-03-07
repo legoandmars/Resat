@@ -114,6 +114,9 @@ namespace Resat.Cameras
             
             // TODO: Animation
             SetCameraState(CameraState.InView, "Enabling camera!");
+            
+            // Set outside color
+            _desaturationCamera.SetOutsideCutoutColor();
         }
         
         private void DisableCamera(bool soundEffects = true)
@@ -125,6 +128,9 @@ namespace Resat.Cameras
 
             // TODO: Animation
             SetCameraState(CameraState.Minimized, "Disabling camera!");
+            
+            // Set outside color
+            _desaturationCamera.SetOutsideCutoutColor(Color.white);
         }
         
         public void OnTakePicture(InputAction.CallbackContext context)

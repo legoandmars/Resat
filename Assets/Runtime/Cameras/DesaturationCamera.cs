@@ -12,6 +12,7 @@ namespace Resat
         
         private static readonly int ScreenResolution = Shader.PropertyToID("_ScreenResolution");
         private static readonly int CutoutOffsetAndScale = Shader.PropertyToID("_CutoutOffsetAndScale");
+        private static readonly int OutsideCutoutColor = Shader.PropertyToID("_OutsideCutoutColor");
         private static readonly int AnimationPercent = Shader.PropertyToID("_AnimationPercent");
 
         [SerializeField]
@@ -20,8 +21,22 @@ namespace Resat
         [SerializeField]
         private Camera? _camera;
 
+        [SerializeField]
+        private Color _outsideCutoutColor;
+
         private Vector2? _resolution;
 
+        public void SetOutsideCutoutColor(Color? overrideColor = null)
+        {
+            if (_material == null)
+                return;
+
+            if (overrideColor == null) 
+                overrideColor = _outsideCutoutColor;
+            
+            _material.SetColor(OutsideCutoutColor, overrideColor.Value);
+        }
+        
         public void SetResolution(CameraResolutionData resolutionData)
         {
             if (_material == null)

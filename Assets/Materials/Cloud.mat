@@ -77,8 +77,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ShadowBoostCutoff: 1.07
-    - _ShadowBoostStrength: 1
+    - _ShadowBoostCutoff: 1.047
+    - _ShadowBoostStrength: 0.914
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

@@ -111,6 +111,11 @@ namespace Resat.Colors
             _topColorArray = null;
         }
 
+        public void SetArraySize(Vector2Int size) // used for debugging only
+        {
+            _okhslArraySize = size;
+        }
+        
         public void ClearGlobalArray()
         {
             _computeShader.SetBuffer(_clearGlobalArrayIndex, "_GlobalOKHSLArray", _globalOkhslArrayBuffer);

@@ -1566,8 +1566,8 @@ MonoBehaviour:
     RenderTextureReadWrite: 0
   _screenshotNativeResolution: {x: 3840, y: 2160}
   _fieldOfView: 60
-  _savePhotosToDisk: 0
-  _startWithCameraEnabled: 1
+  _savePhotosToDisk: 1
+  _startWithCameraEnabled: 0
   _animationSpeed: 2.5
 --- !u!1 &683531043
 GameObject:
@@ -3697,6 +3697,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputController: {fileID: 1656060608}
   _desaturationCamera: {fileID: 551777550}
+  _photoController: {fileID: 678523065}
   _okhslController: {fileID: 1979811283}
 --- !u!4 &1521886816 stripped
 Transform:

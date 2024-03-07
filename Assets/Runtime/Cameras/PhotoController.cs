@@ -82,6 +82,13 @@ namespace Resat.Cameras
             _desaturationCamera.SetAnimationPercent(_animationPercent);
         }
 
+        // DEBUGGING ONLY!!
+        public void SetSize(Vector2Int main, Vector2Int native)
+        {
+            _photoResolutionData.Resolution = main;
+            _photoResolutionData.NativeResolution = native;
+        }
+        
         private void SetCameraState(CameraState cameraState, string? message = null)
         {
             if (message != null)

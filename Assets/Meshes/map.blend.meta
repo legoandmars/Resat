@@ -47,6 +47,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: SandRamp
+    second: {fileID: 2100000, guid: ff3335bd23a189049a1ce6e0ecbaadad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: TestWall
     second: {fileID: 2100000, guid: 9db602a4416f9744eb8d358b90b4333b, type: 2}
   - first:

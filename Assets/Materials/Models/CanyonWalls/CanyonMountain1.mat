@@ -65,7 +65,7 @@ Material:
     m_Floats:
     - _BoostShadows: 0
     - _BumpScale: 1
-    - _CullMode: 0
+    - _CullMode: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DisableShowOKHSLView: 1
@@ -89,7 +89,7 @@ Material:
     - _UseDetailTexture: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.92549026, g: 0.43137258, b: 0.09411766, a: 1}
+    - _Color: {r: 0.809, g: 0.5114798, b: 0.194969, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FakeLightingColor: {r: 1, g: 1, b: 1, a: 1}

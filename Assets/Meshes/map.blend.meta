@@ -32,6 +32,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Mesa
+    second: {fileID: 2100000, guid: 414dcb23c44511f47a5cd49c802536b2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: OrangeMapGround
     second: {fileID: 2100000, guid: 86c70e5af9357e347a5e8a40e06b4694, type: 2}
   - first:

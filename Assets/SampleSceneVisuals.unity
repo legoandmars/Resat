@@ -1566,8 +1566,8 @@ MonoBehaviour:
     RenderTextureReadWrite: 0
   _screenshotNativeResolution: {x: 3840, y: 2160}
   _fieldOfView: 60
-  _savePhotosToDisk: 1
-  _startWithCameraEnabled: 0
+  _savePhotosToDisk: 0
+  _startWithCameraEnabled: 1
   _animationSpeed: 2.5
 --- !u!1 &683531043
 GameObject:

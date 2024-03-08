@@ -72,6 +72,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Wortor
+    second: {fileID: 2100000, guid: 8d036439d5a24b9478f9d516b4f84379, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: YellowMapGround
     second: {fileID: 2100000, guid: 0717966a2a853e0488e10a039bfa310f, type: 2}
   materials:

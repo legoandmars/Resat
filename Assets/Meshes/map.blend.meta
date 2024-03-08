@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Canyon
+    second: {fileID: 2100000, guid: 641afa792015adc4eacd976ed4ed9f26, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: DesertWalls
     second: {fileID: 2100000, guid: 91e35c1d94b58b94d897895992d912f9, type: 2}
   - first:

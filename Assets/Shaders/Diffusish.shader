@@ -13,12 +13,13 @@ Properties {
     _ShadowBoostStrength ("Shadow boost strength", Range(0, 2)) = 1
     [Toggle(DETAIL_TEXTURE)] _UseDetailTexture("Use detail texture", Float) = 0
     [Toggle(SHADOW_BOOST)] _BoostShadows("Use shadow boost", Float) = 0
+    [Enum(UnityEngine.Rendering.CullMode)] _CullMode("Cull Mode", Int) = 2
 }
     
 SubShader {
     Tags { "RenderType"="Opaque" }
     LOD 200
-
+    Cull [_CullMode]
 CGPROGRAM
 #pragma surface surf LambertOverride
 

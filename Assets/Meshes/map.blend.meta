@@ -17,6 +17,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Collider
+    second: {fileID: 2100000, guid: 44598458e1b660347b4430a9fa33ccf7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: DesertWalls
     second: {fileID: 2100000, guid: 91e35c1d94b58b94d897895992d912f9, type: 2}
   - first:

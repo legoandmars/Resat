@@ -107,12 +107,25 @@ namespace Resat.Tweening
                 cancellationTokenSource = new();
             
             // These methods automatically handle the cancellation as long as we pass the CTS and tween type
-            var mainTween = TweenVectorTracked(currentPanelSize, Vector2.zero, tweenSettings.Duration, setPanelSize, tweenSettings.XEase, tweenSettings.YEase, panelTweenType, cancellationTokenSource);
+            var mainTween = TweenVectorTracked(currentPanelSize, 
+                Vector2.zero, 
+                tweenSettings.Duration, 
+                setPanelSize, 
+                tweenSettings.XEase, 
+                tweenSettings.YEase, 
+                panelTweenType, 
+                cancellationTokenSource);
             
-            // wait before starting the corner tween
-            await UniTask.WaitForSeconds(tweenSettings.Duration - tweenSettings.CornerDurationOffset); 
-            var cornerTween = TweenVectorTracked(currentCornersSize, Vector2.zero, tweenSettings.CornerDuration, setCornersSize, tweenSettings.CornersEaseOut, tweenSettings.CornersEaseOut, cornerTweenType, cancellationTokenSource);
-
+            var cornerTween = TweenVectorTracked(currentCornersSize, 
+                Vector2.zero, 
+                tweenSettings.CornerDuration, 
+                setCornersSize, 
+                tweenSettings.CornersEaseOut, 
+                tweenSettings.CornersEaseOut, 
+                cornerTweenType, 
+                cancellationTokenSource,
+                tweenSettings.Duration - tweenSettings.CornerDurationOffset); // wait before starting corner tween
+            
             var mainSuccess = await mainTween;
             var cornerSuccess = await cornerTween;
             
@@ -133,8 +146,23 @@ namespace Resat.Tweening
                 cancellationTokenSource = new();
             
             // These methods automatically handle the cancellation as long as we pass the CTS and tween type
-            var mainTween = TweenVectorTracked(currentPanelSize, tweenSettings.Size, tweenSettings.Duration, setPanelSize, tweenSettings.XEase, tweenSettings.YEase, panelTweenType, cancellationTokenSource);
-            var cornerTween = TweenVectorTracked(currentCornersSize, Vector2.one, tweenSettings.CornerDuration, setCornersSize, tweenSettings.CornersEaseIn, tweenSettings.CornersEaseIn, cornerTweenType, cancellationTokenSource);
+            var mainTween = TweenVectorTracked(currentPanelSize, 
+                tweenSettings.Size, 
+                tweenSettings.Duration, 
+                setPanelSize, 
+                tweenSettings.XEase, 
+                tweenSettings.YEase, 
+                panelTweenType, 
+                cancellationTokenSource);
+            
+            var cornerTween = TweenVectorTracked(currentCornersSize, 
+            Vector2.one, 
+            tweenSettings.CornerDuration, 
+            setCornersSize, 
+            tweenSettings.CornersEaseIn, 
+            tweenSettings.CornersEaseIn, 
+            cornerTweenType, 
+            cancellationTokenSource);
 
             var mainSuccess = await mainTween;
             var cornerSuccess = await cornerTween;
@@ -150,13 +178,15 @@ namespace Resat.Tweening
             Ease xEase,
             Ease yEase,
             TweenType tweenType,
-            CancellationTokenSource cancellationTokenSource)
+            CancellationTokenSource cancellationTokenSource,
+            float offset = 0f)
         {
+            Debug.Log($"Starting tween {tweenType}...");
             // Cancel tween on same object, if existing
             // Used for cancelling and retrying a color tween (eg if the user is moving between two biomes rapidly)
             if (_tweensByType.TryGetValue(tweenType, out CancellationTokenSource existingTweenCancellationTokenSource))
             {
-                Debug.Log("Cancelling...");
+                Debug.Log($"Cancelling {tweenType}...");
                 existingTweenCancellationTokenSource.Cancel();
                 _tweensByType.Remove(tweenType);
             }
@@ -174,6 +204,13 @@ namespace Resat.Tweening
                 cancelled = true;
             });
 
+            if (offset != 0f)
+            {
+                tween.Pause();
+                await UniTask.WaitForSeconds(offset);
+                tween.Start();
+            }
+            
             await tween;
 
             if (!cancelled)

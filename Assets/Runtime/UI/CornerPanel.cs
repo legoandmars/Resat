@@ -74,6 +74,7 @@ namespace Resat.UI
             if (MainPanel == null)
                 return;
 
+            Debug.Log("Size!");
             MainPanel.sizeDelta = size;
         }
 

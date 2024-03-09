@@ -2,6 +2,8 @@
 {
     public enum ColorTweenType
     {
-        ImageBehaviourColor
+        ImageBehaviourColor,
+        SkyboxTop,
+        SkyboxBottom
     }
 }

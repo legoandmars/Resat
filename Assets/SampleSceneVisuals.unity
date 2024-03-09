@@ -1707,7 +1707,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 551777546}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e6df2c606022bf458c44cb4252b1e98, type: 3}
   m_Name: 
@@ -4227,6 +4227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _biomeIntermediate: {fileID: 1851688479}
+  _tweenController: {fileID: 1605977857}
   _skyboxMaterial: {fileID: 2100000, guid: 09aa82972b1bf4746b7acb8ea379cef0, type: 2}
 --- !u!1 &1199949829
 GameObject:
@@ -5374,7 +5375,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tweenManager: {fileID: 1511151375}
-  _biomeColorTransitionDuration: 0.5
+  _biomeImageTransitionDuration: 1.25
+  _biomeSkyboxTransitionDuration: 1.25
 --- !u!1 &1616271244
 GameObject:
   m_ObjectHideFlags: 0

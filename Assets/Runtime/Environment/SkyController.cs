@@ -1,5 +1,8 @@
-﻿using Resat.Intermediates;
+﻿using Cysharp.Threading.Tasks;
+using Resat.Intermediates;
+using Resat.Models;
 using Resat.Models.Events;
+using Resat.Tweening;
 using UnityEngine;
 
 namespace Resat.Environment
@@ -12,6 +15,9 @@ namespace Resat.Environment
         [Header("Dependencies")]
         [SerializeField]
         private BiomeIntermediate _biomeIntermediate = null!;
+        
+        [SerializeField]
+        private TweenController _tweenController = null!;
 
         [SerializeField]
         private Material? _skyboxMaterial;
@@ -42,10 +48,38 @@ namespace Resat.Environment
                 return;
 
             var biome = biomeChangeEvent.Biome;
-            
-            // TODO: Tween
-            _skyboxMaterial.SetColor(TopColor, biome.SkyboxTopColor);
-            _skyboxMaterial.SetColor(BottomColor, biome.SkyboxBottomColor);
+
+            if (biomeChangeEvent.FirstChange)
+            {
+                SetTopColor(biome.SkyboxTopColor);
+                SetBottomColor(biome.SkyboxBottomColor);
+            }
+            else
+            {
+                AnimateColors(_skyboxMaterial.GetColor(TopColor), biome.SkyboxTopColor, ColorTweenType.SkyboxTop).Forget();
+                AnimateColors(_skyboxMaterial.GetColor(BottomColor), biome.SkyboxBottomColor, ColorTweenType.SkyboxBottom).Forget();
+            }
+        }
+
+        private async UniTask AnimateColors(Color startColor, Color endColor, ColorTweenType colorTweenType)
+        {
+            await _tweenController.TweenColors(startColor, endColor, colorTweenType == ColorTweenType.SkyboxTop ? SetTopColor : SetBottomColor, colorTweenType);
+        }
+
+        private void SetTopColor(Color color)
+        {
+            if (_skyboxMaterial == null)
+                return;
+
+            _skyboxMaterial.SetColor(TopColor, color);
+        }
+
+        private void SetBottomColor(Color color)
+        {
+            if (_skyboxMaterial == null)
+                return;
+
+            _skyboxMaterial.SetColor(BottomColor, color);
         }
     }
 }

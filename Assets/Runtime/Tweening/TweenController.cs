@@ -17,7 +17,10 @@ namespace Resat.Tweening
         // not sure if this is really the best place for this, but you gotta put it somewhere
         [Header("Durations")] 
         [SerializeField]
-        private float _biomeColorTransitionDuration = 1f;
+        private float _biomeImageTransitionDuration = 1f;
+        
+        [SerializeField]
+        private float _biomeSkyboxTransitionDuration = 1f;
 
         // idk if this is overkill/already implemented in AuraTween but i'm feeling the crunch
         private Dictionary<ColorTweenType, Tween> _tweensByColorType = new();
@@ -26,12 +29,6 @@ namespace Resat.Tweening
         public async UniTask RunTween(float duration, Action<float> run, Ease ease = Ease.Linear, float start = 0f, float end = 1f)
         {
             await _tweenManager.Run(start, end, duration, run, ease.ToProcedure(), this);
-        }
-
-        // direct usage if we think we're going to need cancellation
-        private Tween RunTweenDirectly(float duration, Action<float> run, Ease ease = Ease.Linear, float start = 0f, float end = 1f)
-        {
-            return _tweenManager.Run(start, end, duration, run, ease.ToProcedure(), this);
         }
 
         // returns false if cancelled
@@ -47,7 +44,7 @@ namespace Resat.Tweening
             }
             
             // To smoothly lerp between color values 
-            var tween = _tweenManager.Run(startColor, endColor, _biomeColorTransitionDuration, run, ease.ToProcedure(), HSV, this);
+            var tween = _tweenManager.Run(startColor, endColor, GetDurationFromTweenType(invoker), run, ease.ToProcedure(), HSV, this);
             
             _tweensByColorType.Add(invoker, tween);
 
@@ -61,8 +58,18 @@ namespace Resat.Tweening
                 _tweensByColorType.Remove(invoker);
             }
             
-            Debug.Log(cancelled);
             return !cancelled;
+        }
+
+        private float GetDurationFromTweenType(ColorTweenType tweenType)
+        {
+            return tweenType switch
+            {
+                ColorTweenType.ImageBehaviourColor => _biomeImageTransitionDuration,
+                ColorTweenType.SkyboxBottom => _biomeSkyboxTransitionDuration,
+                ColorTweenType.SkyboxTop => _biomeSkyboxTransitionDuration,
+                _ => 1f
+            };
         }
         
         // TODO: OKHSL

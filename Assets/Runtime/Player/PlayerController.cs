@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Input;
 using Resat.Behaviours;
 using Resat.Input;
+using Resat.Intermediates;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,7 +13,10 @@ namespace Resat.Player
     {
         [SerializeField]
         private InputController _inputController = null!;
-        
+
+        [SerializeField]
+        private NpcIntermediate _npcIntermediate = null!;
+
         [SerializeField]
         private CharacterController _characterController = null!;
 
@@ -107,12 +111,22 @@ namespace Resat.Player
             
             if (hits == 0 || _raycastResults[0].distance > _npcInteractionDistance)
             {
-                _focusedNpc = null;
+                TrySetNpc(null);
             }
-            else
+            else if (_focusedNpc == null)
             {
-                _focusedNpc = _raycastResults[0].collider.gameObject.GetComponent<NpcTriggerBehaviour>();
+                TrySetNpc(_raycastResults[0].collider.gameObject.GetComponent<NpcTriggerBehaviour>());
             }
+            // do nothing if we have an already focused NPC, and one's in view. this will almost certainly be the same NPC, and we don't need to run the GetComponent call again.
+        }
+
+        private void TrySetNpc(NpcTriggerBehaviour? focusedNpc)
+        {
+            if (_focusedNpc == focusedNpc)
+                return;
+
+            _focusedNpc = focusedNpc;
+            _npcIntermediate.ChangeNpcFocus(_focusedNpc);
         }
     }
 }

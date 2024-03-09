@@ -12,6 +12,9 @@ namespace Resat.Input
         [HideInInspector]
         public bool CameraInputEnabled = false;
         
+        [HideInInspector]
+        public bool DialogueInputEnabled = false;
+
         private ResatInput? _input = null;
         public ResatInput Input
         {
@@ -42,11 +45,23 @@ namespace Resat.Input
             Input.Debugging.Enable();
         }
 
+        public void EnableDialogueInput()
+        {
+            Input.Dialogue.Enable();
+            DialogueInputEnabled = true;
+        }
+
         public void DisablePlayerInput()
         {
             Input.Player.Disable();
             PlayerInputEnabled = false;
             Cursor.lockState = CursorLockMode.None;
+        }
+
+        public void DisableCameraInput()
+        {
+            Input.Camera.Disable();
+            CameraInputEnabled = false;
         }
     }
 }

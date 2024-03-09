@@ -65,13 +65,13 @@ Shader "Unlit/Desaturate"
                 fixed4 col = tex2D(_MainTex, i.uv);
 
                 // inverted so rider doesn't throw a fit
-                #ifndef DISABLE_SHOW_OKHSL_VIEW
+#ifndef DISABLE_SHOW_OKHSL_VIEW
                     uint tempArrayIndex = ArrayIndexFromArrayCoordinates(ArrayCoordinatesFromOKHSL(RGBtoOKHSL(col), _OKHSLArrayResolution), _OKHSLArrayResolution);
                     float3 parsedOkhsl = OKHSLFromArrayIndex(tempArrayIndex, _OKHSLArrayResolution);
                     float3 parsedCol = OKHSLtoRGB(parsedOkhsl);
 
                     return float4(parsedCol.r, parsedCol.g, parsedCol.b, 1);
-                #endif
+#endif
                 // else is annoying but needed for rider to not black everything out
                 // rescale space to clamp like centered UI
                 float newX = i.uv.x;

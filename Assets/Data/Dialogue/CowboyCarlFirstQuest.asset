@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1312f3546a14bf995139cb2d3033f27, type: 3}
-  m_Name: CowboyCarl
+  m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
+  m_Name: CowboyCarlFirstQuest
   m_EditorClassIdentifier: 
-  Name: Cowboy Carl
-  Dialogue: {fileID: 11400000, guid: 23a0b0881a9b0ee419a9cd1eca101f4d, type: 2}
+  Dialogue:
+  - Yeehaw!
+  - Yeehaw!!
+  - Yeehaw!!!

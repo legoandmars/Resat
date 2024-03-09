@@ -49,9 +49,6 @@ namespace Resat.Environment
 
         private void OnBiomeChanged(BiomeChangeEvent biomeChangeEvent)
         {
-            Debug.Log("WHA");
-            Debug.Log(_lights.Count);
-            Debug.Log(_lights.Count > 0);
             if (_skyboxMaterial == null)
                 return;
 

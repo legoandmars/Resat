@@ -325,6 +325,34 @@ namespace Input
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Dialogue"",
+            ""id"": ""f36f3a6b-b574-4bdb-8e12-5b59e8dcb93c"",
+            ""actions"": [
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""1b15559b-93f9-432c-b843-2be995e10af4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5198aaff-c6d8-4aca-81e7-0bbdafabaf35"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -345,6 +373,9 @@ namespace Input
             m_Debugging_DesaturatedView = m_Debugging.FindAction("DesaturatedView", throwIfNotFound: true);
             m_Debugging_ResaturatedView = m_Debugging.FindAction("ResaturatedView", throwIfNotFound: true);
             m_Debugging_ResetGlobalArray = m_Debugging.FindAction("ResetGlobalArray", throwIfNotFound: true);
+            // Dialogue
+            m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
+            m_Dialogue_Interact = m_Dialogue.FindAction("Interact", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -596,6 +627,52 @@ namespace Input
             }
         }
         public DebuggingActions @Debugging => new DebuggingActions(this);
+
+        // Dialogue
+        private readonly InputActionMap m_Dialogue;
+        private List<IDialogueActions> m_DialogueActionsCallbackInterfaces = new List<IDialogueActions>();
+        private readonly InputAction m_Dialogue_Interact;
+        public struct DialogueActions
+        {
+            private @ResatInput m_Wrapper;
+            public DialogueActions(@ResatInput wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Interact => m_Wrapper.m_Dialogue_Interact;
+            public InputActionMap Get() { return m_Wrapper.m_Dialogue; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(DialogueActions set) { return set.Get(); }
+            public void AddCallbacks(IDialogueActions instance)
+            {
+                if (instance == null || m_Wrapper.m_DialogueActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_DialogueActionsCallbackInterfaces.Add(instance);
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
+            }
+
+            private void UnregisterCallbacks(IDialogueActions instance)
+            {
+                @Interact.started -= instance.OnInteract;
+                @Interact.performed -= instance.OnInteract;
+                @Interact.canceled -= instance.OnInteract;
+            }
+
+            public void RemoveCallbacks(IDialogueActions instance)
+            {
+                if (m_Wrapper.m_DialogueActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            public void SetCallbacks(IDialogueActions instance)
+            {
+                foreach (var item in m_Wrapper.m_DialogueActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_DialogueActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        public DialogueActions @Dialogue => new DialogueActions(this);
         public interface IPlayerActions
         {
             void OnMove(InputAction.CallbackContext context);
@@ -614,6 +691,10 @@ namespace Input
             void OnDesaturatedView(InputAction.CallbackContext context);
             void OnResaturatedView(InputAction.CallbackContext context);
             void OnResetGlobalArray(InputAction.CallbackContext context);
+        }
+        public interface IDialogueActions
+        {
+            void OnInteract(InputAction.CallbackContext context);
         }
     }
 }

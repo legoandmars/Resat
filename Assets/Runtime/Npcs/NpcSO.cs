@@ -1,4 +1,5 @@
-﻿using Resat.Models;
+﻿using Resat.Dialogue;
+using Resat.Models;
 using UnityEngine;
 
 namespace Resat.Npcs
@@ -7,11 +8,8 @@ namespace Resat.Npcs
     public class NpcSO : ScriptableObject
     {
         public string Name = "NPC";
-        /*
-        public BiomeType BiomeType;
-        public Color DialogueBoxColor = new(0,0,0,1);
-        public Color SkyboxTopColor = new Color(1, 1, 1, 1);
-        public Color SkyboxBottomColor = new Color(1, 1, 1, 1);
-        public Color LightingColor = new Color(1, 1, 1, 1);*/
+
+        // TODO: Multiple dialogue support
+        public DialogueSO? Dialogue;
     }
 }

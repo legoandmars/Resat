@@ -4,6 +4,7 @@
     {
         ImageBehaviourColor,
         SkyboxTop,
-        SkyboxBottom
+        SkyboxBottom,
+        Lighting
     }
 }

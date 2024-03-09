@@ -4193,7 +4193,7 @@ GameObject:
   - component: {fileID: 1153014055}
   - component: {fileID: 1153014056}
   m_Layer: 0
-  m_Name: SkyController
+  m_Name: EnvironmentController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4229,6 +4229,9 @@ MonoBehaviour:
   _biomeIntermediate: {fileID: 1851688479}
   _tweenController: {fileID: 1605977857}
   _skyboxMaterial: {fileID: 2100000, guid: 09aa82972b1bf4746b7acb8ea379cef0, type: 2}
+  _lights:
+  - {fileID: 705507994}
+  - {fileID: 2045069556}
 --- !u!1 &1199949829
 GameObject:
   m_ObjectHideFlags: 0
@@ -5377,6 +5380,7 @@ MonoBehaviour:
   _tweenManager: {fileID: 1511151375}
   _biomeImageTransitionDuration: 1.25
   _biomeSkyboxTransitionDuration: 1.25
+  _biomeLightingTransitionDuration: 1
 --- !u!1 &1616271244
 GameObject:
   m_ObjectHideFlags: 0

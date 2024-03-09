@@ -73,8 +73,6 @@ namespace Resat.Behaviours
 
         private void SetImageColor(Color color)
         {
-            Debug.Log("Color...");
-            
             foreach (var image in _dialogueImages)
             {
                 image.color = color;

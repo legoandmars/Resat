@@ -10,5 +10,6 @@ namespace Resat.Biomes
         public Color DialogueBoxColor = new(0,0,0,1);
         public Color SkyboxTopColor = new Color(1, 1, 1, 1);
         public Color SkyboxBottomColor = new Color(1, 1, 1, 1);
+        public Color LightingColor = new Color(1, 1, 1, 1);
     }
 }

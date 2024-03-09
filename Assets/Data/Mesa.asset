@@ -16,3 +16,4 @@ MonoBehaviour:
   DialogueBoxColor: {r: 0.29411766, g: 0.026511492, b: 0, a: 1}
   SkyboxTopColor: {r: 0.972549, g: 0.5686275, b: 0.44705883, a: 1}
   SkyboxBottomColor: {r: 0.94509804, g: 0.7647059, b: 0.65882355, a: 1}
+  LightingColor: {r: 1, g: 0.8392157, b: 0.8392157, a: 1}

@@ -21,6 +21,9 @@ namespace Resat.Tweening
         
         [SerializeField]
         private float _biomeSkyboxTransitionDuration = 1f;
+        
+        [SerializeField]
+        private float _biomeLightingTransitionDuration = 1f;
 
         // idk if this is overkill/already implemented in AuraTween but i'm feeling the crunch
         private Dictionary<ColorTweenType, Tween> _tweensByColorType = new();
@@ -68,6 +71,7 @@ namespace Resat.Tweening
                 ColorTweenType.ImageBehaviourColor => _biomeImageTransitionDuration,
                 ColorTweenType.SkyboxBottom => _biomeSkyboxTransitionDuration,
                 ColorTweenType.SkyboxTop => _biomeSkyboxTransitionDuration,
+                ColorTweenType.Lighting => _biomeLightingTransitionDuration,
                 _ => 1f
             };
         }

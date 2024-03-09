@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9193f81c837c43868f246338c2adda7c, type: 3}
   m_Name: Desert
   m_EditorClassIdentifier: 
+  BiomeType: 0
   DialogueBoxColor: {r: 0.19607843, g: 0.12941177, b: 0, a: 1}
   SkyboxTopColor: {r: 0.83137256, g: 0.8901961, b: 0.50980395, a: 1}
   SkyboxBottomColor: {r: 0.9411765, g: 0.9019608, b: 0.6627451, a: 1}
+  LightingColor: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}

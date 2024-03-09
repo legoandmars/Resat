@@ -1,4 +1,6 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Resat.Intermediates;
 using Resat.Models;
 using Resat.Models.Events;
@@ -7,7 +9,7 @@ using UnityEngine;
 
 namespace Resat.Environment
 {
-    public class SkyController : MonoBehaviour
+    public class EnvironmentController : MonoBehaviour
     {
         private static readonly int TopColor = Shader.PropertyToID("_Tint");
         private static readonly int BottomColor = Shader.PropertyToID("_Tint2");
@@ -21,6 +23,9 @@ namespace Resat.Environment
 
         [SerializeField]
         private Material? _skyboxMaterial;
+        
+        [SerializeField]
+        private List<Light> _lights = new();
 
         private void Awake()
         {
@@ -44,6 +49,9 @@ namespace Resat.Environment
 
         private void OnBiomeChanged(BiomeChangeEvent biomeChangeEvent)
         {
+            Debug.Log("WHA");
+            Debug.Log(_lights.Count);
+            Debug.Log(_lights.Count > 0);
             if (_skyboxMaterial == null)
                 return;
 
@@ -53,17 +61,25 @@ namespace Resat.Environment
             {
                 SetTopColor(biome.SkyboxTopColor);
                 SetBottomColor(biome.SkyboxBottomColor);
+                if (_lights.Count > 0)
+                {
+                    SetLightingColor(biome.LightingColor); 
+                }
             }
             else
             {
-                AnimateColors(_skyboxMaterial.GetColor(TopColor), biome.SkyboxTopColor, ColorTweenType.SkyboxTop).Forget();
-                AnimateColors(_skyboxMaterial.GetColor(BottomColor), biome.SkyboxBottomColor, ColorTweenType.SkyboxBottom).Forget();
+                AnimateColors(_skyboxMaterial.GetColor(TopColor), biome.SkyboxTopColor, ColorTweenType.SkyboxTop, SetTopColor).Forget();
+                AnimateColors(_skyboxMaterial.GetColor(BottomColor), biome.SkyboxBottomColor, ColorTweenType.SkyboxBottom, SetBottomColor).Forget();
+                if (_lights.Count > 0)
+                {
+                    AnimateColors(_lights[0].color, biome.LightingColor, ColorTweenType.Lighting, SetLightingColor).Forget();
+                }
             }
         }
 
-        private async UniTask AnimateColors(Color startColor, Color endColor, ColorTweenType colorTweenType)
+        private async UniTask AnimateColors(Color startColor, Color endColor, ColorTweenType colorTweenType, Action<Color> run)
         {
-            await _tweenController.TweenColors(startColor, endColor, colorTweenType == ColorTweenType.SkyboxTop ? SetTopColor : SetBottomColor, colorTweenType);
+            await _tweenController.TweenColors(startColor, endColor, run, colorTweenType);
         }
 
         private void SetTopColor(Color color)
@@ -80,6 +96,14 @@ namespace Resat.Environment
                 return;
 
             _skyboxMaterial.SetColor(BottomColor, color);
+        }
+
+        private void SetLightingColor(Color color)
+        {
+            foreach (var light in _lights)
+            {
+                light.color = color;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Input;
+using Resat.Behaviours;
 using Resat.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,6 +15,9 @@ namespace Resat.Player
         
         [SerializeField]
         private CharacterController _characterController = null!;
+
+        [SerializeField]
+        private Transform _raycastEmittingObject = null!;
         
         [SerializeField]
         private Camera _camera = null!;
@@ -30,8 +34,13 @@ namespace Resat.Player
         [SerializeField]
         private float _fallSpeed = 9.8f;
 
+        [SerializeField]
+        private LayerMask _npcLayerMask;
+
         private float _verticalVelocity;
         private float _groundedTimer;        // to allow jumping when going down ramps
+        private RaycastHit[] _raycastResults = new RaycastHit[1]; // no reason we would ever need to cast for more than one NPC
+        private NpcTriggerBehaviour? _focusedNpc = null;
         
         void Start()
         {
@@ -81,10 +90,26 @@ namespace Resat.Player
  
                 // Physics dynamics formula for calculating jump up velocity based on height and gravity
                 _verticalVelocity += Mathf.Sqrt(_jumpHeight * 2 * _fallSpeed);
-                Debug.Log("HJUMP!");
             }
             
             _characterController.Move(moveDirection * new Vector3(moveValue.x, _verticalVelocity * Time.deltaTime, moveValue.y));
+
+            NpcInteractionCheck();
+        }
+
+        private void NpcInteractionCheck()
+        {
+            // TODO: Add behaviour on NPC focus
+            var hits = Physics.RaycastNonAlloc(_raycastEmittingObject.position, _raycastEmittingObject.forward, _raycastResults, Mathf.Infinity, _npcLayerMask);
+            
+            if (hits == 0)
+            {
+                _focusedNpc = null;
+            }
+            for (int i = 0; i < hits; i++)
+            {
+                _focusedNpc = _raycastResults[0].collider.gameObject.GetComponent<NpcTriggerBehaviour>();
+            }
         }
     }
 }

@@ -31,7 +31,6 @@ namespace Resat.Behaviours
         
         private void OnTriggerEnter(Collider collider)
         {
-            Debug.Log("GUH");
             if (_playerLayer == null || _biomeIntermediate == null || collider.gameObject.layer != _playerLayer)
                 return;
             

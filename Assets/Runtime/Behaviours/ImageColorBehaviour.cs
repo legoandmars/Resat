@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Resat.Intermediates;
 using Resat.Models;
 using Resat.Models.Events;
+using Resat.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +14,9 @@ namespace Resat.Behaviours
         [Header("Dependencies")]
         [SerializeField]
         private BiomeIntermediate? _biomeIntermediate;
+        
+        [SerializeField]
+        private TweenController _tweenController = null!;
         
         [Header("Settings")]
         [SerializeField]
@@ -45,12 +50,34 @@ namespace Resat.Behaviours
 
         private void OnBiomeChanged(BiomeChangeEvent biomeChangeEvent)
         {
-            var biome = biomeChangeEvent.Biome;
+            if (_dialogueImages.Count == 0)
+                return;
             
-            // TODO: Tween color if initial false
+            var biome = biomeChangeEvent.Biome;
+
+            if (biomeChangeEvent.FirstChange)
+            {
+                SetImageColor(biomeChangeEvent.Biome.DialogueBoxColor);
+            }
+            else
+            {
+                // assumes all images start out as the same color, as we're setting them to the same color anyways
+                AnimateColors(_dialogueImages[0].color, biome.DialogueBoxColor).Forget();
+            }
+        }
+
+        private async UniTask AnimateColors(Color startColor, Color endColor)
+        {
+            await _tweenController.TweenColors(startColor, endColor, SetImageColor, ColorTweenType.ImageBehaviourColor);
+        }
+
+        private void SetImageColor(Color color)
+        {
+            Debug.Log("Color...");
+            
             foreach (var image in _dialogueImages)
             {
-                image.color = biome.DialogueBoxColor;
+                image.color = color;
             }
         }
     }

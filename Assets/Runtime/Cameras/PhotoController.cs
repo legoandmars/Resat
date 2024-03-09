@@ -6,6 +6,7 @@ using Resat.Audio;
 using Resat.Colors;
 using Resat.Input;
 using Resat.Models;
+using Resat.Tweening;
 using Resat.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,6 +21,9 @@ namespace Resat.Cameras
         
         [SerializeField]
         private InputController _inputController = null!;
+        
+        [SerializeField]
+        private TweenController _tweenController = null!;
 
         [SerializeField]
         private ResatCamera _resatCamera = null!;
@@ -55,7 +59,7 @@ namespace Resat.Cameras
 
         [Header("Animation")]
         [SerializeField]
-        private float _animationSpeed = 1f;
+        private float _animationDuration = 1f;
 
         private CameraState _cameraState = CameraState.Minimized;
         private float _animationPercent = 0f;
@@ -99,16 +103,12 @@ namespace Resat.Cameras
         
         private async UniTask AnimateAfterPicture()
         {
-            SetAnimationPercent(0f);
+            SetAnimationPercent(0f); // just in case, likely unnecessary
             SetCameraState(CameraState.TakingPhoto, "Taking photo!");
-            
-            while (_animationPercent < 1f)
-            {
-                await UniTask.NextFrame();
-                SetAnimationPercent(_animationPercent + (Time.deltaTime * _animationSpeed));
-            }
 
-            SetAnimationPercent(1f);
+            await _tweenController.RunTween(_animationDuration, SetAnimationPercent);
+
+            SetAnimationPercent(1f); // just in case, likely unnecessary
             SetCameraState(CameraState.InView, "Finished taking photo!");
         }
         

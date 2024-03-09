@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Resat.Intermediates;
 using Resat.Models;
+using Resat.Models.Events;
 using UnityEngine;
 
 namespace Resat.Biomes
@@ -13,14 +14,15 @@ namespace Resat.Biomes
         private BiomeIntermediate _biomeIntermediate = null!;
         
         [SerializeField]
-        private BiomeType _biomeType = BiomeType.Desert;
+        private BiomeType _initialBiomeType = BiomeType.Desert;
 
         [SerializeField]
         private List<BiomeSO> _biomes = new();
 
         private Dictionary<BiomeType, BiomeSO>? _biomesByType;
-        private bool _transitioning = false;
-
+        // private bool _transitioning = false;
+        private BiomeType _biomeType;
+        
         // cache a dictionary in awake because unity doesn't let us use dictionaries in-inspector
         private void Awake()
         {
@@ -30,6 +32,16 @@ namespace Resat.Biomes
             {
                 _biomesByType[biome.BiomeType] = biome;
             }
+            
+
+        }
+
+        private void Start()
+        {
+            if (_biomesByType == null || !_biomesByType.TryGetValue(_initialBiomeType, out var initialBiome))
+                return;
+
+            ChangeBiome(initialBiome, true);
         }
         
         private void OnEnable()
@@ -50,10 +62,15 @@ namespace Resat.Biomes
             if (!_biomesByType.TryGetValue(biomeType, out var biome))
                 return;
             
-            Debug.Log($"Switching biome to {biomeType}!");
+            ChangeBiome(biome);
+        }
+
+        private void ChangeBiome(BiomeSO biome, bool first = false)
+        {
+            Debug.Log($"Switching biome to {biome.BiomeType}!");
             
-            _biomeType = biomeType;
-            _biomeIntermediate.ChangeBiome(biome);
+            _biomeType = biome.BiomeType;
+            _biomeIntermediate.ChangeBiome(new BiomeChangeEvent(biome, first));
         }
     }
 }

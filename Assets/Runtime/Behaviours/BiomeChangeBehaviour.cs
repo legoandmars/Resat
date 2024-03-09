@@ -23,6 +23,7 @@ namespace Resat.Behaviours
             if (_biomeIntermediate == null)
             {
                 Debug.LogWarning("Biome intermediate null on change behaviour! Not firing any events!");
+                enabled = false;
                 return;
             }
             _playerLayer = LayerMask.NameToLayer("Player");

@@ -5727,6 +5727,7 @@ MonoBehaviour:
   _speed: 6
   _jumpHeight: 1.25
   _fallSpeed: 15
+  _npcInteractionDistance: 6
   _npcLayerMask:
     serializedVersion: 2
     m_Bits: 128

@@ -33,6 +33,9 @@ namespace Resat.Player
         
         [SerializeField]
         private float _fallSpeed = 9.8f;
+        
+        [SerializeField]
+        private float _npcInteractionDistance = 1f;
 
         [SerializeField]
         private LayerMask _npcLayerMask;
@@ -102,11 +105,11 @@ namespace Resat.Player
             // TODO: Add behaviour on NPC focus
             var hits = Physics.RaycastNonAlloc(_raycastEmittingObject.position, _raycastEmittingObject.forward, _raycastResults, Mathf.Infinity, _npcLayerMask);
             
-            if (hits == 0)
+            if (hits == 0 || _raycastResults[0].distance > _npcInteractionDistance)
             {
                 _focusedNpc = null;
             }
-            for (int i = 0; i < hits; i++)
+            else
             {
                 _focusedNpc = _raycastResults[0].collider.gameObject.GetComponent<NpcTriggerBehaviour>();
             }

@@ -50,7 +50,6 @@ namespace Resat.UI
             // Setup UI
             if (_interactionPromptPanel != null)
                 _interactionPromptPanel.Close();
-
         }
 
         private void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)

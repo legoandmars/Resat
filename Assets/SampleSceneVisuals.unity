@@ -2351,7 +2351,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4db96e319f3543939ecc81d88b368d24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tweenController: {fileID: 1605977857}
   MainPanel: {fileID: 598411207}
+  _size: {x: 150, y: 150}
+  _animationDuration: 1
   _rectTransform: {fileID: 598411207}
   _text: {fileID: 2016472962}
 --- !u!114 &598411209
@@ -2405,7 +2408,7 @@ GameObject:
   - component: {fileID: 613702690}
   - component: {fileID: 613702692}
   m_Layer: 5
-  m_Name: DialogueBox (1)
+  m_Name: NameBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2483,7 +2486,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4db96e319f3543939ecc81d88b368d24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tweenController: {fileID: 0}
   MainPanel: {fileID: 613702689}
+  _size: {x: 0, y: 0}
+  _animationDuration: 1
   _rectTransform: {fileID: 613702689}
   _text: {fileID: 386994809}
 --- !u!1 &641632284
@@ -3351,7 +3357,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4db96e319f3543939ecc81d88b368d24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tweenController: {fileID: 0}
   MainPanel: {fileID: 847239618}
+  _size: {x: 0, y: 0}
+  _animationDuration: 1
   _rectTransform: {fileID: 847239618}
   _text: {fileID: 2122227842}
 --- !u!1 &854113693

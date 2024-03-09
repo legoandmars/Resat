@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using AuraTween;
 using Cysharp.Threading.Tasks;
 using Resat.Models;
@@ -27,6 +28,7 @@ namespace Resat.Tweening
 
         // idk if this is overkill/already implemented in AuraTween but i'm feeling the crunch
         private Dictionary<ColorTweenType, Tween> _tweensByColorType = new();
+        private Dictionary<TweenType, CancellationTokenSource> _tweensByType = new();
         
         // this method is essentially just syntax sugar for auratween
         public async UniTask RunTween(float duration, Action<float> run, Ease ease = Ease.Linear, float start = 0f, float end = 1f)
@@ -64,7 +66,7 @@ namespace Resat.Tweening
             return !cancelled;
         }
 
-        public async UniTask<bool> TweenVectors(Vector2 startVector, Vector2 endVector, float duration, Action<Vector2> run, Ease xEase = Ease.Linear, Ease yEase = Ease.Linear)
+        private Tween GetTweenForVectors(Vector2 startVector, Vector2 endVector, float duration, Action<Vector2> run, Ease xEase, Ease yEase)
         {
             var xEaser = xEase.ToProcedure();
             var yEaser = yEase.ToProcedure();
@@ -76,10 +78,110 @@ namespace Resat.Tweening
                 // scuffed lerp based on the linear tween
                 run.Invoke(InterpolateVector(startVector, endVector, xEaser, yEaser, value));
             }, Ease.Linear.ToProcedure(), this);
+            
+            return tween;
+        }
+
+        public async UniTask<bool> TweenVectors(Vector2 startVector, Vector2 endVector, float duration, Action<Vector2> run, Ease xEase = Ease.Linear, Ease yEase = Ease.Linear)
+        {
+            var tween = GetTweenForVectors(startVector, endVector, duration, run, xEase, yEase);
 
             await tween;
 
             return true;
+        }
+
+        // used for automagically putting all corner panel tweening into one nice method, so we can await it
+        // a bit of a messy megamethod
+        public async UniTask<bool> TweenCornerPanelOut(
+            CornerTweenSettings tweenSettings, 
+            Vector2 currentPanelSize, 
+            Vector2 currentCornersSize, 
+            Action<Vector2> setPanelSize,
+            Action<Vector2> setCornersSize, 
+            TweenType panelTweenType,
+            TweenType cornerTweenType,
+            CancellationTokenSource? cancellationTokenSource = null)
+        {
+            if (cancellationTokenSource == null)
+                cancellationTokenSource = new();
+            
+            // These methods automatically handle the cancellation as long as we pass the CTS and tween type
+            var mainTween = TweenVectorTracked(currentPanelSize, Vector2.zero, tweenSettings.Duration, setPanelSize, tweenSettings.XEase, tweenSettings.YEase, panelTweenType, cancellationTokenSource);
+            
+            // wait before starting the corner tween
+            await UniTask.WaitForSeconds(tweenSettings.Duration - tweenSettings.CornerDurationOffset); 
+            var cornerTween = TweenVectorTracked(currentCornersSize, Vector2.zero, tweenSettings.CornerDuration, setCornersSize, tweenSettings.CornersEaseOut, tweenSettings.CornersEaseOut, cornerTweenType, cancellationTokenSource);
+
+            var mainSuccess = await mainTween;
+            var cornerSuccess = await cornerTween;
+            
+            return mainSuccess && cornerSuccess;
+        }
+
+        public async UniTask<bool> TweenCornerPanelIn(
+            CornerTweenSettings tweenSettings, 
+            Vector2 currentPanelSize, 
+            Vector2 currentCornersSize, 
+            Action<Vector2> setPanelSize,
+            Action<Vector2> setCornersSize, 
+            TweenType panelTweenType,
+            TweenType cornerTweenType,
+            CancellationTokenSource? cancellationTokenSource = null)
+        {
+            if (cancellationTokenSource == null)
+                cancellationTokenSource = new();
+            
+            // These methods automatically handle the cancellation as long as we pass the CTS and tween type
+            var mainTween = TweenVectorTracked(currentPanelSize, tweenSettings.Size, tweenSettings.Duration, setPanelSize, tweenSettings.XEase, tweenSettings.YEase, panelTweenType, cancellationTokenSource);
+            var cornerTween = TweenVectorTracked(currentCornersSize, Vector2.one, tweenSettings.CornerDuration, setCornersSize, tweenSettings.CornersEaseIn, tweenSettings.CornersEaseIn, cornerTweenType, cancellationTokenSource);
+
+            var mainSuccess = await mainTween;
+            var cornerSuccess = await cornerTween;
+            
+            return mainSuccess && cornerSuccess;
+        }
+
+        private async UniTask<bool> TweenVectorTracked(
+            Vector2 startSize,
+            Vector2 endSize,
+            float duration,
+            Action<Vector2> setSize,
+            Ease xEase,
+            Ease yEase,
+            TweenType tweenType,
+            CancellationTokenSource cancellationTokenSource)
+        {
+            // Cancel tween on same object, if existing
+            // Used for cancelling and retrying a color tween (eg if the user is moving between two biomes rapidly)
+            if (_tweensByType.TryGetValue(tweenType, out CancellationTokenSource existingTweenCancellationTokenSource))
+            {
+                Debug.Log("Cancelling...");
+                existingTweenCancellationTokenSource.Cancel();
+                _tweensByType.Remove(tweenType);
+            }
+
+            var tween = GetTweenForVectors(startSize, endSize, duration, setSize, xEase, yEase);
+            bool cancelled = false;
+
+            // add to cancellation array
+            _tweensByType.Add(tweenType, cancellationTokenSource);
+
+            // Cancel tween on CTS cancellation
+            cancellationTokenSource.Token.Register(() =>
+            {
+                tween.Cancel();
+                cancelled = true;
+            });
+
+            await tween;
+
+            if (!cancelled)
+            {
+                _tweensByType.Remove(tweenType);
+            }
+            
+            return !cancelled;
         }
 
         private float GetDurationFromTweenType(ColorTweenType tweenType)

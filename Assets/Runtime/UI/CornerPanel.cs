@@ -21,43 +21,52 @@ namespace Resat.UI
         [SerializeField]
         private CornerTweenSettings _tweenSettings;
 
-        public async UniTask Close()
+        public async UniTask<bool> Close()
         {
-            if (MainPanel == null)
-                return;
+            if (MainPanel == null || Corners.AnyCornersNull)
+                return false;
 
             if (_tweenController == null)
             {
                 // don't lerp
                 MainPanel.gameObject.SetActive(false);
-                return;
+                return true;
             }
 
-            
-            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, Vector2.zero, _tweenSettings.Duration, SetSize, _tweenSettings.XEase, _tweenSettings.YEase);
-            await UniTask.WaitForSeconds(_tweenSettings.Duration - _tweenSettings.CornerDurationOffset);
-            var cornersTween = _tweenController.TweenVectors(Vector2.one, Vector2.zero, _tweenSettings.CornerDuration, SetCornersSize, _tweenSettings.CornersEaseOut, _tweenSettings.CornersEaseOut);
-            await cornersTween;
+            var success = await _tweenController.TweenCornerPanelOut(
+                _tweenSettings,
+                MainPanel.sizeDelta,
+                Corners.CornersContainer!.localScale,
+                SetSize,
+                SetCornersSize,
+                Models.TweenType.InteractionPrompt,
+                Models.TweenType.InteractionPromptCorners);
+
+            return success;
         }
-
         
-        public async UniTask Open()
+        public async UniTask<bool> Open()
         {
             if (MainPanel == null)
-                return;
+                return false;
 
             if (_tweenController == null)
             {
                 // don't lerp
                 MainPanel.gameObject.SetActive(false);
-                return;
+                return true;
             }
             
-            
-            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, _tweenSettings.Size, _tweenSettings.Duration, SetSize, _tweenSettings.XEase, _tweenSettings.YEase);
-            var cornersTween = _tweenController.TweenVectors(Vector2.zero, Vector2.one, _tweenSettings.CornerDuration, SetCornersSize, _tweenSettings.CornersEaseIn, _tweenSettings.CornersEaseIn);
+            var success = await _tweenController.TweenCornerPanelIn(
+                _tweenSettings,
+                MainPanel.sizeDelta,
+                Corners.CornersContainer!.localScale,
+                SetSize,
+                SetCornersSize,
+                Models.TweenType.InteractionPrompt,
+                Models.TweenType.InteractionPromptCorners);
 
-            await mainTween;
+            return success;
         }
         
         private void SetSize(Vector2 size)

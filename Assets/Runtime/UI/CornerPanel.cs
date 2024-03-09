@@ -13,7 +13,9 @@ namespace Resat.UI
         
         [Header("UI")]
         public RectTransform? MainPanel;
-        public PanelCorners? Corners;
+        
+        [SerializeField]
+        public PanelCorners Corners;
 
         [Header("Settings")] 
         [SerializeField]
@@ -22,6 +24,24 @@ namespace Resat.UI
         [SerializeField]
         private float _animationDuration = 1f;
         
+        [SerializeField]
+        private float _cornerAnimationDuration = 1f;
+
+        [SerializeField]
+        private float _cornerOutAnimationOffset = 0f;
+        
+        [SerializeField]
+        private Ease _xEase;
+        
+        [SerializeField]
+        private Ease _yEase;
+        
+        [SerializeField]
+        private Ease _cornersEaseIn;
+        
+        [SerializeField]
+        private Ease _cornersEaseOut;
+
         public async UniTask Close()
         {
             if (MainPanel == null)
@@ -33,10 +53,12 @@ namespace Resat.UI
                 MainPanel.gameObject.SetActive(false);
                 return;
             }
+
             
-            // height is the same, so we only need to await one
-            _tweenController.RunTween(_animationDuration, SetHeight, Ease.Linear, MainPanel.sizeDelta.y, 0f).Forget();
-            await _tweenController.RunTween(_animationDuration, SetWidth, Ease.Linear, MainPanel.sizeDelta.x, 0f);
+            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, Vector2.zero, _animationDuration, SetSize, _xEase, _yEase);
+            await UniTask.WaitForSeconds(_animationDuration - _cornerOutAnimationOffset);
+            var cornersTween = _tweenController.TweenVectors(Vector2.one, Vector2.zero, _cornerAnimationDuration, SetCornersSize, _cornersEaseOut, _cornersEaseOut);
+            await cornersTween;
         }
 
         
@@ -53,26 +75,26 @@ namespace Resat.UI
             }
             
             
-            // height is the same, so we only need to await one
-            _tweenController.RunTween(_animationDuration, SetHeight, Ease.Linear, MainPanel.sizeDelta.y, _size.y).Forget();
-            await _tweenController.RunTween(_animationDuration, SetWidth, Ease.Linear, MainPanel.sizeDelta.x, _size.x);
+            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, _size, _animationDuration, SetSize, _xEase, _yEase);
+            var cornersTween = _tweenController.TweenVectors(Vector2.zero, Vector2.one, _cornerAnimationDuration, SetCornersSize, _cornersEaseIn, _cornersEaseIn);
+
+            await mainTween;
         }
         
-        private void SetHeight(float height)
+        private void SetSize(Vector2 size)
         {
             if (MainPanel == null)
                 return;
 
-            MainPanel.sizeDelta = new Vector2(MainPanel.sizeDelta.x, height);
+            MainPanel.sizeDelta = size;
         }
 
-        private void SetWidth(float width)
+        private void SetCornersSize(Vector2 size)
         {
-            if (MainPanel == null)
+            if (Corners.AnyCornersNull)
                 return;
 
-            MainPanel.sizeDelta = new Vector2(width, MainPanel.sizeDelta.y);
+            Corners.CornersContainer!.localScale = size;
         }
-
     }
 }

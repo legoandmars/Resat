@@ -64,6 +64,24 @@ namespace Resat.Tweening
             return !cancelled;
         }
 
+        public async UniTask<bool> TweenVectors(Vector2 startVector, Vector2 endVector, float duration, Action<Vector2> run, Ease xEase = Ease.Linear, Ease yEase = Ease.Linear)
+        {
+            var xEaser = xEase.ToProcedure();
+            var yEaser = yEase.ToProcedure();
+            
+            // Fairly fucked way to make this work with unmatched eases
+            // I want to use the same tween if at all possible though
+            var tween = _tweenManager.Run(0f, 1f, duration, (value) =>
+            {
+                // scuffed lerp based on the linear tween
+                run.Invoke(InterpolateVector(startVector, endVector, xEaser, yEaser, value));
+            }, Ease.Linear.ToProcedure(), this);
+
+            await tween;
+
+            return true;
+        }
+
         private float GetDurationFromTweenType(ColorTweenType tweenType)
         {
             return tweenType switch
@@ -75,7 +93,21 @@ namespace Resat.Tweening
                 _ => 1f
             };
         }
-        
+
+        private Vector2 InterpolateVector(Vector2 start, Vector2 end, EaseProcedure xEase, EaseProcedure yEase, float time)
+        {
+            float xTime = time;
+            float yTime = time;
+            
+            var xLerp = xEase(ref xTime);
+            var yLerp = yEase(ref yTime);
+
+            var x = Mathf.Lerp(start.x, end.x, xLerp);
+            var y = Mathf.Lerp(start.y, end.y, yLerp);
+
+            return new Vector2(x, y);
+        }
+
         // TODO: OKHSL
         private static Color HSV(ref Color start, ref Color end, ref float time)
         {

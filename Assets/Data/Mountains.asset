@@ -10,6 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9193f81c837c43868f246338c2adda7c, type: 3}
-  m_Name: Mountain
+  m_Name: Mountains
   m_EditorClassIdentifier: 
+  BiomeType: 3
   DialogueBoxColor: {r: 0.07058824, g: 0, b: 0.21960784, a: 1}
+  SkyboxTopColor: {r: 1, g: 1, b: 1, a: 1}
+  SkyboxBottomColor: {r: 1, g: 1, b: 1, a: 1}

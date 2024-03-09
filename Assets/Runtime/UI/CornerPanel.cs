@@ -19,28 +19,7 @@ namespace Resat.UI
 
         [Header("Settings")] 
         [SerializeField]
-        private Vector2 _size;
-        
-        [SerializeField]
-        private float _animationDuration = 1f;
-        
-        [SerializeField]
-        private float _cornerAnimationDuration = 1f;
-
-        [SerializeField]
-        private float _cornerOutAnimationOffset = 0f;
-        
-        [SerializeField]
-        private Ease _xEase;
-        
-        [SerializeField]
-        private Ease _yEase;
-        
-        [SerializeField]
-        private Ease _cornersEaseIn;
-        
-        [SerializeField]
-        private Ease _cornersEaseOut;
+        private CornerTweenSettings _tweenSettings;
 
         public async UniTask Close()
         {
@@ -55,9 +34,9 @@ namespace Resat.UI
             }
 
             
-            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, Vector2.zero, _animationDuration, SetSize, _xEase, _yEase);
-            await UniTask.WaitForSeconds(_animationDuration - _cornerOutAnimationOffset);
-            var cornersTween = _tweenController.TweenVectors(Vector2.one, Vector2.zero, _cornerAnimationDuration, SetCornersSize, _cornersEaseOut, _cornersEaseOut);
+            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, Vector2.zero, _tweenSettings.Duration, SetSize, _tweenSettings.XEase, _tweenSettings.YEase);
+            await UniTask.WaitForSeconds(_tweenSettings.Duration - _tweenSettings.CornerDurationOffset);
+            var cornersTween = _tweenController.TweenVectors(Vector2.one, Vector2.zero, _tweenSettings.CornerDuration, SetCornersSize, _tweenSettings.CornersEaseOut, _tweenSettings.CornersEaseOut);
             await cornersTween;
         }
 
@@ -75,8 +54,8 @@ namespace Resat.UI
             }
             
             
-            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, _size, _animationDuration, SetSize, _xEase, _yEase);
-            var cornersTween = _tweenController.TweenVectors(Vector2.zero, Vector2.one, _cornerAnimationDuration, SetCornersSize, _cornersEaseIn, _cornersEaseIn);
+            var mainTween = _tweenController.TweenVectors(MainPanel.sizeDelta, _tweenSettings.Size, _tweenSettings.Duration, SetSize, _tweenSettings.XEase, _tweenSettings.YEase);
+            var cornersTween = _tweenController.TweenVectors(Vector2.zero, Vector2.one, _tweenSettings.CornerDuration, SetCornersSize, _tweenSettings.CornersEaseIn, _tweenSettings.CornersEaseIn);
 
             await mainTween;
         }

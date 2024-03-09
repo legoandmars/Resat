@@ -2359,14 +2359,15 @@ MonoBehaviour:
     TopRight: {fileID: 163722166}
     BottomLeft: {fileID: 1618718010}
     BottomRight: {fileID: 1180031256}
-  _size: {x: 250, y: 250}
-  _animationDuration: 0.75
-  _cornerAnimationDuration: 0.3
-  _cornerOutAnimationOffset: 0.2
-  _xEase: 12
-  _yEase: 18
-  _cornersEaseIn: 12
-  _cornersEaseOut: 11
+  _tweenSettings:
+    Size: {x: 250, y: 250}
+    Duration: 0.9
+    CornerDuration: 0.3
+    CornerDurationOffset: 0.225
+    XEase: 12
+    YEase: 18
+    CornersEaseIn: 12
+    CornersEaseOut: 11
   _rectTransform: {fileID: 598411207}
   _text: {fileID: 2016472962}
 --- !u!114 &598411209
@@ -2425,7 +2426,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &613702689
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2506,14 +2507,15 @@ MonoBehaviour:
     TopRight: {fileID: 0}
     BottomLeft: {fileID: 0}
     BottomRight: {fileID: 0}
-  _size: {x: 0, y: 0}
-  _animationDuration: 1
-  _cornerAnimationDuration: 1
-  _cornerOutAnimationOffset: 0
-  _xEase: 0
-  _yEase: 0
-  _cornersEaseIn: 0
-  _cornersEaseOut: 0
+  _tweenSettings:
+    Size: {x: 0, y: 0}
+    Duration: 1
+    CornerDuration: 1
+    CornerDurationOffset: 0
+    XEase: 0
+    YEase: 0
+    CornersEaseIn: 0
+    CornersEaseOut: 0
   _rectTransform: {fileID: 613702689}
   _text: {fileID: 386994809}
 --- !u!1 &641632284
@@ -3307,7 +3309,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &847239618
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3389,14 +3391,15 @@ MonoBehaviour:
     TopRight: {fileID: 0}
     BottomLeft: {fileID: 0}
     BottomRight: {fileID: 0}
-  _size: {x: 0, y: 0}
-  _animationDuration: 1
-  _cornerAnimationDuration: 1
-  _cornerOutAnimationOffset: 0
-  _xEase: 0
-  _yEase: 0
-  _cornersEaseIn: 0
-  _cornersEaseOut: 0
+  _tweenSettings:
+    Size: {x: 0, y: 0}
+    Duration: 1
+    CornerDuration: 1
+    CornerDurationOffset: 0
+    XEase: 0
+    YEase: 0
+    CornersEaseIn: 0
+    CornersEaseOut: 0
   _rectTransform: {fileID: 847239618}
   _text: {fileID: 2122227842}
 --- !u!1 &854113693
@@ -7907,7 +7910,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -42}
+  m_AnchoredPosition: {x: 0, y: -47}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2016472962

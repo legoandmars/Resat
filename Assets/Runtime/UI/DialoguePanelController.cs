@@ -1,4 +1,5 @@
-﻿using Resat.Behaviours;
+﻿using Cysharp.Threading.Tasks;
+using Resat.Behaviours;
 using Resat.Dialogue;
 using Resat.Intermediates;
 using TMPro;
@@ -26,7 +27,7 @@ namespace Resat.UI
         private void Start()
         {
             _dialoguePanel?.Close();
-            _namePanel?.Close();
+            _namePanel?.CloseWithText("");
             _interactionPromptPanel?.Close();
         }
         
@@ -42,17 +43,22 @@ namespace Resat.UI
             _npcIntermediate.DialogueStarted -= OnDialogueStarted;
         }
 
-        private void OnDialogueStarted(DialogueSO dialogueSO)
+        private async void OnDialogueStarted(DialogueSO dialogueSO)
         {
             Debug.Log("Oh no!");
             _currentDialogue = dialogueSO;
             
             // Setup UI
             if (_interactionPromptPanel != null)
-                _interactionPromptPanel.Close();
+                await _interactionPromptPanel.Close();
+
+            if (_namePanel != null)
+            {
+                await _namePanel.OpenWithText("Cowboy carl");
+            }
         }
 
-        private void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)
+        private async void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)
         {
             // do other stuff here if necessary, before any panel stuff
             
@@ -60,9 +66,9 @@ namespace Resat.UI
                 return;
 
             if (npcBehaviour == null)
-                _interactionPromptPanel.Close();
+                await _interactionPromptPanel.Close();
             else
-                _interactionPromptPanel.Open();
+                await _interactionPromptPanel.Open();
         }
     }
 }

@@ -1,13 +1,11 @@
-﻿using TMPro;
+﻿using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace Resat.UI
 {
     public class DialoguePanel : CornerPanel
     {
-        [SerializeField]
-        private RectTransform? _rectTransform;
-
         [SerializeField]
         private TextMeshProUGUI? _text;
 
@@ -16,17 +14,47 @@ namespace Resat.UI
             if (_text == null)
                 return;
             
+            Debug.Log(content);
             // TODO: Interpolation
             _text.text = content;
         }
 
         public void SetActive(bool active)
         {
-            if (_rectTransform == null)
+            /*if (_rectTransform == null)
                 return;
             
             // TODO: Interpolation
-            _rectTransform.gameObject.SetActive(active);
+            _rectTransform.gameObject.SetActive(active);*/
         }
+        
+        public async UniTask<bool> OpenWithText(string content)
+        {
+            // disable all text
+            SetText("");
+            
+            var success = await Open();
+
+            // TODO: Animate this
+            if (success)
+            {
+                SetText(content);
+            }
+            
+            // do stuff
+            return success;
+        }
+        
+        public async UniTask<bool> CloseWithText(string content = "")
+        {
+            // TODO: Animate this
+            SetText(content);
+
+            var success = await Close();
+            
+            // do stuff
+            return success;
+        }
+
     }
 }

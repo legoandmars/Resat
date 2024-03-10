@@ -38,9 +38,7 @@ namespace Resat.UI
                 MainPanel.sizeDelta,
                 Corners.CornersContainer!.localScale,
                 SetSize,
-                SetCornersSize,
-                Models.TweenType.InteractionPrompt,
-                Models.TweenType.InteractionPromptCorners);
+                SetCornersSize);
 
             return success;
         }
@@ -62,9 +60,7 @@ namespace Resat.UI
                 MainPanel.sizeDelta,
                 Corners.CornersContainer!.localScale,
                 SetSize,
-                SetCornersSize,
-                Models.TweenType.InteractionPrompt,
-                Models.TweenType.InteractionPromptCorners);
+                SetCornersSize);
 
             return success;
         }

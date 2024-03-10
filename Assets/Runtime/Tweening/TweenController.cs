@@ -98,9 +98,7 @@ namespace Resat.Tweening
             Vector2 currentPanelSize, 
             Vector2 currentCornersSize, 
             Action<Vector2> setPanelSize,
-            Action<Vector2> setCornersSize, 
-            TweenType panelTweenType,
-            TweenType cornerTweenType,
+            Action<Vector2> setCornersSize,
             CancellationTokenSource? cancellationTokenSource = null)
         {
             if (cancellationTokenSource == null)
@@ -113,7 +111,7 @@ namespace Resat.Tweening
                 setPanelSize, 
                 tweenSettings.XEase, 
                 tweenSettings.YEase, 
-                panelTweenType, 
+                tweenSettings.PanelTweenType, 
                 cancellationTokenSource);
             
             var cornerTween = TweenVectorTracked(currentCornersSize, 
@@ -122,7 +120,7 @@ namespace Resat.Tweening
                 setCornersSize, 
                 tweenSettings.CornersEaseOut, 
                 tweenSettings.CornersEaseOut, 
-                cornerTweenType, 
+                tweenSettings.CornerTweenType, 
                 cancellationTokenSource,
                 tweenSettings.Duration - tweenSettings.CornerDurationOffset); // wait before starting corner tween
             
@@ -137,9 +135,7 @@ namespace Resat.Tweening
             Vector2 currentPanelSize, 
             Vector2 currentCornersSize, 
             Action<Vector2> setPanelSize,
-            Action<Vector2> setCornersSize, 
-            TweenType panelTweenType,
-            TweenType cornerTweenType,
+            Action<Vector2> setCornersSize,
             CancellationTokenSource? cancellationTokenSource = null)
         {
             if (cancellationTokenSource == null)
@@ -152,7 +148,7 @@ namespace Resat.Tweening
                 setPanelSize, 
                 tweenSettings.XEase, 
                 tweenSettings.YEase, 
-                panelTweenType, 
+                tweenSettings.PanelTweenType, 
                 cancellationTokenSource);
             
             var cornerTween = TweenVectorTracked(currentCornersSize, 
@@ -161,7 +157,7 @@ namespace Resat.Tweening
             setCornersSize, 
             tweenSettings.CornersEaseIn, 
             tweenSettings.CornersEaseIn, 
-            cornerTweenType, 
+            tweenSettings.CornerTweenType, 
             cancellationTokenSource);
 
             var mainSuccess = await mainTween;
@@ -208,6 +204,10 @@ namespace Resat.Tweening
             {
                 tween.Pause();
                 await UniTask.WaitForSeconds(offset);
+                if (!tween.IsAlive)
+                {
+                    return false;
+                }
                 tween.Start();
             }
             

@@ -15,5 +15,7 @@ namespace Resat.Models
         public Ease YEase;
         public Ease CornersEaseIn;
         public Ease CornersEaseOut;
+        public TweenType PanelTweenType;
+        public TweenType CornerTweenType;
     }
 }

@@ -62,7 +62,7 @@ namespace Resat.Behaviours
             else
             {
                 // assumes all images start out as the same color, as we're setting them to the same color anyways
-                AnimateColors(_dialogueImages[0].color, biome.DialogueBoxColor).Forget();
+                AnimateColors(_dialogueImages[0].color, biome.DialogueBoxColor).Forget(); 
             }
         }
 

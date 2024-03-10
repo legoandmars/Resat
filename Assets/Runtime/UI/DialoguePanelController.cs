@@ -41,6 +41,9 @@ namespace Resat.UI
         [SerializeField]
         private float _dialogueTextStartDelay = 0f;
 
+        [SerializeField]
+        private float _nameTextStartDelay = 0f;
+
         [Header("Text speeds")] 
         [SerializeField]
         private TextAnimationSpeed _dialogueTextSpeed;
@@ -214,9 +217,10 @@ namespace Resat.UI
             // disable all text
             dialoguePanel.SetText("");
             
-            var success = await dialoguePanel.Open(textAnimationSpeed == null);
+            var openSuccess = dialoguePanel.Open(textAnimationSpeed == null);
 
-            if (success)
+            await UniTask.WaitForSeconds(_nameTextStartDelay);
+            if (true)
             {
                 if (textAnimationSpeed == null)
                 {
@@ -228,7 +232,7 @@ namespace Resat.UI
                 }
             }
             
-            return success;
+            return await openSuccess;
         }
 
         private async void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)

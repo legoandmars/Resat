@@ -7641,6 +7641,7 @@ MonoBehaviour:
   _dialoguePanelStartDelay: 0.5
   _namePanelStartDelay: 0.25
   _dialogueTextStartDelay: 0.5
+  _nameTextStartDelay: 0.4
   _dialogueTextSpeed:
     Min: 0.03
     Max: 0.05

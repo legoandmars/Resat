@@ -149,6 +149,9 @@ namespace Resat.UI
 
         private async UniTask CloseDialogue()
         {
+            if (_dialoguePanel == null || _namePanel == null || _dialoguePanel.Text == null || _namePanel.Text == null)
+                return;
+            
             bool showInteractPrompt = _currentDialogue?.ShowInteractPromptAfterDialogueComplete ?? false;
             DialogueStoppedEvent dialogueStoppedEvent = new(_currentDialogue!, _currentNpc!);
             
@@ -159,9 +162,13 @@ namespace Resat.UI
             _currentTokenSource = null;
             _canContinueDialogue = false;
 
-            UniTask<bool> namePanelSuccess = _namePanel != null ? CloseWithText(_namePanel, _nameTextSpeed * _textCloseSpeedMultiplier) : UniTask.FromResult(true);
+            // kill text first so UI outro is consistent
+            var dialogueTextUnanimate = _textAnimationController.UnanimateText(_dialoguePanel.Text.text, _dialoguePanel.Text, _dialogueTextSpeed * _textCloseSpeedMultiplier);
+            var nameTextUnanimate = _textAnimationController.UnanimateText(_namePanel.Text.text, _namePanel.Text, _nameTextSpeed * _textCloseSpeedMultiplier);
+
+            UniTask<bool> namePanelSuccess = _namePanel.Close();
             await UniTask.WaitForSeconds(_namePanelStartDelay);
-            UniTask<bool> dialoguePanelSuccess = _dialoguePanel != null ? CloseWithText(_dialoguePanel, _dialogueTextSpeed * _textCloseSpeedMultiplier) : UniTask.FromResult(true);
+            UniTask<bool> dialoguePanelSuccess = _dialoguePanel.Close();
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
 
             UniTask<bool> promptPanelSuccess;
@@ -172,6 +179,10 @@ namespace Resat.UI
 
             bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
             
+            // just in case text isn't somehow done
+            await dialogueTextUnanimate;
+            await nameTextUnanimate;
+
             _npcIntermediate.StopDialogue(dialogueStoppedEvent);
         }
         

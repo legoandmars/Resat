@@ -7550,7 +7550,7 @@ MonoBehaviour:
   _nameTextSpeed:
     Min: 0.05
     Max: 0.1
-  _textCloseSpeedMultiplier: 4
+  _textCloseSpeedMultiplier: 6
 --- !u!1 &1833412579
 GameObject:
   m_ObjectHideFlags: 0

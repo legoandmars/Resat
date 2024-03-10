@@ -14,6 +14,9 @@ namespace Resat.Behaviours
         [SerializeField]
         private NpcSO? _npcSO;
 
+        [SerializeField]
+        private ExclamationPointBehaviour? _exclamationPoint;
+        
         [NonSerialized]
         public DialogueSO? CurrentDialogue;
 
@@ -22,6 +25,11 @@ namespace Resat.Behaviours
         private void Awake()
         {
             CurrentDialogue = _npcSO?.InitialDialogue;
+
+            if (_exclamationPoint != null)
+            {
+                _exclamationPoint.SetActive(false);
+            }
         }
         
         public void DisableInteractions()

@@ -7,5 +7,7 @@
         InteractionPromptCorners,
         NamePanel,
         NamePanelCorners,
+        DialoguePanel,
+        DialoguePanelCorners
     }
 }

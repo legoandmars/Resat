@@ -28,29 +28,44 @@ namespace Resat.UI
             _rectTransform.gameObject.SetActive(active);*/
         }
         
-        public async UniTask<bool> OpenWithText(string content)
+        public async UniTask<bool> OpenWithText(string content, bool instant = false)
         {
             // disable all text
             SetText("");
             
-            var success = await Open();
+            var success = await Open(instant);
 
             // TODO: Animate this
             if (success)
             {
-                SetText(content);
+                if (instant)
+                {
+                    SetText(content);
+                }
+                else
+                {
+                    // TODO: Animate this
+                    SetText(content);
+                }
             }
             
             // do stuff
             return success;
         }
         
-        public async UniTask<bool> CloseWithText(string content = "")
+        public async UniTask<bool> CloseWithText(string content = "", bool instant = false)
         {
-            // TODO: Animate this
-            SetText(content);
+            if (instant)
+            {
+                SetText(content);
+            }
+            else
+            {
+                // TODO: Animate this
+                SetText(content);
+            }
 
-            var success = await Close();
+            var success = await Close(instant);
             
             // do stuff
             return success;

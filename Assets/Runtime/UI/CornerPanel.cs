@@ -19,17 +19,18 @@ namespace Resat.UI
 
         [Header("Settings")] 
         [SerializeField]
-        private CornerTweenSettings _tweenSettings;
+        private CornerTweenSettings _tweenSettings = new();
 
-        public async UniTask<bool> Close()
+        public async UniTask<bool> Close(bool instant = false)
         {
             if (MainPanel == null || Corners.AnyCornersNull)
                 return false;
 
-            if (_tweenController == null)
+            if (_tweenController == null || instant)
             {
                 // don't lerp
-                MainPanel.gameObject.SetActive(false);
+                SetSize(Vector2.zero);
+                SetCornersSize(Vector2.zero);
                 return true;
             }
 
@@ -43,15 +44,16 @@ namespace Resat.UI
             return success;
         }
         
-        public async UniTask<bool> Open()
+        public async UniTask<bool> Open(bool instant = false)
         {
             if (MainPanel == null)
                 return false;
 
-            if (_tweenController == null)
+            if (_tweenController == null || instant)
             {
                 // don't lerp
-                MainPanel.gameObject.SetActive(false);
+                SetSize(_tweenSettings.Size);
+                SetCornersSize(Vector2.one);
                 return true;
             }
             
@@ -70,7 +72,6 @@ namespace Resat.UI
             if (MainPanel == null)
                 return;
 
-            Debug.Log("Size!");
             MainPanel.sizeDelta = size;
         }
 

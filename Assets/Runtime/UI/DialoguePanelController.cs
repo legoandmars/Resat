@@ -21,14 +21,21 @@ namespace Resat.UI
         [SerializeField]
         private CornerPanel? _interactionPromptPanel;
 
+        [Header("Delays, each one is additive; eg dialogue panel include name panel start delay")]
+        [SerializeField]
+        private float _dialoguePanelStartDelay = 0.5f;
+        
+        [SerializeField]
+        private float _namePanelStartDelay = 1f;
+
         private DialogueSO? _currentDialogue;
 
         // Disable dialogue panels on start
         private void Start()
         {
-            _dialoguePanel?.Close();
-            _namePanel?.CloseWithText("");
-            _interactionPromptPanel?.Close();
+            _dialoguePanel?.CloseWithText("", true);
+            _namePanel?.CloseWithText("", true);
+            _interactionPromptPanel?.Close(true);
         }
         
         private void OnEnable()
@@ -47,15 +54,16 @@ namespace Resat.UI
         {
             Debug.Log("Oh no!");
             _currentDialogue = dialogueSO;
-            
-            // Setup UI
-            if (_interactionPromptPanel != null)
-                await _interactionPromptPanel.Close();
 
-            if (_namePanel != null)
-            {
-                await _namePanel.OpenWithText("Cowboy carl");
-            }
+            UniTask<bool> promptPanelSuccess = _interactionPromptPanel?.Close() ?? UniTask.FromResult(true);
+            await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
+            UniTask<bool> dialoguePanelSuccess = _dialoguePanel?.Open() ?? UniTask.FromResult(true);
+            await UniTask.WaitForSeconds(_namePanelStartDelay);
+            UniTask<bool> namePanelSuccess = _namePanel?.OpenWithText(dialogueSO.name) ?? UniTask.FromResult(true);
+
+            bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
+
+            // add first page of dialogue
         }
 
         private async void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)

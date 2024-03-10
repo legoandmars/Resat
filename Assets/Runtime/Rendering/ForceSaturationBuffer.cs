@@ -89,7 +89,7 @@ namespace Resat.Rendering
             CreateCommandBuffer();
         }
 
-        private void RemoveRenderers(List<Renderer> renderers, bool resaturate)
+        public void RemoveRenderers(List<Renderer> renderers, bool resaturate)
         {
             if (resaturate)
             {

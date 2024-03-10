@@ -7,6 +7,7 @@ namespace Resat.Behaviours
     {
         public List<Renderer> Renderers => _renderers;
         public bool Resaturate => _resaturate;
+        public bool Interactable => _interactable;
         
         [SerializeField]
         private List<Renderer> _renderers = new();
@@ -16,6 +17,9 @@ namespace Resat.Behaviours
         [Header("True if force saturated, false if force desaturated")]
         [SerializeField]
         private bool _resaturate = true;
+
+        [SerializeField]
+        private bool _interactable = false;
 
         public void SetActive(bool active)
         {

@@ -2,6 +2,7 @@
 using Resat.Behaviours;
 using Resat.Input;
 using Resat.Intermediates;
+using Resat.Models.Events;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -45,7 +46,7 @@ namespace Resat.Dialogue
             Debug.Log("Focus changed!");
         }
         
-        private void OnDialogueStopped()
+        private void OnDialogueStopped(DialogueStoppedEvent dialogueStoppedEvent)
         {
             Debug.Log("Stopping dialogue...");
             _inDialogue = false;

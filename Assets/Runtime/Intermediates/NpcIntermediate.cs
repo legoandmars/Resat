@@ -11,7 +11,7 @@ namespace Resat.Intermediates
     {
         public event Action<NpcTriggerBehaviour?>? NpcFocusChanged;
         public event Action<DialogueStartedEvent>? DialogueStarted;
-        public event Action? DialogueStopped;
+        public event Action<DialogueStoppedEvent>? DialogueStopped;
         public event Action? DialogueContinueRequested;
         
         public void ChangeNpcFocus(NpcTriggerBehaviour? npcBehaviour)
@@ -24,9 +24,9 @@ namespace Resat.Intermediates
             DialogueStarted?.Invoke(dialogueStartedEvent);
         }
         
-        public void StopDialogue()
+        public void StopDialogue(DialogueStoppedEvent dialogueStoppedEvent)
         {
-            DialogueStopped?.Invoke();
+            DialogueStopped?.Invoke(dialogueStoppedEvent);
         }
 
         public void RequestDialogueContinue()

@@ -5,6 +5,7 @@ using Resat.Dialogue;
 using Resat.Intermediates;
 using Resat.Models;
 using Resat.Models.Events;
+using Resat.Npcs;
 using TMPro;
 using UnityEngine;
 
@@ -51,6 +52,7 @@ namespace Resat.UI
         private float _textCloseSpeedMultiplier = 2f;
 
         private DialogueSO? _currentDialogue;
+        private NpcSO? _currentNpc; // used soley for the exit event
         private int _dialoguePage = 0;
         private CancellationTokenSource? _currentTokenSource;
         private bool _canContinueDialogue = false;
@@ -100,6 +102,7 @@ namespace Resat.UI
         {
             // setup & clear stuff
             _currentDialogue = dialogueStartedEvent.Dialogue;
+            _currentNpc = dialogueStartedEvent.Npc;
             _canContinueDialogue = false;
             _dialogueIcon?.SetIcon(DialogueIconType.InDialogue);
                 
@@ -146,8 +149,12 @@ namespace Resat.UI
 
         private async UniTask CloseDialogue()
         {
+            bool showInteractPrompt = _currentDialogue?.ShowInteractPromptAfterDialogueComplete ?? false;
+            DialogueStoppedEvent dialogueStoppedEvent = new(_currentDialogue!, _currentNpc!);
+            
             // reset all variables
             _currentDialogue = null;
+            _currentNpc = null;
             _dialoguePage = 0;
             _currentTokenSource = null;
             _canContinueDialogue = false;
@@ -156,11 +163,16 @@ namespace Resat.UI
             await UniTask.WaitForSeconds(_namePanelStartDelay);
             UniTask<bool> dialoguePanelSuccess = _dialoguePanel != null ? CloseWithText(_dialoguePanel, _dialogueTextSpeed * _textCloseSpeedMultiplier) : UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
-            UniTask<bool> promptPanelSuccess = _interactionPromptPanel?.Open() ?? UniTask.FromResult(true); // TODO: Selectively do based on if NPC has more dialogue for you
+
+            UniTask<bool> promptPanelSuccess;
+            if (!showInteractPrompt || _interactionPromptPanel == null)
+                promptPanelSuccess = UniTask.FromResult(true);
+            else
+                promptPanelSuccess = _interactionPromptPanel.Open();
 
             bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
             
-            _npcIntermediate.StopDialogue();
+            _npcIntermediate.StopDialogue(dialogueStoppedEvent);
         }
         
         public async UniTask<bool> CloseWithText(DialoguePanel dialoguePanel, TextAnimationSpeed? textAnimationSpeed = null)

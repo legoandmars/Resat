@@ -8,5 +8,6 @@ namespace Resat.Dialogue
     public class DialogueSO : ScriptableObject
     {
         public List<string> Dialogue = new();
+        public bool ShowInteractPromptAfterDialogueComplete = true;
     }
 }

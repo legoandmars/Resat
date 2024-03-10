@@ -58,9 +58,10 @@ namespace Resat.Dialogue
 
         private void BeginDialogue()
         {
-            var dialogue = _npcBehaviour?.NpcSO?.Dialogue;
+            var npc = _npcBehaviour?.NpcSO;
+            var dialogue = npc?.Dialogue;
 
-            if (dialogue == null)
+            if (npc == null || dialogue == null)
                 return;
             
             Debug.Log("Starting dialogue...");
@@ -70,7 +71,7 @@ namespace Resat.Dialogue
             _inputController.DisablePlayerInput();
             _inputController.DisableCameraInput();
             
-            _npcIntermediate.StartDialogue(dialogue);
+            _npcIntermediate.StartDialogue(new (dialogue, npc));
         }
     }
 }

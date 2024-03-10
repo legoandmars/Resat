@@ -2,6 +2,7 @@
 using Resat.Behaviours;
 using Resat.Dialogue;
 using Resat.Intermediates;
+using Resat.Models.Events;
 using TMPro;
 using UnityEngine;
 
@@ -50,16 +51,16 @@ namespace Resat.UI
             _npcIntermediate.DialogueStarted -= OnDialogueStarted;
         }
 
-        private async void OnDialogueStarted(DialogueSO dialogueSO)
+        private async void OnDialogueStarted(DialogueStartedEvent dialogueStartedEvent)
         {
             Debug.Log("Oh no!");
-            _currentDialogue = dialogueSO;
+            _currentDialogue = dialogueStartedEvent.Dialogue;
 
             UniTask<bool> promptPanelSuccess = _interactionPromptPanel?.Close() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
             UniTask<bool> dialoguePanelSuccess = _dialoguePanel?.Open() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_namePanelStartDelay);
-            UniTask<bool> namePanelSuccess = _namePanel?.OpenWithText(dialogueSO.name) ?? UniTask.FromResult(true);
+            UniTask<bool> namePanelSuccess = _namePanel?.OpenWithText(dialogueStartedEvent.Npc.Name) ?? UniTask.FromResult(true);
 
             bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
 

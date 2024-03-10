@@ -177,12 +177,12 @@ namespace Resat.Tweening
             CancellationTokenSource cancellationTokenSource,
             float offset = 0f)
         {
-            Debug.Log($"Starting tween {tweenType}...");
+            // Debug.Log($"Starting tween {tweenType}...");
             // Cancel tween on same object, if existing
             // Used for cancelling and retrying a color tween (eg if the user is moving between two biomes rapidly)
             if (_tweensByType.TryGetValue(tweenType, out CancellationTokenSource existingTweenCancellationTokenSource))
             {
-                Debug.Log($"Cancelling {tweenType}...");
+                // Debug.Log($"Cancelling {tweenType}...");
                 existingTweenCancellationTokenSource.Cancel();
                 _tweensByType.Remove(tweenType);
             }

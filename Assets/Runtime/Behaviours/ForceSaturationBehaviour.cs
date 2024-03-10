@@ -16,5 +16,10 @@ namespace Resat.Behaviours
         [Header("True if force saturated, false if force desaturated")]
         [SerializeField]
         private bool _resaturate = true;
+
+        public void SetActive(bool active)
+        {
+            gameObject.SetActive(active);
+        }
     }
 }

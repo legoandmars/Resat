@@ -933,8 +933,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32339dae801d401da3ae4fde027ee0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _typingSpeedMin: 0.1
-  _typingSpeedMax: 0.2
 --- !u!1 &163722165
 GameObject:
   m_ObjectHideFlags: 0
@@ -7266,6 +7264,13 @@ MonoBehaviour:
   _dialoguePanelStartDelay: 0.5
   _namePanelStartDelay: 0.25
   _dialogueTextStartDelay: 0.5
+  _dialogueTextSpeed:
+    Min: 0.03
+    Max: 0.05
+  _nameTextSpeed:
+    Min: 0.05
+    Max: 0.1
+  _textCloseSpeedMultiplier: 4
 --- !u!1 &1851688478
 GameObject:
   m_ObjectHideFlags: 0

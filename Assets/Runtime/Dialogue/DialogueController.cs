@@ -27,12 +27,14 @@ namespace Resat.Dialogue
         private void OnEnable()
         {
             _npcIntermediate.NpcFocusChanged += OnNpcFocusChanged;
+            _npcIntermediate.DialogueStopped += OnDialogueStopped;
             _inputController.Input.Dialogue.AddCallbacks(this);
         }
 
         private void OnDisable()
         {
             _npcIntermediate.NpcFocusChanged -= OnNpcFocusChanged;
+            _npcIntermediate.DialogueStopped -= OnDialogueStopped;
             _inputController.Input.Dialogue.RemoveCallbacks(this);
         }
 
@@ -41,6 +43,16 @@ namespace Resat.Dialogue
             _npcBehaviour = npcBehaviour;
             
             Debug.Log("Focus changed!");
+        }
+        
+        private void OnDialogueStopped()
+        {
+            Debug.Log("Stopping dialogue...");
+            _inDialogue = false;
+            
+            // Enable input
+            _inputController.EnablePlayerInput();
+            _inputController.EnableCameraInput();
         }
 
         public void OnInteract(InputAction.CallbackContext context)
@@ -69,7 +81,7 @@ namespace Resat.Dialogue
             var npc = _npcBehaviour?.NpcSO;
             var dialogue = npc?.Dialogue;
 
-            if (npc == null || dialogue == null)
+            if (npc == null || dialogue == null || _inDialogue)
                 return;
             
             Debug.Log("Starting dialogue...");

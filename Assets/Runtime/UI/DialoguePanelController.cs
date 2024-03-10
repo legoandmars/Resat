@@ -40,6 +40,16 @@ namespace Resat.UI
         [SerializeField]
         private float _dialogueTextStartDelay = 0f;
 
+        [Header("Text speeds")] 
+        [SerializeField]
+        private TextAnimationSpeed _dialogueTextSpeed;
+        
+        [SerializeField]
+        private TextAnimationSpeed _nameTextSpeed;
+
+        [SerializeField]
+        private float _textCloseSpeedMultiplier = 2f;
+
         private DialogueSO? _currentDialogue;
         private int _dialoguePage = 0;
         private CancellationTokenSource? _currentTokenSource;
@@ -49,9 +59,9 @@ namespace Resat.UI
         private void Start()
         {
             if (_dialoguePanel != null)
-                CloseWithText(_dialoguePanel, true).Forget();
+                CloseWithText(_dialoguePanel).Forget();
             if (_namePanel != null)
-                CloseWithText(_namePanel, true).Forget();
+                CloseWithText(_namePanel).Forget();
             if (_interactionPromptPanel != null)
                 _interactionPromptPanel.Close(true).Forget();
         }
@@ -97,7 +107,7 @@ namespace Resat.UI
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
             UniTask<bool> dialoguePanelSuccess = _dialoguePanel?.Open() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_namePanelStartDelay);
-            UniTask<bool> namePanelSuccess = _namePanel != null ? OpenWithText(_namePanel, dialogueStartedEvent.Npc.Name) : UniTask.FromResult(true);
+            UniTask<bool> namePanelSuccess = _namePanel != null ? OpenWithText(_namePanel, dialogueStartedEvent.Npc.Name, _nameTextSpeed) : UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_dialogueTextStartDelay);
 
             // add first page of dialogue
@@ -126,7 +136,7 @@ namespace Resat.UI
             _dialogueIcon?.SetIcon(DialogueIconType.InDialogue);
             var pageContent = _currentDialogue.Dialogue[_dialoguePage]!;
             
-            await _textAnimationController.AnimateText(pageContent, _dialoguePanel.Text, _currentTokenSource.Token);
+            await _textAnimationController.AnimateText(pageContent, _dialoguePanel.Text, _dialogueTextSpeed, _currentTokenSource.Token);
 
             // setup for next page
             _currentTokenSource = null;
@@ -136,29 +146,44 @@ namespace Resat.UI
 
         private async UniTask CloseDialogue()
         {
-            await _textAnimationController.UnanimateText(_dialoguePanel.Text.text, _dialoguePanel.Text);
+            // reset all variables
+            _currentDialogue = null;
+            _dialoguePage = 0;
+            _currentTokenSource = null;
+            _canContinueDialogue = false;
+
+            UniTask<bool> namePanelSuccess = _namePanel != null ? CloseWithText(_namePanel, _nameTextSpeed * _textCloseSpeedMultiplier) : UniTask.FromResult(true);
+            await UniTask.WaitForSeconds(_namePanelStartDelay);
+            UniTask<bool> dialoguePanelSuccess = _dialoguePanel != null ? CloseWithText(_dialoguePanel, _dialogueTextSpeed * _textCloseSpeedMultiplier) : UniTask.FromResult(true);
+            await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
+            UniTask<bool> promptPanelSuccess = _interactionPromptPanel?.Open() ?? UniTask.FromResult(true); // TODO: Selectively do based on if NPC has more dialogue for you
+
+            bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
+            
+            _npcIntermediate.StopDialogue();
         }
         
-        public async UniTask<bool> CloseWithText(DialoguePanel dialoguePanel, bool instant = false)
+        public async UniTask<bool> CloseWithText(DialoguePanel dialoguePanel, TextAnimationSpeed? textAnimationSpeed = null)
         {
             if (dialoguePanel.Text == null)
                 return false;
             
-            if (instant)
+            if (textAnimationSpeed == null)
             {
+                // instant
                 dialoguePanel.SetText("");
             }
             else
             {
-                await _textAnimationController.UnanimateText(dialoguePanel.Text.text, dialoguePanel.Text);
+                await _textAnimationController.UnanimateText(dialoguePanel.Text.text, dialoguePanel.Text, textAnimationSpeed.Value);
             }
 
-            var success = await dialoguePanel.Close(instant);
+            var success = await dialoguePanel.Close(textAnimationSpeed == null);
 
             return success;
         }
 
-        public async UniTask<bool> OpenWithText(DialoguePanel dialoguePanel, string content, bool instant = false)
+        public async UniTask<bool> OpenWithText(DialoguePanel dialoguePanel, string content, TextAnimationSpeed? textAnimationSpeed = null)
         {
             if (dialoguePanel.Text == null)
                 return false;
@@ -166,17 +191,17 @@ namespace Resat.UI
             // disable all text
             dialoguePanel.SetText("");
             
-            var success = await dialoguePanel.Open(instant);
+            var success = await dialoguePanel.Open(textAnimationSpeed == null);
 
             if (success)
             {
-                if (instant)
+                if (textAnimationSpeed == null)
                 {
                     dialoguePanel.SetText(content);
                 }
                 else
                 {
-                    await _textAnimationController.AnimateText(content, dialoguePanel.Text);
+                    await _textAnimationController.AnimateText(content, dialoguePanel.Text, textAnimationSpeed.Value);
                 }
             }
             

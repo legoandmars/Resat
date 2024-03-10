@@ -38,7 +38,8 @@ Shader "Unlit/Desaturate"
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
             };
-
+            
+            sampler2D _ForceSaturationMask;
             sampler2D _MainTex;
             float4 _MainTex_ST;
             float4 _ScreenResolution;
@@ -120,6 +121,10 @@ Shader "Unlit/Desaturate"
 
                 // adjusts all colors outside the camera viewport
                 float4 multiplier = lerp(float4(1,1,1,1), _OutsideCutoutColor, 1 - cut);
+
+                // lerp by force resaturation for objects like quest items
+                float forceResaturate = tex2D(_ForceSaturationMask, i.uv);
+                desaturationLerp = lerp(desaturationLerp, 1, step(0.6, forceResaturate));
                 
                 // TODO: Partial resaturation? Maybe you need to see a color 100 times to fully resat?
                 return lerp(desaturatedCol, col, lerp(cut, 1, desaturationLerp)) * multiplier;

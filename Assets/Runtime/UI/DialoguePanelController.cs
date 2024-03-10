@@ -58,6 +58,7 @@ namespace Resat.UI
         private NpcSO? _currentNpc; // used soley for the exit event
         private int _dialoguePage = 0;
         private CancellationTokenSource? _currentTokenSource;
+        private CancellationTokenSource? _namePanelTokenSource;
         private bool _canContinueDialogue = false;
         
         // Disable dialogue panels on start
@@ -108,12 +109,13 @@ namespace Resat.UI
             _currentNpc = dialogueStartedEvent.Npc;
             _canContinueDialogue = false;
             _dialogueIcon?.SetIcon(DialogueIconType.InDialogue);
+            _namePanelTokenSource = new();
                 
             UniTask<bool> promptPanelSuccess = _interactionPromptPanel?.Close() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
             UniTask<bool> dialoguePanelSuccess = _dialoguePanel?.Open() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_namePanelStartDelay);
-            UniTask<bool> namePanelSuccess = _namePanel != null ? OpenWithText(_namePanel, dialogueStartedEvent.Npc.Name, _nameTextSpeed) : UniTask.FromResult(true);
+            UniTask<bool> namePanelSuccess = _namePanel != null ? OpenWithText(_namePanel, dialogueStartedEvent.Npc.Name, _nameTextSpeed, _namePanelTokenSource.Token) : UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_dialogueTextStartDelay);
 
             // add first page of dialogue
@@ -158,13 +160,17 @@ namespace Resat.UI
             bool showInteractPrompt = _currentDialogue?.ShowInteractPromptAfterDialogueComplete ?? false;
             DialogueStoppedEvent dialogueStoppedEvent = new(_currentDialogue!, _currentNpc!);
             
+            // cancel just in case user was spamming click
+            _namePanelTokenSource?.Cancel();
+            
             // reset all variables
             _currentDialogue = null;
             _currentNpc = null;
             _dialoguePage = 0;
             _currentTokenSource = null;
             _canContinueDialogue = false;
-
+            _namePanelTokenSource = null;
+            
             // kill text first so UI outro is consistent
             var dialogueTextUnanimate = _textAnimationController.UnanimateText(_dialoguePanel.Text.text, _dialoguePanel.Text, _dialogueTextSpeed * _textCloseSpeedMultiplier);
             var nameTextUnanimate = _textAnimationController.UnanimateText(_namePanel.Text.text, _namePanel.Text, _nameTextSpeed * _textCloseSpeedMultiplier);
@@ -209,7 +215,7 @@ namespace Resat.UI
             return success;
         }
 
-        public async UniTask<bool> OpenWithText(DialoguePanel dialoguePanel, string content, TextAnimationSpeed? textAnimationSpeed = null)
+        public async UniTask<bool> OpenWithText(DialoguePanel dialoguePanel, string content, TextAnimationSpeed? textAnimationSpeed = null, CancellationToken cancellationToken = default)
         {
             if (dialoguePanel.Text == null)
                 return false;
@@ -228,7 +234,7 @@ namespace Resat.UI
                 }
                 else
                 {
-                    await _textAnimationController.AnimateText(content, dialoguePanel.Text, textAnimationSpeed.Value);
+                    await _textAnimationController.AnimateText(content, dialoguePanel.Text, textAnimationSpeed.Value, null, cancellationToken);
                 }
             }
             

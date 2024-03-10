@@ -10,7 +10,7 @@ namespace Resat.Behaviours
     {
         public bool Interactable => _interactable;
         public NpcSO? NpcSO => _npcSO;
-        public ExclamationPointBehaviour ExclamationPoint => _exclamationPoint;
+        public ExclamationPointBehaviour? ExclamationPoint => _exclamationPoint;
         
         [SerializeField]
         private NpcSO? _npcSO;

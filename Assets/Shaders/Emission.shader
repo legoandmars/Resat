@@ -1,6 +1,10 @@
 ﻿// https://lindenreidblog.com/2018/09/13/using-command-buffers-in-unity-selective-bloom/
 Shader "Custom/Emission"
 {
+	Properties
+    {
+    	_Color ("Render Color", Color) = (1,0,0,1)
+    }
 	SubShader
 	{
 		Pass
@@ -12,7 +16,8 @@ Shader "Custom/Emission"
 			
 			// Properties
             sampler2D_float _CameraDepthTexture;
-
+			fixed4 _Color;
+			
 			struct vertexInput
 			{
 				float4 vertex : POSITION;
@@ -49,13 +54,12 @@ Shader "Custom/Emission"
 				camDepth = Linear01Depth (camDepth); // converts z buffer value to depth value from 0..1
 
                 float diff = saturate(input.linearDepth - camDepth);
-                if(diff < 0.001)
-                    c = float4(1, 0, 0, 1);
+                if (diff < 0.001)
+                {
+					c = _Color;
+                }
 
                 return c;
-                //return float4(camDepth, camDepth, camDepth, 1); // test camera depth value
-                //return float4(input.linearDepth, input.linearDepth, input.linearDepth, 1); // test our depth
-                //return float4(diff, diff, diff, 1);
 			}
 
 			ENDCG

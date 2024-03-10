@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RendererUtils;
 
 namespace Resat.Rendering
 {
@@ -9,15 +10,22 @@ namespace Resat.Rendering
     {
         private static readonly int ForceSaturationMask = Shader.PropertyToID("_ForceSaturationMask");
         
+        // TODO: Add ability to like, disable these, changing the list doesn't remove the serialized DrawRenderer calls
         [SerializeField]
-        private List<Renderer> _maskedRenderers = new();
+        private List<Renderer> _forceSaturateRenderers = new();
+
+        [SerializeField]
+        private List<Renderer> _forceDesaturateRenderers = new();
 
         [SerializeField]
         private Camera? _camera;
 
         // used to render the actual renderer
         [SerializeField]
-        private Material? _maskMaterial;
+        private Material? _forceSaturateMaterial;
+
+        [SerializeField]
+        private Material? _forceDesaturateMaterial;
 
         [SerializeField]
         private CameraEvent _cameraEvent = CameraEvent.AfterEverything;
@@ -30,19 +38,27 @@ namespace Resat.Rendering
             var commandBuffer = new CommandBuffer();
             commandBuffer.name = "Render force saturated objects";
             
-            commandBuffer.GetTemporaryRT(ForceSaturationMask, -1, -1, 24, FilterMode.Bilinear);
+            commandBuffer.GetTemporaryRT(ForceSaturationMask, -1, -1, 0, FilterMode.Bilinear);
             commandBuffer.SetRenderTarget(ForceSaturationMask);
             commandBuffer.ClearRenderTarget(true, true, Color.black);
 
-            foreach (var maskedRenderer in _maskedRenderers)
+            foreach (var maskedRenderer in _forceSaturateRenderers)
             {
                 if (maskedRenderer.gameObject == null) 
                     continue;
                 
-                commandBuffer.DrawRenderer(maskedRenderer, _maskMaterial);
+                commandBuffer.DrawRenderer(maskedRenderer, _forceSaturateMaterial);
             }
-            
-            commandBuffer.SetGlobalTexture(ForceSaturationMask, ForceSaturationMask);
+
+            foreach (var maskedRenderer in _forceDesaturateRenderers)
+            {
+                if (maskedRenderer.gameObject == null) 
+                    continue;
+                
+                commandBuffer.DrawRenderer(maskedRenderer, _forceDesaturateMaterial);
+            }
+
+            var list = new RendererList();
             
             _camera.AddCommandBuffer(_cameraEvent, commandBuffer);
         }

@@ -61,7 +61,7 @@ namespace Resat.Dialogue
             if (!context.performed || !_inDialogue)
                 return;
             
-            Debug.Log("Continue...");
+            _npcIntermediate.RequestDialogueContinue();
         }
 
         private void BeginDialogue()

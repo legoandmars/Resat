@@ -19,24 +19,5 @@ namespace Resat.UI
             // TODO: Interpolation
             _text.text = content;
         }
-
-        public async UniTask<bool> CloseWithText(string content = "", bool instant = false)
-        {
-            if (instant)
-            {
-                SetText(content);
-            }
-            else
-            {
-                // TODO: Animate this
-                SetText(content);
-            }
-
-            var success = await Close(instant);
-            
-            // do stuff
-            return success;
-        }
-
     }
 }

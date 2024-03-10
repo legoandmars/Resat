@@ -1,7 +1,9 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
 using Resat.Behaviours;
 using Resat.Dialogue;
 using Resat.Intermediates;
+using Resat.Models;
 using Resat.Models.Events;
 using TMPro;
 using UnityEngine;
@@ -25,6 +27,9 @@ namespace Resat.UI
         [SerializeField]
         private CornerPanel? _interactionPromptPanel;
 
+        [SerializeField]
+        private DialogueIcon? _dialogueIcon;
+
         [Header("Delays, each one is additive; eg dialogue panel include name panel start delay")]
         [SerializeField]
         private float _dialoguePanelStartDelay = 0.5f;
@@ -37,19 +42,42 @@ namespace Resat.UI
 
         private DialogueSO? _currentDialogue;
         private int _dialoguePage = 0;
+        private CancellationTokenSource? _currentTokenSource;
+        private bool _canContinueDialogue = false;
         
         // Disable dialogue panels on start
         private void Start()
         {
-            _dialoguePanel?.CloseWithText("", true);
-            _namePanel?.CloseWithText("", true);
-            _interactionPromptPanel?.Close(true);
+            if (_dialoguePanel != null)
+                CloseWithText(_dialoguePanel, true).Forget();
+            if (_namePanel != null)
+                CloseWithText(_namePanel, true).Forget();
+            if (_interactionPromptPanel != null)
+                _interactionPromptPanel.Close(true).Forget();
         }
         
         private void OnEnable()
         {
             _npcIntermediate.NpcFocusChanged += OnNpcFocusChanged;
             _npcIntermediate.DialogueStarted += OnDialogueStarted;
+            _npcIntermediate.DialogueContinueRequested += OnDialogueContinueRequested;
+        }
+
+        private void OnDialogueContinueRequested()
+        {
+            if (!_canContinueDialogue)
+                return;
+            
+            if (_currentTokenSource == null)
+            {
+                // next page
+                NextDialoguePage().Forget();
+            }
+            else
+            {
+                // skip text animation
+                _currentTokenSource.Cancel();
+            }
         }
 
         private void OnDisable()
@@ -60,9 +88,11 @@ namespace Resat.UI
 
         private async void OnDialogueStarted(DialogueStartedEvent dialogueStartedEvent)
         {
-            Debug.Log("Oh no!");
+            // setup & clear stuff
             _currentDialogue = dialogueStartedEvent.Dialogue;
-
+            _canContinueDialogue = false;
+            _dialogueIcon?.SetIcon(DialogueIconType.InDialogue);
+                
             UniTask<bool> promptPanelSuccess = _interactionPromptPanel?.Close() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
             UniTask<bool> dialoguePanelSuccess = _dialoguePanel?.Open() ?? UniTask.FromResult(true);
@@ -73,7 +103,8 @@ namespace Resat.UI
             // add first page of dialogue
             _dialoguePage = 0;
             NextDialoguePage().Forget();
-
+            _canContinueDialogue = true;
+            
             bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
         }
 
@@ -81,21 +112,52 @@ namespace Resat.UI
         {
             if (_currentDialogue == null || _dialoguePanel?.Text == null)
                 return;
-            
+
             var lastPage = _currentDialogue.Dialogue.Count - 1;
-            if (_dialoguePage == lastPage)
+            if (_dialoguePage > lastPage)
             {
                 // cancel out!
+                await CloseDialogue();
                 return;
             }
-
+            
+            // Setup variables for in-dialogue
+            _currentTokenSource = new();
+            _dialogueIcon?.SetIcon(DialogueIconType.InDialogue);
             var pageContent = _currentDialogue.Dialogue[_dialoguePage]!;
             
-            await _textAnimationController.AnimateText(pageContent, _dialoguePanel.Text);
-            
+            await _textAnimationController.AnimateText(pageContent, _dialoguePanel.Text, _currentTokenSource.Token);
+
             // setup for next page
+            _currentTokenSource = null;
+            _dialoguePage++;
+            _dialogueIcon?.SetIcon(_dialoguePage > lastPage ? DialogueIconType.DialogueFinished : DialogueIconType.DialoguePageFinished);
+        }
+
+        private async UniTask CloseDialogue()
+        {
+            await _textAnimationController.UnanimateText(_dialoguePanel.Text.text, _dialoguePanel.Text);
         }
         
+        public async UniTask<bool> CloseWithText(DialoguePanel dialoguePanel, bool instant = false)
+        {
+            if (dialoguePanel.Text == null)
+                return false;
+            
+            if (instant)
+            {
+                dialoguePanel.SetText("");
+            }
+            else
+            {
+                await _textAnimationController.UnanimateText(dialoguePanel.Text.text, dialoguePanel.Text);
+            }
+
+            var success = await dialoguePanel.Close(instant);
+
+            return success;
+        }
+
         public async UniTask<bool> OpenWithText(DialoguePanel dialoguePanel, string content, bool instant = false)
         {
             if (dialoguePanel.Text == null)
@@ -106,7 +168,6 @@ namespace Resat.UI
             
             var success = await dialoguePanel.Open(instant);
 
-            // TODO: Animate this
             if (success)
             {
                 if (instant)
@@ -115,12 +176,10 @@ namespace Resat.UI
                 }
                 else
                 {
-                    // TODO: Animate this
                     await _textAnimationController.AnimateText(content, dialoguePanel.Text);
                 }
             }
             
-            // do stuff
             return success;
         }
 

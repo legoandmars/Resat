@@ -56,6 +56,14 @@ namespace Resat.Dialogue
             BeginDialogue();
         }
 
+        public void OnContinue(InputAction.CallbackContext context)
+        {
+            if (!context.performed || !_inDialogue)
+                return;
+            
+            Debug.Log("Continue...");
+        }
+
         private void BeginDialogue()
         {
             var npc = _npcBehaviour?.NpcSO;

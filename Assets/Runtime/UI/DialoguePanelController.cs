@@ -11,6 +11,9 @@ namespace Resat.UI
     public class DialoguePanelController : MonoBehaviour
     {
         [SerializeField]
+        private TextAnimationController _textAnimationController = null!;
+
+        [SerializeField]
         private NpcIntermediate _npcIntermediate = null!;
         
         [SerializeField]
@@ -28,9 +31,13 @@ namespace Resat.UI
         
         [SerializeField]
         private float _namePanelStartDelay = 1f;
+        
+        [SerializeField]
+        private float _dialogueTextStartDelay = 0f;
 
         private DialogueSO? _currentDialogue;
-
+        private int _dialoguePage = 0;
+        
         // Disable dialogue panels on start
         private void Start()
         {
@@ -60,11 +67,61 @@ namespace Resat.UI
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
             UniTask<bool> dialoguePanelSuccess = _dialoguePanel?.Open() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_namePanelStartDelay);
-            UniTask<bool> namePanelSuccess = _namePanel?.OpenWithText(dialogueStartedEvent.Npc.Name) ?? UniTask.FromResult(true);
-
-            bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
+            UniTask<bool> namePanelSuccess = _namePanel != null ? OpenWithText(_namePanel, dialogueStartedEvent.Npc.Name) : UniTask.FromResult(true);
+            await UniTask.WaitForSeconds(_dialogueTextStartDelay);
 
             // add first page of dialogue
+            _dialoguePage = 0;
+            NextDialoguePage().Forget();
+
+            bool success = await promptPanelSuccess && await namePanelSuccess && await dialoguePanelSuccess;
+        }
+
+        private async UniTask NextDialoguePage()
+        {
+            if (_currentDialogue == null || _dialoguePanel?.Text == null)
+                return;
+            
+            var lastPage = _currentDialogue.Dialogue.Count - 1;
+            if (_dialoguePage == lastPage)
+            {
+                // cancel out!
+                return;
+            }
+
+            var pageContent = _currentDialogue.Dialogue[_dialoguePage]!;
+            
+            await _textAnimationController.AnimateText(pageContent, _dialoguePanel.Text);
+            
+            // setup for next page
+        }
+        
+        public async UniTask<bool> OpenWithText(DialoguePanel dialoguePanel, string content, bool instant = false)
+        {
+            if (dialoguePanel.Text == null)
+                return false;
+            
+            // disable all text
+            dialoguePanel.SetText("");
+            
+            var success = await dialoguePanel.Open(instant);
+
+            // TODO: Animate this
+            if (success)
+            {
+                if (instant)
+                {
+                    dialoguePanel.SetText(content);
+                }
+                else
+                {
+                    // TODO: Animate this
+                    await _textAnimationController.AnimateText(content, dialoguePanel.Text);
+                }
+            }
+            
+            // do stuff
+            return success;
         }
 
         private async void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)

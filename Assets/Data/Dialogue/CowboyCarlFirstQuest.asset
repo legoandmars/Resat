@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: CowboyCarlFirstQuest
   m_EditorClassIdentifier: 
   Dialogue:
-  - Yeehaw!
+  - Yeehaw! Welcome to the outback, partner! Thank you for saving me! Here's some
+    information I will give you!
   - Yeehaw!!
   - Yeehaw!!!

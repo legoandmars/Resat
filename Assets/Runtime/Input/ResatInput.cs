@@ -338,6 +338,15 @@ namespace Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Continue"",
+                    ""type"": ""Button"",
+                    ""id"": ""3d099494-7e9f-481e-94d3-a71693fec67e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -349,6 +358,17 @@ namespace Input
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7eccf0d1-3476-4b0e-a29c-0aefae5da5b3"",
+                    ""path"": ""<Mouse>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Continue"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -376,6 +396,7 @@ namespace Input
             // Dialogue
             m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
             m_Dialogue_Interact = m_Dialogue.FindAction("Interact", throwIfNotFound: true);
+            m_Dialogue_Continue = m_Dialogue.FindAction("Continue", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -632,11 +653,13 @@ namespace Input
         private readonly InputActionMap m_Dialogue;
         private List<IDialogueActions> m_DialogueActionsCallbackInterfaces = new List<IDialogueActions>();
         private readonly InputAction m_Dialogue_Interact;
+        private readonly InputAction m_Dialogue_Continue;
         public struct DialogueActions
         {
             private @ResatInput m_Wrapper;
             public DialogueActions(@ResatInput wrapper) { m_Wrapper = wrapper; }
             public InputAction @Interact => m_Wrapper.m_Dialogue_Interact;
+            public InputAction @Continue => m_Wrapper.m_Dialogue_Continue;
             public InputActionMap Get() { return m_Wrapper.m_Dialogue; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -649,6 +672,9 @@ namespace Input
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Continue.started += instance.OnContinue;
+                @Continue.performed += instance.OnContinue;
+                @Continue.canceled += instance.OnContinue;
             }
 
             private void UnregisterCallbacks(IDialogueActions instance)
@@ -656,6 +682,9 @@ namespace Input
                 @Interact.started -= instance.OnInteract;
                 @Interact.performed -= instance.OnInteract;
                 @Interact.canceled -= instance.OnInteract;
+                @Continue.started -= instance.OnContinue;
+                @Continue.performed -= instance.OnContinue;
+                @Continue.canceled -= instance.OnContinue;
             }
 
             public void RemoveCallbacks(IDialogueActions instance)
@@ -695,6 +724,7 @@ namespace Input
         public interface IDialogueActions
         {
             void OnInteract(InputAction.CallbackContext context);
+            void OnContinue(InputAction.CallbackContext context);
         }
     }
 }

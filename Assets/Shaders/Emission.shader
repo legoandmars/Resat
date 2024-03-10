@@ -53,7 +53,8 @@ Shader "Custom/Emission"
 				float camDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv);
 				camDepth = Linear01Depth (camDepth); // converts z buffer value to depth value from 0..1
 
-                float diff = saturate(input.linearDepth - camDepth);
+				// fix self-intersection. surely this will not break anything :clueless:
+                float diff = saturate(input.linearDepth - camDepth - 0.002);
                 if (diff < 0.001)
                 {
 					c = _Color;

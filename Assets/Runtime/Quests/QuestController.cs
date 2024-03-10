@@ -50,6 +50,7 @@ namespace Resat.Quests
         // used for removing objects when picked up
         private void OnDialogueStopped(DialogueStoppedEvent dialogueStoppedEvent)
         {
+            List<QuestReference> completedReferences = new();
             foreach (var activeQuest in _activeQuests)
             {
                 foreach (var saturatedObject in activeQuest.SaturatedObjects)
@@ -57,9 +58,19 @@ namespace Resat.Quests
                     if (dialogueStoppedEvent.Npc != saturatedObject.AssignedNPC)
                         continue;
                     
-                    CompleteSaturatedObject(saturatedObject);
                     // fix up saturated object
+                    CompleteSaturatedObject(saturatedObject);
+                    
+                    // TODO: We *really* need a richer way of determining if a quest is done
+                    // As soon as we have multi-object quests this *will* break.
+                    completedReferences.Add(activeQuest);
                 }
+            }
+
+            foreach (var completed in completedReferences)
+            {
+                _activeQuests.Remove(completed);
+                _completedQuests.Add(completed);
             }
         }
 
@@ -91,7 +102,6 @@ namespace Resat.Quests
             saturatedObject.PermanentObjectWhenComplete.SetActive(true);
             _forceSaturationBuffer.AddRenderers(saturatedObject.PermanentObjectWhenComplete.Renderers, true);
         }
-
         
         private void StartQuest(QuestReference questReference)
         {

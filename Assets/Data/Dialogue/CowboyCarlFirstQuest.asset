@@ -15,5 +15,8 @@ MonoBehaviour:
   Dialogue:
   - Yeehaw! Welcome to the outback, partner! Thank you for saving me! Here's some
     information I will give you!
-  - 1Yeehaw!!
-  - 2Yeehaw!!!
+  - You should use your camera. NOW!
+  ShowInteractPromptAfterDialogueComplete: 1
+  StopShowingDialogueAfterwards: 0
+  NextDialogue: {fileID: 0}
+  QuestRequirementToPass: {fileID: 0}

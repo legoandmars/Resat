@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Cowboy Hat
   InitialDialogue: {fileID: 11400000, guid: bc75314b7f1f4354d9a44007f48ecfe4, type: 2}
+  TextAudio: {fileID: 11400000, guid: 3ae2dd5a2ae44a5418c12b971ecc1f51, type: 2}

@@ -139,7 +139,7 @@ namespace Resat.UI
             _dialogueIcon?.SetIcon(DialogueIconType.InDialogue);
             var pageContent = _currentDialogue.Dialogue[_dialoguePage]!;
             
-            await _textAnimationController.AnimateText(pageContent, _dialoguePanel.Text, _dialogueTextSpeed, _currentTokenSource.Token);
+            await _textAnimationController.AnimateText(pageContent, _dialoguePanel.Text, _dialogueTextSpeed, _currentNpc?.TextAudio, _currentTokenSource.Token);
 
             // setup for next page
             _currentTokenSource = null;

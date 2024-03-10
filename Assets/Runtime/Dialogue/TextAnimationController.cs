@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using Resat.Audio;
 using Resat.Models;
 using TMPro;
 using UnityEngine;
@@ -8,13 +9,15 @@ namespace Resat.Dialogue
 {
     public class TextAnimationController : MonoBehaviour
     {
+        [SerializeField]
+        private DialogueAudioController _dialogueAudioController = null!;
         /*[SerializeField]
         private float _typingSpeedMin;
 
         [SerializeField]
         private float _typingSpeedMax;
         */
-        public async UniTask AnimateText(string content, TextMeshProUGUI text, TextAnimationSpeed textAnimationSpeed, CancellationToken cancellationToken = default)
+        public async UniTask AnimateText(string content, TextMeshProUGUI text, TextAnimationSpeed textAnimationSpeed, TextAudioSO? textAudio = null, CancellationToken cancellationToken = default)
         {
             string currentText = "";
             // should probably make this use  a stringbuilder or something
@@ -24,6 +27,10 @@ namespace Resat.Dialogue
                 currentText = currentText + content[i];
                 text.SetText(currentText);
 
+                if (textAudio != null)
+                {
+                    _dialogueAudioController.PlayDialogueSound(textAudio);
+                }
                 if (cancellationToken.IsCancellationRequested)
                 {
                     text.SetText(content);

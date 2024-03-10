@@ -8,7 +8,7 @@ namespace Resat.Npcs
     public class NpcSO : ScriptableObject
     {
         public string Name = "NPC";
-
         public DialogueSO? InitialDialogue;
+        public TextAudioSO? TextAudio;
     }
 }

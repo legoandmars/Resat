@@ -933,6 +933,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32339dae801d401da3ae4fde027ee0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _dialogueAudioController: {fileID: 709008269}
 --- !u!1 &163722165
 GameObject:
   m_ObjectHideFlags: 0
@@ -1735,6 +1736,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2419677091882274794, guid: be4f6c4def33d924d812f7cbbe28fb42, type: 3}
   m_PrefabInstance: {fileID: 731861332}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &469288125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 469288126}
+  - component: {fileID: 469288127}
+  m_Layer: 0
+  m_Name: DialogueAudioPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &469288126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469288125}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 709008267}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &469288127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 469288125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0701179cac8144fdaf3304fbaa52bcb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sfxMixerGroup: {fileID: 0}
+  _volume: 1
+  _pitchBase: 1
+  _pitchRandomness: 0.05
+  _initialPoolSize: 10
 --- !u!1 &479288394 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4860884733252827142, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
@@ -2094,6 +2144,7 @@ Transform:
   m_Children:
   - {fileID: 1410187355}
   - {fileID: 1955244113}
+  - {fileID: 709008267}
   m_Father: {fileID: 1117427580}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3299,6 +3350,52 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 3686452558192738640, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
+--- !u!1 &709008266
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 709008267}
+  - component: {fileID: 709008269}
+  m_Layer: 0
+  m_Name: DialogueAudioController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &709008267
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 709008266}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 469288126}
+  m_Father: {fileID: 551777547}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &709008269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 709008266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80485a6e421f4a128a5f1907bd34be94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dialogueAudioPool: {fileID: 469288127}
 --- !u!1 &718361604
 GameObject:
   m_ObjectHideFlags: 0

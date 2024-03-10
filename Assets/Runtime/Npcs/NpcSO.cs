@@ -9,7 +9,6 @@ namespace Resat.Npcs
     {
         public string Name = "NPC";
 
-        // TODO: Multiple dialogue support
-        public DialogueSO? Dialogue;
+        public DialogueSO? InitialDialogue;
     }
 }

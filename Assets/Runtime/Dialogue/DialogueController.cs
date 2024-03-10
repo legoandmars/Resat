@@ -1,18 +1,25 @@
-﻿using Input;
+﻿using System.Collections.Generic;
+using Input;
 using Resat.Behaviours;
 using Resat.Input;
 using Resat.Intermediates;
 using Resat.Models.Events;
+using Resat.Npcs;
+using Resat.Quests;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Resat.Dialogue
 {
     // responsible for actually handling/starting dialogue, and doing dialogue input
+    // also tracks what NPCs are giving which dialogue
     public class DialogueController : MonoBehaviour, ResatInput.IDialogueActions
     {
         [SerializeField]
         private InputController _inputController = null!;
+
+        [SerializeField]
+        private QuestController _questController = null!;
 
         [SerializeField]
         private NpcIntermediate _npcIntermediate = null!;
@@ -50,6 +57,9 @@ namespace Resat.Dialogue
         {
             Debug.Log("Stopping dialogue...");
             _inDialogue = false;
+         
+            // Attempt to advance dialogue to next stage
+            AdvanceDialogueAfterFinished();
             
             // Enable input
             _inputController.EnablePlayerInput();
@@ -80,7 +90,7 @@ namespace Resat.Dialogue
         private void BeginDialogue()
         {
             var npc = _npcBehaviour?.NpcSO;
-            var dialogue = npc?.Dialogue;
+            var dialogue = GetDialogueFromNpc(_npcBehaviour);
 
             if (npc == null || dialogue == null || _inDialogue)
                 return;
@@ -93,6 +103,44 @@ namespace Resat.Dialogue
             _inputController.DisableCameraInput();
             
             _npcIntermediate.StartDialogue(new (dialogue, npc));
+        }
+
+        private void AdvanceDialogueAfterFinished()
+        {
+            var dialogue = _npcBehaviour?.CurrentDialogue;
+
+            if (_npcBehaviour == null || dialogue == null)
+                return;
+
+            if (dialogue.StopShowingDialogueAfterwards)
+            {
+                _npcBehaviour.DisableInteractions();
+                return;
+            }
+            
+            if (dialogue.QuestRequirementToPass == null && dialogue.NextDialogue)
+            {
+                // easy street
+                _npcBehaviour.CurrentDialogue = dialogue.NextDialogue;
+            }
+        }
+        
+        private DialogueSO? GetDialogueFromNpc(NpcTriggerBehaviour? npcBehaviour)
+        {
+            if (npcBehaviour == null)
+                return null;
+
+            // advance through quests dialogues as necessary
+            // TODO: This will break with consecutive quests and should be recurisve. I do not forsee this being a problem as-is so i will spend my time elsewhere
+            if (npcBehaviour.CurrentDialogue?.QuestRequirementToPass != null && npcBehaviour.CurrentDialogue.NextDialogue != null)
+            {
+                if (_questController.QuestIsComplete(npcBehaviour.CurrentDialogue.QuestRequirementToPass))
+                {
+                    npcBehaviour.CurrentDialogue = npcBehaviour.CurrentDialogue.NextDialogue;
+                }
+            }
+            
+            return npcBehaviour.CurrentDialogue;
         }
     }
 }

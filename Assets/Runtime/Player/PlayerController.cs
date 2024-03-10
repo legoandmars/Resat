@@ -115,7 +115,8 @@ namespace Resat.Player
             }
             else if (_focusedNpc == null)
             {
-                TrySetNpc(_raycastResults[0].collider.gameObject.GetComponent<NpcTriggerBehaviour>());
+                var triggerBehaviour = _raycastResults[0].collider.gameObject.GetComponent<NpcTriggerBehaviour>();
+                TrySetNpc(triggerBehaviour.Interactable ? triggerBehaviour : null);
             }
             // do nothing if we have an already focused NPC, and one's in view. this will almost certainly be the same NPC, and we don't need to run the GetComponent call again.
         }

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CowboyCarl
   m_EditorClassIdentifier: 
   Name: Cowboy Carl
-  Dialogue: {fileID: 11400000, guid: 23a0b0881a9b0ee419a9cd1eca101f4d, type: 2}
+  InitialDialogue: {fileID: 11400000, guid: 77bbe886d2e6f2a4ca990ff97010a833, type: 2}

@@ -20,6 +20,7 @@ namespace Resat.Quests
         public List<QuestReference> QuestReferences = new();
 
         private List<QuestReference> _activeQuests = new();
+        private List<QuestReference> _completedQuests = new(); // TODO: how do you mark a quest as complete?
         
         private void Start()
         {
@@ -41,6 +42,11 @@ namespace Resat.Quests
             _npcIntermediate.DialogueStopped -= OnDialogueStopped;
         }
 
+        public bool QuestIsComplete(QuestSO quest)
+        {
+            return _completedQuests.Any(x => x.QuestSO == quest);
+        }
+        
         // used for removing objects when picked up
         private void OnDialogueStopped(DialogueStoppedEvent dialogueStoppedEvent)
         {

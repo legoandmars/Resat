@@ -1478,6 +1478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _forceSaturationBuffer: {fileID: 643601649}
+  _npcIntermediate: {fileID: 78213285}
   QuestReferences:
   - QuestSO: {fileID: 11400000, guid: 95c1e0494ae6f5647ab37124b89f2407, type: 2}
     SaturatedObjects:
@@ -1670,6 +1671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inputController: {fileID: 1656060608}
+  _questController: {fileID: 290105122}
   _npcIntermediate: {fileID: 78213285}
 --- !u!1001 &408657894
 PrefabInstance:

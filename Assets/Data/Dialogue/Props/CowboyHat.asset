@@ -16,3 +16,6 @@ MonoBehaviour:
   - You collected a dusty old cowboy hat. The shape has been moulded to somebody's
     head over a period of many years.
   ShowInteractPromptAfterDialogueComplete: 0
+  StopShowingDialogueAfterwards: 1
+  NextDialogue: {fileID: 0}
+  QuestRequirementToPass: {fileID: 0}

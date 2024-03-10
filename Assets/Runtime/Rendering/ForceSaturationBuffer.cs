@@ -47,6 +47,7 @@ namespace Resat.Rendering
             {
                 _camera.RemoveCommandBuffer(_cameraEvent, _commandBuffer);
                 _commandBuffer.Dispose();
+                _commandBuffer = null;
             }
 
             if (_forceSaturateRenderers.Count == 0 && _forceDesaturateRenderers.Count == 0)
@@ -71,6 +72,7 @@ namespace Resat.Rendering
             }
 
             _camera.AddCommandBuffer(_cameraEvent, commandBuffer);
+            _commandBuffer = commandBuffer;
 
         }
 

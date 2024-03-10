@@ -134,7 +134,7 @@ namespace Resat.Dialogue
             // TODO: This will break with consecutive quests and should be recurisve. I do not forsee this being a problem as-is so i will spend my time elsewhere
             if (npcBehaviour.CurrentDialogue?.QuestRequirementToPass != null && npcBehaviour.CurrentDialogue.NextDialogue != null)
             {
-                if (_questController.QuestIsComplete(npcBehaviour.CurrentDialogue.QuestRequirementToPass))
+                if (_questController.AllQuestItemsCollected(npcBehaviour.CurrentDialogue.QuestRequirementToPass))
                 {
                     npcBehaviour.CurrentDialogue = npcBehaviour.CurrentDialogue.NextDialogue;
                 }

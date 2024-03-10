@@ -1034,7 +1034,7 @@ GameObject:
   - component: {fileID: 221854871}
   - component: {fileID: 221854874}
   m_Layer: 7
-  m_Name: NpcTriggerCollider
+  m_Name: CowboyCodyTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1483,10 +1483,12 @@ MonoBehaviour:
   _npcIntermediate: {fileID: 78213285}
   QuestReferences:
   - QuestSO: {fileID: 11400000, guid: 95c1e0494ae6f5647ab37124b89f2407, type: 2}
+    QuestNpc: {fileID: 221854874}
     SaturatedObjects:
     - AssignedNPC: {fileID: 11400000, guid: 6e3739275b25b214d875154703cf91ec, type: 2}
       SaturatedObject: {fileID: 937916351}
       PermanentObjectWhenComplete: {fileID: 602883910}
+    State: 0
 --- !u!1001 &299127933
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2778,8 +2780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5903ecb691114cb7bed20821c1a07797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _forceSaturateRenderers:
-  - {fileID: 1059022089}
+  _forceSaturateRenderers: []
   _forceDesaturateRenderers: []
   _camera: {fileID: 551777549}
   _forceSaturateMaterial: {fileID: 2100000, guid: 8cb30bfa6bd142b449e13250030b63d3, type: 2}
@@ -4791,11 +4792,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1041747827}
   m_CullTransparentMesh: 1
---- !u!23 &1059022089 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 291136885362146431, guid: a44b443a3b1f0854b8d50d19643cca06, type: 3}
-  m_PrefabInstance: {fileID: 4254231354030952375}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1070662596
 GameObject:
   m_ObjectHideFlags: 0

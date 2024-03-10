@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Resat.Behaviours;
 using Resat.Intermediates;
 using Resat.Models;
 using Resat.Models.Events;
+using Resat.Npcs;
 using Resat.Rendering;
 using UnityEngine;
 
@@ -18,9 +20,6 @@ namespace Resat.Quests
 
         [SerializeField]
         public List<QuestReference> QuestReferences = new();
-
-        private List<QuestReference> _activeQuests = new();
-        private List<QuestReference> _completedQuests = new(); // TODO: how do you mark a quest as complete?
         
         private void Start()
         {
@@ -35,43 +34,56 @@ namespace Resat.Quests
         private void OnEnable()
         {
             _npcIntermediate.DialogueStopped += OnDialogueStopped;
+            _npcIntermediate.DialogueStarted += OnDialogueStarted;
         }
 
         private void OnDisable()
         {
             _npcIntermediate.DialogueStopped -= OnDialogueStopped;
+            _npcIntermediate.DialogueStarted -= OnDialogueStarted;
         }
 
-        public bool QuestIsComplete(QuestSO quest)
+        private IEnumerable<QuestReference> GetQuestsOfType(QuestState questState)
         {
-            return _completedQuests.Any(x => x.QuestSO == quest);
+            return QuestReferences.Where(x => x.State == questState);
+        }
+        
+        private void SetObjectState(SaturatedObjectData objectData, SaturatedObjectState objectState)
+        {
+            bool normalActive = objectState == SaturatedObjectState.Active;
+            bool permanentActive = objectState == SaturatedObjectState.Permanent;
+            
+            SetSaturationBehaviourState(objectData.SaturatedObject, normalActive);
+            SetSaturationBehaviourState(objectData.PermanentObjectWhenComplete, permanentActive);
+        }
+
+        // TODO: Lerp
+        private void SetSaturationBehaviourState(ForceSaturationBehaviour? saturationBehaviour, bool active)
+        {
+            if (saturationBehaviour == null)
+                return;
+            
+            saturationBehaviour.SetActive(active);
+            if (active)
+                _forceSaturationBuffer.AddRenderers(saturationBehaviour.Renderers, saturationBehaviour.Resaturate);
+            else
+                _forceSaturationBuffer.RemoveRenderers(saturationBehaviour.Renderers, saturationBehaviour.Resaturate);
+        }
+        
+        public bool AllQuestItemsCollected(QuestSO quest)
+        {
+            return GetQuestsOfType(QuestState.AllItemsCollected).Any(x => x.QuestSO == quest);
         }
         
         // used for removing objects when picked up
         private void OnDialogueStopped(DialogueStoppedEvent dialogueStoppedEvent)
         {
-            List<QuestReference> completedReferences = new();
-            foreach (var activeQuest in _activeQuests)
-            {
-                foreach (var saturatedObject in activeQuest.SaturatedObjects)
-                {
-                    if (dialogueStoppedEvent.Npc != saturatedObject.AssignedNPC)
-                        continue;
-                    
-                    // fix up saturated object
-                    CompleteSaturatedObject(saturatedObject);
-                    
-                    // TODO: We *really* need a richer way of determining if a quest is done
-                    // As soon as we have multi-object quests this *will* break.
-                    completedReferences.Add(activeQuest);
-                }
-            }
+            CompleteQuestItemsIfNecessary(dialogueStoppedEvent.Npc);
+        }
 
-            foreach (var completed in completedReferences)
-            {
-                _activeQuests.Remove(completed);
-                _completedQuests.Add(completed);
-            }
+        private void OnDialogueStarted(DialogueStartedEvent dialogueStartedEvent)
+        {
+            CompleteQuestIfNecessary(dialogueStartedEvent.Npc);
         }
 
         private void DisableQuestObjects()
@@ -80,29 +92,11 @@ namespace Resat.Quests
             {
                 foreach (var saturatedObject in questReference.SaturatedObjects)
                 {
-                    saturatedObject.SaturatedObject?.SetActive(false);
-                    saturatedObject.PermanentObjectWhenComplete?.SetActive(false);
+                    SetObjectState(saturatedObject, SaturatedObjectState.Inactive);
                 }
             }
         }
 
-        // TODO: Think more about how multi-support would work
-        // TODO: see if there's any way we can interpolate this? slowly scale down?
-        private void CompleteSaturatedObject(SaturatedObjectData saturatedObject)
-        {
-            if (saturatedObject.SaturatedObject == null)
-                return;
-            
-            saturatedObject.SaturatedObject.SetActive(false);
-            _forceSaturationBuffer.RemoveRenderers(saturatedObject.SaturatedObject.Renderers, true);
-
-            if (saturatedObject.PermanentObjectWhenComplete == null)
-                return;
-            
-            saturatedObject.PermanentObjectWhenComplete.SetActive(true);
-            _forceSaturationBuffer.AddRenderers(saturatedObject.PermanentObjectWhenComplete.Renderers, true);
-        }
-        
         private void StartQuest(QuestReference questReference)
         {
             if (questReference.QuestSO.QuestType == QuestType.FindSaturatedObject)
@@ -113,13 +107,74 @@ namespace Resat.Quests
                     if (saturatedObject.SaturatedObject == null)
                         continue;
                     
-                    saturatedObject.SaturatedObject.SetActive(true);
-                    // should really be like, one method TODO
-                    _forceSaturationBuffer.AddRenderers(saturatedObject.SaturatedObject.Renderers, true);
+                    SetObjectState(saturatedObject, SaturatedObjectState.Active);
                 }
             }
-            
-            _activeQuests.Add(questReference);
+
+            questReference.State = QuestState.Active;
+        }
+
+        private void CompleteQuestItemsIfNecessary(NpcSO npc)
+        {
+            foreach (var activeQuest in GetQuestsOfType(QuestState.Active))
+            {
+                if (activeQuest.QuestSO.QuestType == QuestType.FindSaturatedObject)
+                {
+                    foreach (var saturatedObject in activeQuest.SaturatedObjects)
+                    {
+                        if (npc != saturatedObject.AssignedNPC)
+                            continue;
+                    
+                        // collect saturated object
+                        SetObjectState(saturatedObject, SaturatedObjectState.Collected);
+                        saturatedObject.Collected = true;
+                    }
+                }
+            }
+
+            // change state of any now-fully collected quests
+            foreach (var activeQuest in GetQuestsOfType(QuestState.Active))
+            {
+                if (activeQuest.QuestSO.QuestType == QuestType.FindSaturatedObject)
+                {
+                    if (activeQuest.SaturatedObjects.Any(x => !x.Collected))
+                        continue;
+                    
+                    AllQuestItemsCollected(activeQuest);
+                    
+                    // set NPC exclamation mark if needed
+                    SetSaturationBehaviourState(activeQuest.QuestNpc?.ExclamationPoint, true);
+                }
+            }
+        }
+
+        private void CompleteQuestIfNecessary(NpcSO npc)
+        {
+            foreach (var activeQuest in GetQuestsOfType(QuestState.AllItemsCollected))
+            {
+                if (activeQuest.QuestSO.QuestType == QuestType.FindSaturatedObject && activeQuest.QuestNpc?.NpcSO == npc)
+                {
+                    foreach (var saturatedObject in activeQuest.SaturatedObjects)
+                    {
+                        SetObjectState(saturatedObject, SaturatedObjectState.Permanent);
+                    }
+
+                    CompleteQuest(activeQuest);
+                    
+                    // set NPC exclamation mark if needed
+                    SetSaturationBehaviourState(activeQuest.QuestNpc?.ExclamationPoint, false);
+                }
+            }
+        }
+
+        private void AllQuestItemsCollected(QuestReference questReference)
+        {
+            questReference.State = QuestState.AllItemsCollected;
+        }
+
+        private void CompleteQuest(QuestReference questReference)
+        {
+            questReference.State = QuestState.Completed;
         }
     }
 }

@@ -52,6 +52,26 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Light1
+    second: {fileID: 2100000, guid: fb383eea667f3e2499de3a91598a351b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light2
+    second: {fileID: 2100000, guid: cfe8bd6dacd18b5439c4e0d388aec310, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light3
+    second: {fileID: 2100000, guid: f11cc8ba5ff8f8f42a401a92aec34241, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light4
+    second: {fileID: 2100000, guid: 6b77656a5ce619747815a3ff8ff8b8a6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Map
     second: {fileID: 2100000, guid: a32892d2f12f3c4478dbaede95578c9e, type: 2}
   - first:

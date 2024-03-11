@@ -127,6 +127,6 @@ Material:
     - _ColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
-    - _Tint: {r: 0.009764706, g: 0.029294118, b: 0.16600001, a: 1}
-    - _Tint2: {r: 0.12006173, g: 0.13446915, b: 0.38900003, a: 1}
+    - _Tint: {r: 0.83137256, g: 0.8901961, b: 0.50980395, a: 1}
+    - _Tint2: {r: 0.9411765, g: 0.9019608, b: 0.6627451, a: 1}
   m_BuildTextureStacks: []

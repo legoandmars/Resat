@@ -11,9 +11,13 @@ namespace Resat.Environment
 {
     public class EnvironmentController : MonoBehaviour
     {
-        private static readonly int TopColor = Shader.PropertyToID("_Tint");
-        private static readonly int BottomColor = Shader.PropertyToID("_Tint2");
+        public static readonly int TopColor = Shader.PropertyToID("_Tint");
+        public static readonly int BottomColor = Shader.PropertyToID("_Tint2");
 
+        // used in inspector only
+        public Material? SkyboxMaterial => _skyboxMaterial;
+        public List<Light> Lights => _lights;
+        
         [Header("Dependencies")]
         [SerializeField]
         private BiomeIntermediate _biomeIntermediate = null!;

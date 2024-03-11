@@ -22,6 +22,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Building3
+    second: {fileID: 2100000, guid: 68a446c05b9ee4b4a966ce98d2a9ce55, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Building4
+    second: {fileID: 2100000, guid: 5c913274c95763b4485806ca28c49e7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Canyon
     second: {fileID: 2100000, guid: 641afa792015adc4eacd976ed4ed9f26, type: 2}
   - first:
@@ -99,6 +109,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Well
     second: {fileID: 2100000, guid: b53122b9fc1ea2e439da935fe9e30755, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Window
+    second: {fileID: 2100000, guid: fb383eea667f3e2499de3a91598a351b, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

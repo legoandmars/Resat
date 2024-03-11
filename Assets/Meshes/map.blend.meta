@@ -12,6 +12,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Building1
+    second: {fileID: 2100000, guid: d0fc3155ef69e6b409f11c643066e892, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Building2
+    second: {fileID: 2100000, guid: 57dfc08a527b431418d2ccb598446b07, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Canyon
     second: {fileID: 2100000, guid: 641afa792015adc4eacd976ed4ed9f26, type: 2}
   - first:

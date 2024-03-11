@@ -88,7 +88,7 @@ Material:
     - _UseDetailTexture: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.20478818, g: 0.33573583, b: 0.735849, a: 1}
+    - _Color: {r: 0.2627451, g: 0.26666668, b: 0.5137255, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FakeLightingColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}

@@ -43,7 +43,7 @@ namespace Resat.Biomes.Editor
                 environmentController.SkyboxMaterial.SetColor(EnvironmentController.TopColor, biome.SkyboxTopColor);
                 environmentController.SkyboxMaterial.SetColor(EnvironmentController.BottomColor, biome.SkyboxBottomColor);
             }
-            02072A, 1F2263
+
             foreach (var light in environmentController.Lights)
             {
                 light.color = biome.LightingColor;

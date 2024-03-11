@@ -1486,6 +1486,7 @@ MonoBehaviour:
     QuestNpc: {fileID: 221854874}
     SaturatedObjects:
     - AssignedNPC: {fileID: 11400000, guid: 6e3739275b25b214d875154703cf91ec, type: 2}
+      Collected: 0
       SaturatedObject: {fileID: 937916351}
       PermanentObjectWhenComplete: {fileID: 602883910}
     State: 0
@@ -4265,6 +4266,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 69566a5643fbff44289bd100e01ec986, type: 2}
+    - target: {fileID: -2618118746939553659, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 286596b11b0d4af4884833e26fe76581, type: 2}
     - target: {fileID: -2504701179578810061, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -4373,6 +4378,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5693980124607886671, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 286596b11b0d4af4884833e26fe76581, type: 2}
     - target: {fileID: 6948730516508358687, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
       propertyPath: m_Enabled
       value: 0

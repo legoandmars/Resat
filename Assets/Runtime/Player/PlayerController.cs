@@ -24,6 +24,9 @@ namespace Resat.Player
         private Transform _raycastEmittingObject = null!;
         
         [SerializeField]
+        private Transform _groundCheckRaycastEmittingObject = null!;
+
+        [SerializeField]
         private Camera _camera = null!;
         
         [SerializeField]
@@ -38,6 +41,9 @@ namespace Resat.Player
         [SerializeField]
         private float _fallSpeed = 9.8f;
         
+        [SerializeField]
+        private float _slideFriction = 0f;
+
         [SerializeField]
         private float _npcInteractionDistance = 1f;
 
@@ -76,12 +82,32 @@ namespace Resat.Player
 
             // Jump
             bool groundedPlayer = _characterController.isGrounded;
-            
+            Vector3? groundNormal = null;
+
+            // If grounded, calculate normal for better grounding check
             if (groundedPlayer)
+            {
+                groundNormal = GetGroundNormal();
+            }
+            bool groundMeetsAngle = GetAngleFromNormal(groundNormal) < _characterController.slopeLimit;
+            
+            if (groundedPlayer && groundMeetsAngle)
                 _groundedTimer = 0.2f;
             if (_groundedTimer > 0)
                 _groundedTimer -= Time.deltaTime;
  
+            // prepare slide movement
+            Vector3 slideMovement = Vector3.zero;
+            _ = _slideFriction; // ignore warning
+            
+            // We're grounded, but should be sliding down a slope
+            /*if (groundedPlayer && !groundMeetsAngle && groundNormal != null)
+            {
+                slideMovement.x = ((1f - groundNormal.Value.y) * groundNormal.Value.x) * _slideFriction;
+                slideMovement.z = ((1f - groundNormal.Value.y) * groundNormal.Value.z) * _slideFriction;
+                slideMovement *= Time.deltaTime;
+            }*/
+            
             // slam into the ground
             if (groundedPlayer && _verticalVelocity < 0)
                 _verticalVelocity = 0f;
@@ -99,11 +125,29 @@ namespace Resat.Player
                 _verticalVelocity += Mathf.Sqrt(_jumpHeight * 2 * _fallSpeed);
             }
             
-            _characterController.Move(moveDirection * new Vector3(moveValue.x, _verticalVelocity * Time.deltaTime, moveValue.y));
+            _characterController.Move((moveDirection * new Vector3(moveValue.x, _verticalVelocity * Time.deltaTime, moveValue.y)) + slideMovement);
 
             NpcInteractionCheck();
         }
 
+        private Vector3? GetGroundNormal()
+        {
+            var hits = Physics.RaycastNonAlloc(_groundCheckRaycastEmittingObject.position, -Vector3.up, _raycastResults, Mathf.Infinity);
+            if (hits == 0)
+                return null;
+
+            return _raycastResults[0].normal;
+            // return Vector3.Angle(_raycastResults[0].normal, Vector3.up);
+        }
+
+        private float GetAngleFromNormal(Vector3? normal)
+        {
+            if (normal == null) 
+                return 180;
+            
+            return Vector3.Angle(normal.Value, Vector3.up);
+        }
+        
         private void NpcInteractionCheck()
         {
             // TODO: Add behaviour on NPC focus

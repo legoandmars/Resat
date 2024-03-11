@@ -62,6 +62,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Road
+    second: {fileID: 2100000, guid: 762821445db073d4ab4cde6c5e774792, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RoadSiding
+    second: {fileID: 2100000, guid: 1f60fc0560bd5ca4a887eb1a54ff535e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: SandRamp
     second: {fileID: 2100000, guid: ff3335bd23a189049a1ce6e0ecbaadad, type: 2}
   - first:

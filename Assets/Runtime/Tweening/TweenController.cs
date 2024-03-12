@@ -66,7 +66,7 @@ namespace Resat.Tweening
             return !cancelled;
         }
 
-        private Tween GetTweenForVectors(Vector2 startVector, Vector2 endVector, float duration, Action<Vector2> run, Ease xEase, Ease yEase)
+        private Tween GetTweenForVectors(Vector2 startVector, Vector2 endVector, float duration, Action<Vector2> run, Ease xEase, Ease yEase, Action<float>? setValue = null, Action<Vector2>? setVector = null)
         {
             var xEaser = xEase.ToProcedure();
             var yEaser = yEase.ToProcedure();
@@ -76,21 +76,17 @@ namespace Resat.Tweening
             var tween = _tweenManager.Run(0f, 1f, duration, (value) =>
             {
                 // scuffed lerp based on the linear tween
-                run.Invoke(InterpolateVector(startVector, endVector, xEaser, yEaser, value));
+                var vector = InterpolateVector(startVector, endVector, xEaser, yEaser, value);
+                run.Invoke(vector);
+                
+                // optional return types
+                setVector?.Invoke(vector);
+                setValue?.Invoke(value);
             }, Ease.Linear.ToProcedure(), this);
             
             return tween;
         }
-
-        public async UniTask<bool> TweenVectors(Vector2 startVector, Vector2 endVector, float duration, Action<Vector2> run, Ease xEase = Ease.Linear, Ease yEase = Ease.Linear)
-        {
-            var tween = GetTweenForVectors(startVector, endVector, duration, run, xEase, yEase);
-
-            await tween;
-
-            return true;
-        }
-
+        
         // used for automagically putting all corner panel tweening into one nice method, so we can await it
         // a bit of a messy megamethod
         public async UniTask<bool> TweenCornerPanelOut(
@@ -99,7 +95,9 @@ namespace Resat.Tweening
             Vector2 currentCornersSize, 
             Action<Vector2> setPanelSize,
             Action<Vector2> setCornersSize,
-            CancellationTokenSource? cancellationTokenSource = null)
+            CancellationTokenSource? cancellationTokenSource = null,
+            Action<float>? setValue = null,
+            Action<Vector2>? setVector = null)
         {
             if (cancellationTokenSource == null)
                 cancellationTokenSource = new();
@@ -112,7 +110,10 @@ namespace Resat.Tweening
                 tweenSettings.XEase, 
                 tweenSettings.YEase, 
                 tweenSettings.PanelTweenType, 
-                cancellationTokenSource);
+                cancellationTokenSource,
+                0f,
+                setValue,
+                setVector);
             
             var cornerTween = TweenVectorTracked(currentCornersSize, 
                 Vector2.zero, 
@@ -122,7 +123,9 @@ namespace Resat.Tweening
                 tweenSettings.CornersEaseOut, 
                 tweenSettings.CornerTweenType, 
                 cancellationTokenSource,
-                tweenSettings.Duration - tweenSettings.CornerDurationOffset); // wait before starting corner tween
+                tweenSettings.Duration - tweenSettings.CornerDurationOffset,
+                setValue,
+                setVector); // wait before starting corner tween
             
             var mainSuccess = await mainTween;
             var cornerSuccess = await cornerTween;
@@ -136,7 +139,9 @@ namespace Resat.Tweening
             Vector2 currentCornersSize, 
             Action<Vector2> setPanelSize,
             Action<Vector2> setCornersSize,
-            CancellationTokenSource? cancellationTokenSource = null)
+            CancellationTokenSource? cancellationTokenSource = null,
+            Action<float>? setValue = null,
+            Action<Vector2>? setVector = null)
         {
             if (cancellationTokenSource == null)
                 cancellationTokenSource = new();
@@ -149,7 +154,10 @@ namespace Resat.Tweening
                 tweenSettings.XEase, 
                 tweenSettings.YEase, 
                 tweenSettings.PanelTweenType, 
-                cancellationTokenSource);
+                cancellationTokenSource,
+                0f,
+                setValue,
+                setVector);
             
             var cornerTween = TweenVectorTracked(currentCornersSize, 
             Vector2.one, 
@@ -158,7 +166,10 @@ namespace Resat.Tweening
             tweenSettings.CornersEaseIn, 
             tweenSettings.CornersEaseIn, 
             tweenSettings.CornerTweenType, 
-            cancellationTokenSource);
+            cancellationTokenSource,
+            0f,
+            setValue,
+            setVector);
 
             var mainSuccess = await mainTween;
             var cornerSuccess = await cornerTween;
@@ -175,7 +186,9 @@ namespace Resat.Tweening
             Ease yEase,
             TweenType tweenType,
             CancellationTokenSource cancellationTokenSource,
-            float offset = 0f)
+            float offset = 0f,
+            Action<float>? setValue = null,
+            Action<Vector2>? setVector = null)
         {
             // Debug.Log($"Starting tween {tweenType}...");
             // Cancel tween on same object, if existing
@@ -187,7 +200,7 @@ namespace Resat.Tweening
                 _tweensByType.Remove(tweenType);
             }
 
-            var tween = GetTweenForVectors(startSize, endSize, duration, setSize, xEase, yEase);
+            var tween = GetTweenForVectors(startSize, endSize, duration, setSize, xEase, yEase, setValue, setVector);
             bool cancelled = false;
 
             // add to cancellation array

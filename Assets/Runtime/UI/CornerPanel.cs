@@ -1,4 +1,5 @@
-﻿using AuraTween;
+﻿using System;
+using AuraTween;
 using Cysharp.Threading.Tasks;
 using Resat.Models;
 using Resat.Tweening;
@@ -21,7 +22,7 @@ namespace Resat.UI
         [SerializeField]
         private CornerTweenSettings _tweenSettings = new();
 
-        public async UniTask<bool> Close(bool instant = false)
+        public async UniTask<bool> Close(bool instant = false, Action<float>? setFloat = null, Action<Vector2>? setVector = null)
         {
             if (MainPanel == null || Corners.AnyCornersNull)
                 return false;
@@ -39,12 +40,15 @@ namespace Resat.UI
                 MainPanel.sizeDelta,
                 Corners.CornersContainer!.localScale,
                 SetSize,
-                SetCornersSize);
+                SetCornersSize,
+                null,
+                setFloat,
+                setVector);
 
             return success;
         }
         
-        public async UniTask<bool> Open(bool instant = false)
+        public async UniTask<bool> Open(bool instant = false, Action<float>? setFloat = null, Action<Vector2>? setVector = null)
         {
             if (MainPanel == null)
                 return false;
@@ -62,7 +66,10 @@ namespace Resat.UI
                 MainPanel.sizeDelta,
                 Corners.CornersContainer!.localScale,
                 SetSize,
-                SetCornersSize);
+                SetCornersSize,
+                null,
+                setFloat,
+                setVector);
 
             return success;
         }

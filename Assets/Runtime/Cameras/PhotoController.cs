@@ -45,6 +45,9 @@ namespace Resat.Cameras
         private OutroPanel _outroPanel = null!;
         
         [SerializeField]
+        private CornerPanel _cameraViewportPanel = null!;
+        
+        [SerializeField]
         private CameraIntermediate _cameraIntermediate = null!;
 
         [Header("Resolution")]
@@ -120,7 +123,6 @@ namespace Resat.Cameras
         private void SetOutroAnimationPercent(float animationPercent)
         {
             // rgb lerp is fine since we're working in grayscale
-            Debug.Log(animationPercent);
             var lerpedColor = Color.Lerp(_desaturationCamera.OutsideCutoutColor, _outroCutoutColor, animationPercent);
             _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
         }
@@ -159,6 +161,33 @@ namespace Resat.Cameras
             await _tweenController.RunTween(_animationDuration, SetAnimationPercent);
         }
 
+        private async UniTask AnimateOpenCamera(bool force = true)
+        {
+            await _cameraViewportPanel.Open(force, SetViewportOpenPercentage, SetViewportOpenVector);
+        }
+        
+        private async UniTask AnimateCloseCamera(bool force = true)
+        {
+            await _cameraViewportPanel.Close(force, SetViewportClosePercentage, SetViewportOpenVector);
+        }
+
+        private void SetViewportOpenVector(Vector2 value)
+        {
+            var fakerd = new CameraResolutionData();
+            fakerd.Center = _photoResolutionData.Center;
+            fakerd.Resolution = new Vector2Int((int)value.x, (int)value.y);
+            _desaturationCamera.SetResolution(fakerd);
+        }
+
+        private void SetViewportClosePercentage(float value) => SetViewportOpenPercentage(1 - value);
+        private void SetViewportOpenPercentage(float value)
+        {
+            Debug.Log(value);
+            // rgb lerp is fine since we're working in grayscale
+            var lerpedColor = Color.Lerp(Color.white, _desaturationCamera.OutsideCutoutColor, value);
+            _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
+        }
+
         public void EnableCamera(bool soundEffects = true, bool force = false)
         {
             if (force)
@@ -174,9 +203,8 @@ namespace Resat.Cameras
             
             // TODO: Animation
             SetCameraState(CameraState.InView, "Enabling camera!");
-            
-            // Set outside color
-            _desaturationCamera.SetOutsideCutoutColor();
+
+            AnimateOpenCamera(force).Forget();
         }
         
         public void DisableCamera(bool soundEffects = true, bool force = false)
@@ -196,7 +224,9 @@ namespace Resat.Cameras
             SetCameraState(CameraState.Minimized, "Disabling camera!");
             
             // Set outside color
-            _desaturationCamera.SetOutsideCutoutColor(Color.white);
+           //  _desaturationCamera.SetOutsideCutoutColor(Color.white);
+            // _cameraViewportPanel.Close(force);
+            AnimateCloseCamera(force).Forget();
         }
         
         public void OnTakePicture(InputAction.CallbackContext context)

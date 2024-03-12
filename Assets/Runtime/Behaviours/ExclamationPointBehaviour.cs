@@ -5,6 +5,8 @@ namespace Resat.Behaviours
 {
     public class ExclamationPointBehaviour : ForceSaturationBehaviour
     {
+        public Camera? PlayerCamera => _playerCamera; 
+        
         [SerializeField]
         private Transform? _exclamationPointVisuals;
 

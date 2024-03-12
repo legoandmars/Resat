@@ -20,6 +20,9 @@ namespace Resat.UI
         private RectTransform? _scaledRectTransform;
         
         [SerializeField]
+        private RectTransform? _scaledWidthRectTransform;
+        
+        [SerializeField]
         private List<ScreenshotPanel> _screenshotPanels = new();
 
         [SerializeField]
@@ -65,9 +68,25 @@ namespace Resat.UI
             await _tweenController.RunTween(duration, OnSizeTween, _ease, 1f, 0.5f);
         }
 
-        private void OnSizeTween(float sizeScale)
+        public async UniTask AnimateScaleIn(float duration)
         {
-            _scaledRectTransform.localScale = new Vector3(sizeScale, sizeScale, 1);
+            await _tweenController.RunTween(duration, OnWidthTween, _ease, 3840, 2750);
+        }
+
+        private void OnWidthTween(float value)
+        {
+            if (_scaledWidthRectTransform == null)
+                return;
+
+            _scaledWidthRectTransform.sizeDelta = new Vector2(value, 2160);
+        }
+
+        private void OnSizeTween(float value)
+        {
+            if (_scaledRectTransform == null)
+                return;
+            
+            _scaledRectTransform.localScale = new Vector3(value, value, 1);
         }
     }
 }

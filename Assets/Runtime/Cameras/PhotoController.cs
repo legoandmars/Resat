@@ -76,6 +76,9 @@ namespace Resat.Cameras
         
         [SerializeField]
         private float _outroScaleAnimationDuration = 1f;
+        
+        [SerializeField]
+        private float _outroScaleInAnimationDuration = 1f;
 
         [SerializeField]
         private Color _outroCutoutColor = Color.black;
@@ -275,10 +278,17 @@ namespace Resat.Cameras
             await _tweenController.RunTween(_outroFadeAnimationDuration, SetOutroAnimationPercent, _outroFadeEase);
             
             // run transition to UI
+            // TODO: Panel should not be interactive at this point
             _outroPanel.SetScreenshotData(_screenshots);
             _outroPanel.SetActive(true);
 
-            await _outroPanel.AnimateScaleOut(_outroScaleAnimationDuration);
+            var scaleOut = _outroPanel.AnimateScaleOut(_outroScaleAnimationDuration);
+            
+            // wait partial so the scale in starts a bit sooner
+            await UniTask.WaitForSeconds(_outroScaleAnimationDuration * 0.6f);
+            
+            await _outroPanel.AnimateScaleIn(_outroScaleInAnimationDuration);
+            await scaleOut; // await just in case we haven't met the condition already
             
             // we done done
         }

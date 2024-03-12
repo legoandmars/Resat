@@ -29,7 +29,7 @@ namespace Resat.UI
             if (NewColorCountText != null)
                 NewColorCountText.text = $"New Colors: {okhslData.NewColorCount}";
             if (NewColorCountPercentageText != null)
-                NewColorCountPercentageText.text = $"- {okhslData.NewColorCoveragePercent:00.0}%";
+                NewColorCountPercentageText.text = $"{okhslData.NewColorCoveragePercent:00.0}%";
         }
 
     }

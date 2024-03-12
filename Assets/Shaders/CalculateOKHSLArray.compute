@@ -86,6 +86,7 @@ void CSClearMetadataArray (uint3 id : SV_DispatchThreadID)
 {
     _OtherMetadataArray[0] = 0;
     _OtherMetadataArray[1] = 0;
+    _OtherMetadataArray[2] = 0;
 }
 
 // Get the preview texture (preview array only)
@@ -128,6 +129,7 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
     // TODO: way to not return existing global colors as top colors?
     uint newColorCount = 0;
     uint colorCount = 0;
+    uint existingColorCount = 0;
     
     int startIndex = id.x * _OKHSLArrayResolution.x;
 
@@ -138,6 +140,7 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
     {
         uint index = startIndex + i;
         uint value = _OKHSLArray[index];
+        uint globalValue = _GlobalOKHSLArray[index];
         
         if (value > maxValue)
         {
@@ -145,12 +148,17 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
             maxIndex = index;
         }
 
+        if (globalValue != 0)
+        {
+            existingColorCount += 1;    
+        }
+        
         if (value != 0)
         {
             colorCount += 1;
             
             // TODO: Do the below bit as a merge before to save perf
-            if (_GlobalOKHSLArray[index] == 0)
+            if (globalValue == 0)
             {
                 newColorCount += 1;
             }
@@ -166,4 +174,5 @@ void CSPostProcess (uint3 id : SV_DispatchThreadID)
     // Add our extra metadata
     InterlockedAdd(_OtherMetadataArray[0], colorCount);
     InterlockedAdd(_OtherMetadataArray[1], newColorCount);
+    InterlockedAdd(_OtherMetadataArray[2], existingColorCount);
 }

@@ -66,7 +66,7 @@ namespace Resat.Colors
             _globalOkhslArrayBuffer = new ComputeBuffer(_okhslArraySize.x * _okhslArraySize.y, 4);
             _previousGlobalOkhslArrayBuffer = new ComputeBuffer(_okhslArraySize.x * _okhslArraySize.y, 4);
             _topColorArrayBuffer = new ComputeBuffer(GetPostProcessDataLength(), 4 * 4);
-            _metadataBuffer = new ComputeBuffer(2, 4); // almost certainly an unnecessary thing for 2 ints
+            _metadataBuffer = new ComputeBuffer(3, 4); // almost certainly an unnecessary thing for 2 ints
 
             // used for desat
             Shader.SetGlobalBuffer("_GlobalOKHSLBuffer", _globalOkhslArrayBuffer);
@@ -80,7 +80,7 @@ namespace Resat.Colors
             
             // _outputArray = new uint[_okhslArraySize.x * _okhslArraySize.y];
             _topColorArray = new TopColor[GetPostProcessDataLength() / 2];
-            _otherMetadataArray = new uint[2];
+            _otherMetadataArray = new uint[3];
             _sortingArray = new TopColor[_topColorsCount];
 
             // set indexes used for setting variables
@@ -244,9 +244,9 @@ namespace Resat.Colors
             _metadataBuffer.GetData(_otherMetadataArray);
             uint totalColorCount = _otherMetadataArray[0];
             uint newColorCount = _otherMetadataArray[1];
+            uint existingColorCount = _otherMetadataArray[2]; // semantically different because it doesn't include new colors
             float totalColorCoverage = ((float)totalColorCount / (_okhslArraySize.x * _okhslArraySize.y)) * 100f;
-            float newColorCoverage = ((float)newColorCount / (_okhslArraySize.x * _okhslArraySize.y)) * 100f;
-
+            float newColorCoverage = ((float)newColorCount / ((_okhslArraySize.x * _okhslArraySize.y) - existingColorCount)) * 100f;
             // vibe check
             // var vibe = _vibeUtilites.GetVibe(GetOKHSLTopColorsFromPostProcessData(_postProcessArray, _topColorsCount));
 

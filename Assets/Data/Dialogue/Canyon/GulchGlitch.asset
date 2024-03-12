@@ -18,4 +18,4 @@ MonoBehaviour:
   ShowInteractPromptAfterDialogueComplete: 1
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 11400000, guid: db4f81180cde43a42b336be19b1eb01d, type: 2}
-  QuestRequirementToPass: {fileID: 11400000, guid: 93fd37e7b9d5563439e0ac432f0a7fdc, type: 2}
+  QuestRequirementToPass: {fileID: 11400000, guid: 607fc76150a3be74096b8b4d3ca7b96b, type: 2}

@@ -31,6 +31,7 @@ namespace Resat.Quests
             StartQuest(QuestReferences.First());
             StartQuest(QuestReferences[1]);
             StartQuest(QuestReferences[2]);
+            StartQuest(QuestReferences[3]);
         }
 
         private void OnEnable()
@@ -148,6 +149,21 @@ namespace Resat.Quests
                     SetSaturationBehaviourState(activeQuest.QuestNpc?.ExclamationPoint, true);
                 }
             }
+        }
+
+        public void ForceCompleteQuestItems(QuestSO quest)
+        {
+            foreach (var activeQuest in GetQuestsOfType(QuestState.Active))
+            {
+                if (activeQuest.QuestSO == quest)
+                {
+                    AllQuestItemsCollected(activeQuest);
+                    
+                    // set NPC exclamation mark if needed
+                    SetSaturationBehaviourState(activeQuest.QuestNpc?.ExclamationPoint, true);
+                }
+            }
+
         }
 
         private void CompleteQuestIfNecessary(NpcSO npc)

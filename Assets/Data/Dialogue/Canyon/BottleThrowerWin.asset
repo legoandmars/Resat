@@ -10,14 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
-  m_Name: GulchThanks
+  m_Name: BottleThrowerWin
   m_EditorClassIdentifier: 
   Dialogue:
-  - Well I'll be.. I've never seen such fine shooting skills in all my years I've
-    been studying this canyon.
-  - I was so impressed I snapped out of it!
-  - I invented that machine you know....
-  ShowInteractPromptAfterDialogueComplete: 1
+  - The bottle thrower is pleased with your performance.
+  ShowInteractPromptAfterDialogueComplete: 0
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 0}
   QuestRequirementToPass: {fileID: 0}

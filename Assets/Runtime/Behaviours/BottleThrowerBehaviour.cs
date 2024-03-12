@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Resat.Audio;
 using Resat.Cameras;
+using Resat.Dialogue;
 using Resat.Intermediates;
+using Resat.Quests;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Resat.Behaviours
 {
@@ -12,6 +16,9 @@ namespace Resat.Behaviours
     {
         [SerializeField]
         private PhotoController _photoController = null!;
+        
+        [SerializeField]
+        private QuestController _questController = null!;
         
         [SerializeField]
         private Camera _actualPhotoCameraWithSmallViewport = null!;
@@ -49,6 +56,17 @@ namespace Resat.Behaviours
         [SerializeField]
         private float _thirdStageDelay;
 
+        [SerializeField]
+        private QuestSO? _quest;
+
+        [SerializeField]
+        private DialogueSO? _failedDialogue;
+
+        [SerializeField]
+        private DialogueSO? _completedDialogue;
+
+        private bool _complete = false;
+        
         private List<ThrownBottle> _spawnedBottles = new();
         
         public override void OnDialogueAnimationEnded()
@@ -92,40 +110,82 @@ namespace Resat.Behaviours
 
         private async UniTask StartThrowing()
         {
+            if (_complete) 
+                return;
+            
             // force cam
             Debug.Log("FORCING");
 
             _photoController.EnableCamera(true, true);
-           
+
+            try
+            {
+                await ThrowingLogic();
+            }
+            catch (Exception ex)
+            {
+                // really really really do not want anything to accidentally break the camera
+                Debug.Log(ex);
+            }
+            
+            _photoController.DisableCamera(true, true);
+        }
+
+        private async UniTask ThrowingLogic()
+        {
             // warmup a few sounds
             for (int i = 0; i < _warmupSoundCount; i++)
             {
                 await UniTask.WaitForSeconds(_firstStageDelay);
                 ThrowBottles(0).Forget();
             }
-            
+
             // first, second, third stage
             for (int i = 0; i < 3; i++)
             {
                 await UniTask.WaitForSeconds(_firstStageDelay);
                 ThrowBottles(1).Forget();
             }
+
             for (int i = 0; i < 2; i++)
             {
                 await UniTask.WaitForSeconds(_secondStageDelay);
                 ThrowBottles(Random.Range(1, 3)).Forget();
             }
-            for (int i = 0; i < 2; i++)
+
+            for (int i = 0; i < 4; i++)
             {
                 await UniTask.WaitForSeconds(_thirdStageDelay);
-                ThrowBottles(Random.Range(2,5)).Forget();
+                ThrowBottles(Random.Range(2, 5)).Forget();
             }
 
+            await UniTask.WaitForSeconds(_thirdStageDelay);
+
             var seenCount = _spawnedBottles.Where(x => !x.Seen).Count();
-            Debug.Log("SEEN");            
+            Debug.Log("SEEN");
             Debug.Log(seenCount);
+
+            if (seenCount == 0)
+            {
+                CurrentDialogue = _completedDialogue;
+                _complete = true;
+                _questController.ForceCompleteQuestItems(_quest!);
+            }
+            else
+            {
+                CurrentDialogue = _failedDialogue;
+            }
+
+            foreach (var bottle in _spawnedBottles)
+            {
+                if (bottle != null)
+                {
+                    bottle.gameObject.SetActive(false);
+                    Destroy(bottle);
+                }
+            }
         }
-        
+
         private async UniTask ThrowBottles(int count)
         {
             if (_throwBottleAudioClip != null)

@@ -69,6 +69,7 @@ namespace Resat.Cameras
         private float _animationPercent = 0f;
         
         private CameraResolutionData _currentResolutionData = new();
+        private bool _forceOverrideActive = false;
         
         private void SetResolution(CameraResolutionData resolutionData)
         {
@@ -118,6 +119,12 @@ namespace Resat.Cameras
         
         public void EnableCamera(bool soundEffects = true, bool force = false)
         {
+            if (force)
+                _forceOverrideActive = true;
+
+            if (_forceOverrideActive && !force)
+                return;
+            
             SetResolution(_photoResolutionData);
             
             if (soundEffects)
@@ -132,6 +139,12 @@ namespace Resat.Cameras
         
         public void DisableCamera(bool soundEffects = true, bool force = false)
         {
+            if (force)
+                _forceOverrideActive = false;
+
+            if (_forceOverrideActive && !force)
+                return;
+
             SetResolution(_minimizedResolutionData);
             
             if (soundEffects)

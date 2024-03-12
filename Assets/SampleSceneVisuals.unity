@@ -596,14 +596,14 @@ PrefabInstance:
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _npcSO
       value: 
-      objectReference: {fileID: 11400000, guid: 838c19944052e524691b5a7fecc0223d, type: 2}
+      objectReference: {fileID: 11400000, guid: e6d36483d0fc7984b9bb880df7260342, type: 2}
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _spriteRenderer
       value: 
       objectReference: {fileID: 1385568055}
     - target: {fileID: 1968945989850639583, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: m_Name
-      value: RadicalTrigger
+      value: GeorgeTrigger
       objectReference: {fileID: 0}
     - target: {fileID: 1968945990301359550, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1886,6 +1886,14 @@ MonoBehaviour:
       SaturatedObject: {fileID: 187820753}
       PermanentObjectWhenComplete: {fileID: 0}
     State: 0
+  - QuestSO: {fileID: 11400000, guid: 607fc76150a3be74096b8b4d3ca7b96b, type: 2}
+    QuestNpc: {fileID: 518547398}
+    SaturatedObjects:
+    - AssignedNPC: {fileID: 0}
+      Collected: 0
+      SaturatedObject: {fileID: 0}
+      PermanentObjectWhenComplete: {fileID: 0}
+    State: 0
 --- !u!1001 &299127933
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2496,6 +2504,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &518547398 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
+  m_PrefabInstance: {fileID: 90480181}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bdab13951474e84bc51951750ab5ce6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &525457316
 GameObject:
   m_ObjectHideFlags: 0
@@ -10711,6 +10730,7 @@ MonoBehaviour:
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
   _photoController: {fileID: 678523065}
+  _questController: {fileID: 290105122}
   _actualPhotoCameraWithSmallViewport: {fileID: 2125634634}
   _cameraIntermediate: {fileID: 1421021507}
   _bottleTemplate: {fileID: 2098448830}
@@ -10723,6 +10743,9 @@ MonoBehaviour:
   _firstStageDelay: 2
   _secondStageDelay: 1.8
   _thirdStageDelay: 1.7
+  _quest: {fileID: 11400000, guid: 607fc76150a3be74096b8b4d3ca7b96b, type: 2}
+  _failedDialogue: {fileID: 11400000, guid: 3580c330214415548adaa17a517e582b, type: 2}
+  _completedDialogue: {fileID: 11400000, guid: 10e35b168971a6f4ca793a76115e4cd3, type: 2}
 --- !u!1 &1955244112
 GameObject:
   m_ObjectHideFlags: 0

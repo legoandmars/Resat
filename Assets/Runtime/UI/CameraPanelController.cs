@@ -10,13 +10,10 @@ namespace Resat.UI
         private CanvasScaler _canvasScaler = null!;
         
         [SerializeField]
-        private RectTransform _mainPanel = null!;
+        private CameraDebugPanel _debugPanel = null!;
 
         [SerializeField]
-        private RectTransform _leftInfoPanel = null!;
-        
-        [SerializeField]
-        private CameraDebugPanel _debugPanel = null!;
+        private CameraPreviewPanel _previewPanel = null!;
         
         public void SetResolution(CameraResolutionData resolutionData)
         {
@@ -25,6 +22,7 @@ namespace Resat.UI
 
         public void SetData(OKHSLData okhslData)
         {
+            _previewPanel.SetData(okhslData);
             _debugPanel.SetData(okhslData);
         }
 

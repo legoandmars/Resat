@@ -243,12 +243,14 @@ namespace Resat.Colors
             // Handle other non-topcolor metadata
             _metadataBuffer.GetData(_otherMetadataArray);
             uint totalColorCount = _otherMetadataArray[0];
+            uint newColorCount = _otherMetadataArray[1];
             float totalColorCoverage = ((float)totalColorCount / (_okhslArraySize.x * _okhslArraySize.y)) * 100f;
+            float newColorCoverage = ((float)newColorCount / (_okhslArraySize.x * _okhslArraySize.y)) * 100f;
 
             // vibe check
             // var vibe = _vibeUtilites.GetVibe(GetOKHSLTopColorsFromPostProcessData(_postProcessArray, _topColorsCount));
 
-            return new OKHSLData(sortedTopColorArray, totalColorCount, totalColorCoverage);
+            return new OKHSLData(sortedTopColorArray, totalColorCount, totalColorCoverage, newColorCount, newColorCoverage);
         }
 
         // Made specifically to truncate and sort an array in one swoop

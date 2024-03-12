@@ -322,7 +322,7 @@ namespace Resat.Cameras
 
             if (_screenshots.Count == 3)
             {
-                _tempOutro = true;
+                // _tempOutro = true;
             }
         }
 

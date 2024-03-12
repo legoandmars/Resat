@@ -115,45 +115,12 @@ namespace Input
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4649dac5-388d-4674-98d1-6546fcb98212"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""199e4004-503b-4623-b962-1c8d199d8412"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Look"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5b616007-e8c9-4c02-991f-f272fb6b0759"",
-                    ""path"": ""<Gamepad>/rightStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Look"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4c9204f4-74e9-4d78-9f24-26154064ea5f"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -191,6 +158,24 @@ namespace Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""a4905599-a26c-4136-a563-9d030d048ff7"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ResetZoom"",
+                    ""type"": ""Button"",
+                    ""id"": ""f9a0f076-6b7a-4097-874c-b8c6705bca53"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -213,6 +198,28 @@ namespace Input
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ToggleCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""30e5188e-3a43-418d-9585-36160576c299"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""08fe268e-043b-4667-8aa8-62ed3cb3f097"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResetZoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -386,6 +393,8 @@ namespace Input
             m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
             m_Camera_TakePicture = m_Camera.FindAction("TakePicture", throwIfNotFound: true);
             m_Camera_ToggleCamera = m_Camera.FindAction("ToggleCamera", throwIfNotFound: true);
+            m_Camera_Zoom = m_Camera.FindAction("Zoom", throwIfNotFound: true);
+            m_Camera_ResetZoom = m_Camera.FindAction("ResetZoom", throwIfNotFound: true);
             // Debugging
             m_Debugging = asset.FindActionMap("Debugging", throwIfNotFound: true);
             m_Debugging_DefaultCamView = m_Debugging.FindAction("DefaultCamView", throwIfNotFound: true);
@@ -522,12 +531,16 @@ namespace Input
         private List<ICameraActions> m_CameraActionsCallbackInterfaces = new List<ICameraActions>();
         private readonly InputAction m_Camera_TakePicture;
         private readonly InputAction m_Camera_ToggleCamera;
+        private readonly InputAction m_Camera_Zoom;
+        private readonly InputAction m_Camera_ResetZoom;
         public struct CameraActions
         {
             private @ResatInput m_Wrapper;
             public CameraActions(@ResatInput wrapper) { m_Wrapper = wrapper; }
             public InputAction @TakePicture => m_Wrapper.m_Camera_TakePicture;
             public InputAction @ToggleCamera => m_Wrapper.m_Camera_ToggleCamera;
+            public InputAction @Zoom => m_Wrapper.m_Camera_Zoom;
+            public InputAction @ResetZoom => m_Wrapper.m_Camera_ResetZoom;
             public InputActionMap Get() { return m_Wrapper.m_Camera; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -543,6 +556,12 @@ namespace Input
                 @ToggleCamera.started += instance.OnToggleCamera;
                 @ToggleCamera.performed += instance.OnToggleCamera;
                 @ToggleCamera.canceled += instance.OnToggleCamera;
+                @Zoom.started += instance.OnZoom;
+                @Zoom.performed += instance.OnZoom;
+                @Zoom.canceled += instance.OnZoom;
+                @ResetZoom.started += instance.OnResetZoom;
+                @ResetZoom.performed += instance.OnResetZoom;
+                @ResetZoom.canceled += instance.OnResetZoom;
             }
 
             private void UnregisterCallbacks(ICameraActions instance)
@@ -553,6 +572,12 @@ namespace Input
                 @ToggleCamera.started -= instance.OnToggleCamera;
                 @ToggleCamera.performed -= instance.OnToggleCamera;
                 @ToggleCamera.canceled -= instance.OnToggleCamera;
+                @Zoom.started -= instance.OnZoom;
+                @Zoom.performed -= instance.OnZoom;
+                @Zoom.canceled -= instance.OnZoom;
+                @ResetZoom.started -= instance.OnResetZoom;
+                @ResetZoom.performed -= instance.OnResetZoom;
+                @ResetZoom.canceled -= instance.OnResetZoom;
             }
 
             public void RemoveCallbacks(ICameraActions instance)
@@ -712,6 +737,8 @@ namespace Input
         {
             void OnTakePicture(InputAction.CallbackContext context);
             void OnToggleCamera(InputAction.CallbackContext context);
+            void OnZoom(InputAction.CallbackContext context);
+            void OnResetZoom(InputAction.CallbackContext context);
         }
         public interface IDebuggingActions
         {

@@ -220,6 +220,7 @@ MonoBehaviour:
     CornerTweenType: 0
   _text: {fileID: 2141667504}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!114 &27446145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -487,6 +488,7 @@ MonoBehaviour:
     CornerTweenType: 7
   _text: {fileID: 0}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!222 &54929437
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1278,7 +1280,7 @@ MonoBehaviour:
   - BiomeSO: {fileID: 11400000, guid: 863d4bd6e529cb843922238ca2061b13, type: 2}
     RequirementQuest: {fileID: 11400000, guid: 95c1e0494ae6f5647ab37124b89f2407, type: 2}
     BiomeType: 0
-    Unlocked: 0
+    Unlocked: 1
   - BiomeSO: {fileID: 11400000, guid: 140cf369fd111574fbe6b6eedb62e282, type: 2}
     RequirementQuest: {fileID: 11400000, guid: 607fc76150a3be74096b8b4d3ca7b96b, type: 2}
     BiomeType: 1
@@ -3522,6 +3524,7 @@ MonoBehaviour:
     CornerTweenType: 0
   _text: {fileID: 0}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!114 &536391019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4313,6 +4316,7 @@ MonoBehaviour:
     CornerTweenType: 1
   _text: {fileID: 2016472962}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!114 &598411209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4540,6 +4544,7 @@ MonoBehaviour:
     CornerTweenType: 3
   _text: {fileID: 649273284}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!224 &625617916 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 661447794153739740, guid: 34f66c049c6e2734f8909f5c646f3fc1, type: 3}
@@ -5315,7 +5320,9 @@ MonoBehaviour:
     FilterMode: 0
     RenderTextureReadWrite: 0
   _screenshotNativeResolution: {x: 3840, y: 2160}
-  _fieldOfView: 60
+  _defaultFieldOfView: 60
+  _fieldOfViewRange: {x: 30, y: 85}
+  _fieldOfViewScrollSpeed: -0.02
   _savePhotosToDisk: 0
   _startWithCameraEnabled: 0
   _animationDuration: 0.4
@@ -6534,6 +6541,7 @@ MonoBehaviour:
     CornerTweenType: 5
   _text: {fileID: 75910486}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!1 &869205129
 GameObject:
   m_ObjectHideFlags: 0
@@ -9131,6 +9139,7 @@ MonoBehaviour:
     CornerTweenType: 5
   _text: {fileID: 75910486}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!114 &1154616154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15868,6 +15877,7 @@ MonoBehaviour:
     CornerTweenType: 9
   _text: {fileID: 2141667504}
   _textAnimationController: {fileID: 161414588}
+  _textAudio: {fileID: 11400000, guid: 7b5c7a58f587daa449e890cef5c4a2f1, type: 2}
 --- !u!222 &2036272559
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17040,6 +17050,7 @@ MonoBehaviour:
     CornerTweenType: 0
   _text: {fileID: 649273284}
   _textAnimationController: {fileID: 0}
+  _textAudio: {fileID: 0}
 --- !u!114 &2131212950
 MonoBehaviour:
   m_ObjectHideFlags: 0

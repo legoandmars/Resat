@@ -78,7 +78,13 @@ namespace Resat.Cameras
         private Vector2Int _screenshotNativeResolution = new(1920, 1080);
 
         [SerializeField]
-        private float _fieldOfView = 60f;
+        private float _defaultFieldOfView;
+
+        [SerializeField]
+        private Vector2 _fieldOfViewRange;
+
+        [SerializeField]
+        private float _fieldOfViewScrollSpeed;
         
         [Header("Settings")]
         [SerializeField]
@@ -120,7 +126,7 @@ namespace Resat.Cameras
 
         private CameraState _cameraState = CameraState.Minimized;
         private float _animationPercent = 0f;
-        
+        private float _maximizedFieldOfView;
         private CameraResolutionData _currentResolutionData = new();
         private bool _forceOverrideActive = false;
         private OKHSLData? _previousOkhslData;
@@ -129,7 +135,6 @@ namespace Resat.Cameras
         
         private void SetFieldOfView(float fieldOfView)
         {
-            _fieldOfView = fieldOfView;
             _desaturationCamera.SetFieldOfView(fieldOfView);
             _resatCamera.SetFieldOfView(fieldOfView);
         }
@@ -202,6 +207,7 @@ namespace Resat.Cameras
             await _cameraViewportPanel.Close(force, null, SetViewportOpenVector);
 
             await sidePanel;
+            // _maximizedFieldOfView = _defaultFieldOfView;
         }
 
         private async UniTask AnimateSidePanel(bool force, bool reverse = false)
@@ -260,6 +266,12 @@ namespace Resat.Cameras
             // rgb lerp is fine since we're working in grayscale
             var lerpedColor = Color.Lerp(Color.white, _desaturationCamera.OutsideCutoutColor, approximateValue);
             _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
+            
+            // lerp FOV between real and fake values
+            if (_defaultFieldOfView != _maximizedFieldOfView)
+            {
+                SetFieldOfView(Mathf.Lerp(_defaultFieldOfView, _maximizedFieldOfView, approximateValue));
+            }
         }
 
         public void EnableCamera(bool soundEffects = true, bool force = false)
@@ -438,6 +450,33 @@ namespace Resat.Cameras
             }
         }
 
+        public void OnZoom(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+                return;
+
+            if (_cameraState != CameraState.InView)
+                return;
+            
+            Debug.Log("ZOOM");
+            var scroll = context.ReadValue<float>();
+            Debug.Log(scroll * _fieldOfViewScrollSpeed);
+            _maximizedFieldOfView = Mathf.Clamp((_maximizedFieldOfView + scroll * _fieldOfViewScrollSpeed), _fieldOfViewRange.x, _fieldOfViewRange.y);
+            SetFieldOfView(_maximizedFieldOfView);
+        }
+
+        public void OnResetZoom(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+                return;
+
+            if (_cameraState != CameraState.InView)
+                return;
+
+            _maximizedFieldOfView = _defaultFieldOfView;
+            SetFieldOfView(_maximizedFieldOfView);
+        }
+
         private void RenderPreview()
         {
             if (_cameraState != CameraState.InView) 
@@ -471,7 +510,7 @@ namespace Resat.Cameras
                 return;
 
             RenderPreview();
-            SetFieldOfView(_fieldOfView); // temporary
+            // SetFieldOfView(_fieldOfView); // temporary
         }
         
         private void Start()
@@ -487,6 +526,8 @@ namespace Resat.Cameras
                 _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);
 
             _topNotificationPanel.CloseWithText("", _notificationTextSpeed, true).Forget();
+
+            _maximizedFieldOfView = _defaultFieldOfView;
         }
 
         private void OnEnable()

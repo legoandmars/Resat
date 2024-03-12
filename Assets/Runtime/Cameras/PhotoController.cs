@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AuraTween;
 using Cysharp.Threading.Tasks;
 using Input;
@@ -106,6 +107,9 @@ namespace Resat.Cameras
         private float _notificationShowTime = 1f;
 
         [SerializeField]
+        private TextAnimationSpeed _notificationTextSpeed = new(1f, 1f);
+
+        [SerializeField]
         private Color _outroCutoutColor = Color.black;
         
         [SerializeField]
@@ -121,6 +125,7 @@ namespace Resat.Cameras
         private bool _forceOverrideActive = false;
         private OKHSLData? _previousOkhslData;
         private List<ScreenshotData> _screenshots = new();
+        private CancellationTokenSource? _topNotificationCts;
         
         private void SetFieldOfView(float fieldOfView)
         {
@@ -283,9 +288,30 @@ namespace Resat.Cameras
 
         private async UniTask ShowTopNotification(string content)
         {
-            await _topNotificationPanel.OpenWithTextScaling();
-            await UniTask.WaitForSeconds(_notificationShowTime);
-            await _topNotificationPanel.CloseWithTextScaling();
+            var notificationCts = new CancellationTokenSource();
+            if (_topNotificationCts != null)
+            {
+                _topNotificationCts.Cancel();
+            }
+            _topNotificationCts = notificationCts;
+            
+            await _topNotificationPanel.OpenWithText(content, _notificationTextSpeed, false, null, null, null, _topNotificationCts.Token);
+            
+            if (notificationCts.IsCancellationRequested)
+                return;
+            
+            await UniTask.WaitForSeconds(_notificationShowTime).AttachExternalCancellation(_topNotificationCts.Token);
+            
+            if (notificationCts.IsCancellationRequested)
+                return;
+            
+            await _topNotificationPanel.CloseWithText(content, _notificationTextSpeed, false, null, null, null, _topNotificationCts.Token);
+            
+            notificationCts.Cancel();
+            if (_topNotificationCts == notificationCts)
+            {
+                _topNotificationCts = null;
+            }
         }
         
         public void DisableCamera(bool soundEffects = true, bool force = false)
@@ -460,7 +486,7 @@ namespace Resat.Cameras
             if (_okhslController.OutputArrayTexture != null)
                 _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);
 
-            _topNotificationPanel.Close(true).Forget();
+            _topNotificationPanel.CloseWithText("", _notificationTextSpeed, true).Forget();
         }
 
         private void OnEnable()

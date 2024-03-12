@@ -8,6 +8,10 @@
         NamePanel,
         NamePanelCorners,
         DialoguePanel,
-        DialoguePanelCorners
+        DialoguePanelCorners,
+        MainPanel,
+        MainPanelCorners,
+        TopNotification,
+        TopNotificationCorners
     }
 }

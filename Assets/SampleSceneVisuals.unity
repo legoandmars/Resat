@@ -219,6 +219,7 @@ MonoBehaviour:
     PanelTweenType: 0
     CornerTweenType: 0
   _text: {fileID: 2141667504}
+  _textAnimationController: {fileID: 0}
 --- !u!114 &27446145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,9 +483,10 @@ MonoBehaviour:
     YEase: 12
     CornersEaseIn: 12
     CornersEaseOut: 11
-    PanelTweenType: 2
-    CornerTweenType: 3
+    PanelTweenType: 6
+    CornerTweenType: 7
   _text: {fileID: 0}
+  _textAnimationController: {fileID: 0}
 --- !u!222 &54929437
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3519,6 +3521,7 @@ MonoBehaviour:
     PanelTweenType: 0
     CornerTweenType: 0
   _text: {fileID: 0}
+  _textAnimationController: {fileID: 0}
 --- !u!114 &536391019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4309,6 +4312,7 @@ MonoBehaviour:
     PanelTweenType: 0
     CornerTweenType: 1
   _text: {fileID: 2016472962}
+  _textAnimationController: {fileID: 0}
 --- !u!114 &598411209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4535,6 +4539,7 @@ MonoBehaviour:
     PanelTweenType: 2
     CornerTweenType: 3
   _text: {fileID: 649273284}
+  _textAnimationController: {fileID: 0}
 --- !u!224 &625617916 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 661447794153739740, guid: 34f66c049c6e2734f8909f5c646f3fc1, type: 3}
@@ -5295,6 +5300,7 @@ MonoBehaviour:
   _topSidePanel: {fileID: 1256746643}
   _outroPanel: {fileID: 996966347}
   _cameraViewportPanel: {fileID: 54929436}
+  _topNotificationPanel: {fileID: 2036272558}
   _cameraIntermediate: {fileID: 1421021507}
   _photoResolutionData:
     Resolution: {x: 272, y: 200}
@@ -5317,6 +5323,10 @@ MonoBehaviour:
   _outroFadeAnimationDuration: 2
   _outroScaleAnimationDuration: 1.5
   _outroScaleInAnimationDuration: 0.7
+  _notificationShowTime: 3
+  _notificationTextSpeed:
+    Min: 0.015
+    Max: 0.018
   _outroCutoutColor: {r: 0, g: 0, b: 0, a: 1}
   _outroFadeEase: 9
   _tempOutro: 0
@@ -6523,6 +6533,7 @@ MonoBehaviour:
     PanelTweenType: 4
     CornerTweenType: 5
   _text: {fileID: 75910486}
+  _textAnimationController: {fileID: 0}
 --- !u!1 &869205129
 GameObject:
   m_ObjectHideFlags: 0
@@ -9119,6 +9130,7 @@ MonoBehaviour:
     PanelTweenType: 4
     CornerTweenType: 5
   _text: {fileID: 75910486}
+  _textAnimationController: {fileID: 0}
 --- !u!114 &1154616154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14332,6 +14344,7 @@ MonoBehaviour:
   - {fileID: 1154616154}
   - {fileID: 1319726465}
   - {fileID: 2131212950}
+  - {fileID: 27446145}
 --- !u!1 &1878892260
 GameObject:
   m_ObjectHideFlags: 0
@@ -15851,9 +15864,10 @@ MonoBehaviour:
     YEase: 18
     CornersEaseIn: 12
     CornersEaseOut: 11
-    PanelTweenType: 2
-    CornerTweenType: 3
+    PanelTweenType: 8
+    CornerTweenType: 9
   _text: {fileID: 2141667504}
+  _textAnimationController: {fileID: 161414588}
 --- !u!222 &2036272559
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17025,6 +17039,7 @@ MonoBehaviour:
     PanelTweenType: 0
     CornerTweenType: 0
   _text: {fileID: 649273284}
+  _textAnimationController: {fileID: 0}
 --- !u!114 &2131212950
 MonoBehaviour:
   m_ObjectHideFlags: 0

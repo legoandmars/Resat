@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using Resat.Dialogue;
+using Resat.Models;
 using TMPro;
 using UnityEngine;
 
@@ -12,6 +15,13 @@ namespace Resat.UI
         [SerializeField]
         private TextMeshProUGUI? _text;
 
+        [SerializeField]
+        private TextAnimationController _textAnimationController = null!;
+
+        // only used for OpenWithText
+        [SerializeField]
+        private TextAudioSO? _textAudio;
+        
         public void SetText(string content)
         {
             if (_text == null)
@@ -21,30 +31,41 @@ namespace Resat.UI
             _text.text = content;
         }
 
-        public async UniTask<bool> CloseWithTextScaling(bool instant = false, Action<float>? setFloat = null, Action<Vector2>? setVector = null)
+        public async UniTask<bool> CloseWithText(string content, TextAnimationSpeed speed, bool instant = false, TextAudioSO? textAudio = null, Action<float>? setFloat = null, Action<Vector2>? setVector = null, CancellationToken cancellationToken = default)
         {
-            return await Close(instant, setFloat, (value) =>
+            if (Text != null)
             {
-                var scale = new Vector3(value.y / _tweenSettings.Size.y, value.x / _tweenSettings.Size.x, 1);
-                if (_text != null)
+                if (!instant)
                 {
-                    _text.transform.localScale = scale;
+                    await _textAnimationController.UnanimateTextSmoothCancel(content, Text, speed, cancellationToken);
                 }
-                setVector?.Invoke(value);
-            });
+                else
+                {
+                    Text.SetText("");
+                }
+            }
+
+            return await Close(instant, setFloat, setVector);
         }
         
-        public async UniTask<bool> OpenWithTextScaling(bool instant = false, Action<float>? setFloat = null, Action<Vector2>? setVector = null)
+        public async UniTask<bool> OpenWithText(string content, TextAnimationSpeed speed, bool instant = false, TextAudioSO? textAudio = null, Action<float>? setFloat = null, Action<Vector2>? setVector = null, CancellationToken cancellationToken = default)
         {
-            return await Open(instant, setFloat, (value) =>
+            var result = Open(instant, setFloat, setVector);
+            await UniTask.WaitForSeconds(_tweenSettings.Duration - 0.4f);
+            
+            if (Text != null)
             {
-                var scale = new Vector3(value.x / _tweenSettings.Size.x, value.y / _tweenSettings.Size.y, 1);
-                if (_text != null)
+                if (!instant)
                 {
-                    _text.transform.localScale = scale;
+                    await _textAnimationController.AnimateTextSmoothCancel(content, Text, speed, textAudio ?? _textAudio, cancellationToken);
                 }
-                setVector?.Invoke(value);
-            });
+                else
+                {
+                    Text.SetText(content);
+                }
+            }
+
+            return await result;
         }
     }
 }

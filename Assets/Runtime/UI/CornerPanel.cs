@@ -9,6 +9,8 @@ namespace Resat.UI
 {
     public class CornerPanel : MonoBehaviour
     {
+        public CornerTweenSettings TweenSettings => _tweenSettings;
+        
         [Header("Dependencies")]
         public TweenController? _tweenController;
         

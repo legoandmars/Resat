@@ -39,7 +39,10 @@ namespace Resat.Cameras
         
         [SerializeField]
         private CameraPanelController _cameraPanelController = null!;
-        
+
+        [SerializeField]
+        private RectTransform? _topSidePanel;
+
         // atp i'm just directly interacting with UI elements, i need to get something out
         [SerializeField]
         private OutroPanel _outroPanel = null!;
@@ -73,6 +76,9 @@ namespace Resat.Cameras
         [Header("Animation")]
         [SerializeField]
         private float _animationDuration = 1f;
+        
+        [SerializeField]
+        private float _sidePanelAnimationDuration = 1f;
         
         [SerializeField]
         private float _outroFadeAnimationDuration = 1f;
@@ -163,12 +169,32 @@ namespace Resat.Cameras
 
         private async UniTask AnimateOpenCamera(bool force = true)
         {
-            await _cameraViewportPanel.Open(force, SetViewportOpenPercentage, SetViewportOpenVector);
+            var openCam = _cameraViewportPanel.Open(force, SetViewportOpenPercentage, SetViewportOpenVector);
+
+            // we need to pull the side panel early
+            await UniTask.WaitForSeconds(_cameraViewportPanel.TweenSettings.Duration - _sidePanelAnimationDuration - 0.21f);
+            await AnimateSidePanel(force);
+
+            await openCam;
         }
         
         private async UniTask AnimateCloseCamera(bool force = true)
         {
+            AnimateSidePanel(force, true);
             await _cameraViewportPanel.Close(force, SetViewportClosePercentage, SetViewportOpenVector);
+        }
+
+        private async UniTask AnimateSidePanel(bool force = true, bool reverse = false)
+        {
+            if (_topSidePanel == null)
+                return;
+
+            // TODO NON LINEAR
+            await _tweenController.RunTween(_sidePanelAnimationDuration, (value) =>
+            {
+                Debug.Log(reverse ? 1 - value : value);
+                _topSidePanel.localScale = new Vector3(1, reverse ? 1 - value : value, 1);
+            });
         }
 
         private void SetViewportOpenVector(Vector2 value)
@@ -177,15 +203,18 @@ namespace Resat.Cameras
             fakerd.Center = _photoResolutionData.Center;
             fakerd.Resolution = new Vector2Int((int)value.x, (int)value.y);
             _desaturationCamera.SetResolution(fakerd);
+            
+            // estimate how done we are based on viewport X
+            // gross hack
+            var approximateValue = (value.x / _photoResolutionData.GetRescaledResolution(new Vector2(1920, 1080)).x);
+            // rgb lerp is fine since we're working in grayscale
+            var lerpedColor = Color.Lerp(Color.white, _desaturationCamera.OutsideCutoutColor, approximateValue);
+            _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
         }
 
         private void SetViewportClosePercentage(float value) => SetViewportOpenPercentage(1 - value);
         private void SetViewportOpenPercentage(float value)
         {
-            Debug.Log(value);
-            // rgb lerp is fine since we're working in grayscale
-            var lerpedColor = Color.Lerp(Color.white, _desaturationCamera.OutsideCutoutColor, value);
-            _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
         }
 
         public void EnableCamera(bool soundEffects = true, bool force = false)

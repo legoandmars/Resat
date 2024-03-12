@@ -11,26 +11,16 @@ namespace Resat.UI
         
         [SerializeField]
         private RectTransform _mainPanel = null!;
+
+        [SerializeField]
+        private RectTransform _leftInfoPanel = null!;
         
         [SerializeField]
         private CameraDebugPanel _debugPanel = null!;
         
         public void SetResolution(CameraResolutionData resolutionData)
         {
-            // get "difference" between 1080p canvas scaler
-            var resolution = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
-            var nativeResolution = resolutionData.NativeResolution / resolutionData.GetNativeResolutionScale(_canvasScaler.referenceResolution);
-            
-            _mainPanel.sizeDelta = resolution;
-
-            float xOffset = (resolutionData.Center.x - 0.5f) * nativeResolution.x;
-            float yOffset = (resolutionData.Center.y - 0.5f) * nativeResolution.y;
-
-            _mainPanel.anchoredPosition = new Vector2(xOffset, yOffset);
-
             _debugPanel.SetPreviewTextureResolution(resolutionData, _canvasScaler);
-            // TEMPORARY!!!
-            // _debugPanel.CameraImage.rectTransform.sizeDelta = resolutionData.GetRescaledResolution(_canvasScaler.referenceResolution);
         }
 
         public void SetData(OKHSLData okhslData)

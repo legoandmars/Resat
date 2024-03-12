@@ -4,8 +4,10 @@ Shader "Unlit/OKHSLPickerOverlay"
     {
         _Saturation ("Saturation", float) = 0.9
         _MainTex ("Overlay", 2D) = "white" {}
+        _PreviewTex ("Preview Tex", 2D) = "white" {}
         _AnimationPercent ("Post-photo animation timer", Range(0.0, 1.0)) = 1.0
         _AnimationState ("Animating", Range(0.0, 1.0)) = 1.0
+        _Speed ("UV speed", Float) = 1.0
         _PreviewColor ("Preview Color", Color) = (1,1,1,1)
         _GlobalColor ("Global Color", Color) = (1,1,1,1)
         _OutsideColor ("Outside Color", Color) = (1,1,1,1)
@@ -43,8 +45,11 @@ Shader "Unlit/OKHSLPickerOverlay"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            sampler2D _PreviewTex;
+            float4 _PreviewTex_ST;
             float4 _NoiseScale;
             float _Saturation;
+            float _Speed;
             float _AnimationPercent;
             float _AnimationState;
             fixed4 _PreviewColor;
@@ -87,10 +92,11 @@ Shader "Unlit/OKHSLPickerOverlay"
                 float3 tempCol = OKHSLtoRGB(float3(i.uv.x, _Saturation, i.uv.y));
                 float4 col = float4(tempCol.r, tempCol.g, tempCol.b, 1);
 
-                float2 noiseScale = float2(_NoiseScale.x, _NoiseScale.x / 4);
-                i.uv.x += unity_gradientNoise(float2(32902, 320) + i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;
-                i.uv.y += unity_gradientNoise(i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;
+                // float2 noiseScale = float2(_NoiseScale.x, _NoiseScale.x / 4);
+                // i.uv.x += unity_gradientNoise(float2(32902, 320) + i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;
+                // i.uv.y += unity_gradientNoise(i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;
                 float4 overlayCol = tex2D(_MainTex, i.uv);
+                float4 previewCol = tex2D(_PreviewTex, i.uv * _PreviewTex_ST.xy + _PreviewTex_ST.zw + float2(_Time.y * _Speed, 0)) * _PreviewColor;
 
                 float4 finalCol = lerp(col, _OutsideColor, _OutsideColor.a);
                 if (overlayCol.r < 0.8f && overlayCol.r > 0.5f)
@@ -100,8 +106,10 @@ Shader "Unlit/OKHSLPickerOverlay"
                 }
                 else if (overlayCol.r > 0.9f)
                 {
-                    float4 interpolatedCol = lerp(_PreviewColor, _GlobalColor, lerp(0, _AnimationPercent, _AnimationState));
-                    finalCol = lerp(col, interpolatedCol, interpolatedCol.a);
+                    // works assuming we only need alpha
+                    previewCol.a = lerp(previewCol.a, _GlobalColor.a, lerp(0, _AnimationPercent, _AnimationState));
+                    float4 interpolatedCol = lerp(previewCol * _PreviewColor, _GlobalColor, lerp(0, _AnimationPercent, _AnimationState));
+                    finalCol = lerp(col, previewCol, previewCol.a);
                 }
                 
                 // apply fog

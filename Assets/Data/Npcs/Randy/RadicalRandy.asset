@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1312f3546a14bf995139cb2d3033f27, type: 3}
   m_Name: RadicalRandy
   m_EditorClassIdentifier: 
-  Name: NPC
+  Name: Radical Randy
   InitialDialogue: {fileID: 11400000, guid: 9d844537ac17219488b148e4ae2de8f1, type: 2}
   TextAudio: {fileID: 11400000, guid: 34ffbe419dd08fd408341309f49e3bd8, type: 2}

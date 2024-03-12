@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
+  m_Name: MarkInitial
+  m_EditorClassIdentifier: 
+  Dialogue:
+  - Hey, could you help me gather some firewood so I can put together a fire?
+  - What? Everybody else in town is glitchy and corrupted?
+  - Huh. Things HAVE seemed awfully lacking in color recently... but I figured that
+    was just ash from all the fires I've been building.
+  - Well, what are you waiting for? If anything, that firewood just got HIGHER priority.
+  ShowInteractPromptAfterDialogueComplete: 1
+  StopShowingDialogueAfterwards: 0
+  NextDialogue: {fileID: 11400000, guid: a290729479df2144d8f2e1c15e971e2e, type: 2}
+  QuestRequirementToPass: {fileID: 11400000, guid: db12294907c4b9d48a4602204e0507a9, type: 2}

@@ -30,6 +30,7 @@ namespace Resat.Quests
             // TODO: if needed don't hardcode this to first
             StartQuest(QuestReferences.First());
             StartQuest(QuestReferences[1]);
+            StartQuest(QuestReferences[2]);
         }
 
         private void OnEnable()

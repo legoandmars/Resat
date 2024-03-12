@@ -28,6 +28,8 @@ namespace Resat.Dialogue
         // hardcoded
         [SerializeField]
         private List<NpcTriggerBehaviour> _skateboardNpcs = new();
+        [SerializeField]
+        private List<NpcTriggerBehaviour> _logNpcs = new();
 
         private NpcTriggerBehaviour? _npcBehaviour;
         private bool _inDialogue = false;
@@ -129,6 +131,17 @@ namespace Resat.Dialogue
                         if (skateboardNpc.Interactable && skateboardNpc.CurrentDialogue?.NextDialogue != null)
                         {
                             skateboardNpc.CurrentDialogue = skateboardNpc.CurrentDialogue.NextDialogue;
+                        }
+                    }
+                }
+                // very hardcoded log...
+                if (_logNpcs.Any(x => x == _npcBehaviour))
+                {
+                    foreach (var logNpc in _logNpcs)
+                    {
+                        if (logNpc.Interactable && logNpc.CurrentDialogue?.NextDialogue != null)
+                        {
+                            logNpc.CurrentDialogue = logNpc.CurrentDialogue.NextDialogue;
                         }
                     }
                 }

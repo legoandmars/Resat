@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Resat.Behaviours;
 using Resat.Intermediates;
@@ -21,6 +22,8 @@ namespace Resat.Quests
         [SerializeField]
         public List<QuestReference> QuestReferences = new();
 
+        public event Action<QuestSO>? OnQuestCompleted;
+        
         private void Start()
         {
             // disable initial objects
@@ -193,6 +196,7 @@ namespace Resat.Quests
         private void CompleteQuest(QuestReference questReference)
         {
             questReference.State = QuestState.Completed;
+            OnQuestCompleted?.Invoke(questReference.QuestSO);
         }
     }
 }

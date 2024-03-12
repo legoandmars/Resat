@@ -5,10 +5,12 @@ using AuraTween;
 using Cysharp.Threading.Tasks;
 using Input;
 using Resat.Audio;
+using Resat.Biomes;
 using Resat.Colors;
 using Resat.Input;
 using Resat.Intermediates;
 using Resat.Models;
+using Resat.Models.Events;
 using Resat.Tweening;
 using Resat.UI;
 using UnityEngine;
@@ -16,6 +18,8 @@ using UnityEngine.InputSystem;
 
 namespace Resat.Cameras
 {
+    // this class is a bit of a monolith. it was meant to be rewritten, but i don't have enough time if I want to finish the jam at this point
+    // it handles input, camera state, and UI state
     public class PhotoController : MonoBehaviour, ResatInput.ICameraActions
     {
         [Header("Dependencies")]
@@ -27,6 +31,12 @@ namespace Resat.Cameras
         
         [SerializeField]
         private TweenController _tweenController = null!;
+
+        [SerializeField]
+        private BiomeController _biomeController = null!;
+
+        [SerializeField]
+        private BiomeIntermediate _biomeIntermediate = null!;
 
         [SerializeField]
         private ResatCamera _resatCamera = null!;
@@ -248,7 +258,15 @@ namespace Resat.Cameras
 
             if (_forceOverrideActive && !force)
                 return;
-            
+
+            var biomeIsUnlocked = _biomeController.BiomeIsUnlocked();
+            if (!biomeIsUnlocked)
+            {
+                Debug.Log("nah. we not unlocked");
+                _cameraAudioController.PlaySoundEffect(SoundEffect.InvalidOperation);
+                return;
+            }
+
             if (soundEffects)
                 _cameraAudioController.PlaySoundEffect(SoundEffect.MenuOpen);
             
@@ -432,11 +450,22 @@ namespace Resat.Cameras
         private void OnEnable()
         {
             _inputController.Input.Camera.AddCallbacks(this);
+            _biomeIntermediate.BiomeChanged += OnBiomeChanged;
+        }
+
+        private void OnBiomeChanged(BiomeChangeEvent biomeChangeEvent)
+        {
+            var unlocked = _biomeController.BiomeIsUnlocked(biomeChangeEvent.Biome.BiomeType);
+            if (!unlocked)
+            {
+                Debug.Log("New biome is NOT unlocked!");
+            }
         }
 
         private void OnDisable()
         {
             _inputController.Input.Camera.RemoveCallbacks(this);
+            _biomeIntermediate.BiomeChanged -= OnBiomeChanged;
         }
     }
 }

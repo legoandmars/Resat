@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Resat.Intermediates;
 using Resat.Models;
 using Resat.Models.Events;
+using Resat.Quests;
 using UnityEngine;
 
 namespace Resat.Biomes
@@ -14,41 +16,42 @@ namespace Resat.Biomes
         private BiomeIntermediate _biomeIntermediate = null!;
         
         [SerializeField]
+        private QuestController _questController = null!;
+        
+        [SerializeField]
         private BiomeType _initialBiomeType = BiomeType.Desert;
 
         [SerializeField]
-        private List<BiomeSO> _biomes = new();
-
-        private Dictionary<BiomeType, BiomeSO>? _biomesByType;
+        private List<BiomeReference> _biomes = new();
+        
         // private bool _transitioning = false;
         private BiomeType _biomeType;
         
-        // cache a dictionary in awake because unity doesn't let us use dictionaries in-inspector
-        private void Awake()
-        {
-            _biomesByType = new Dictionary<BiomeType, BiomeSO>();
-
-            foreach (var biome in _biomes)
-            {
-                _biomesByType[biome.BiomeType] = biome;
-            }
-            
-
-        }
-
         private void Start()
         {
-            if (_biomesByType == null || !_biomesByType.TryGetValue(_initialBiomeType, out var initialBiome))
-                return;
-
-            ChangeBiome(initialBiome, true);
+            var biome = _biomes.FirstOrDefault(x => x.BiomeType == _initialBiomeType);
+            
+            if (biome != null)
+                ChangeBiome(biome, true);
         }
         
         private void OnEnable()
         {
             _biomeIntermediate.BiomeChangeRequested += OnBiomeChangeRequested;
+            _questController.OnQuestCompleted += OnQuestCompleted;
         }
-        
+
+        private void OnQuestCompleted(QuestSO quest)
+        {
+            foreach (var biome in _biomes)
+            {
+                if (biome.RequirementQuest != quest)
+                    continue;
+
+                biome.Unlocked = true;
+            }
+        }
+
         private void OnDisable()
         {
             _biomeIntermediate.BiomeChangeRequested -= OnBiomeChangeRequested;
@@ -56,21 +59,24 @@ namespace Resat.Biomes
 
         private void OnBiomeChangeRequested(BiomeType biomeType)
         {
-            if (_biomesByType == null || biomeType == _biomeType)
-                return;
-
-            if (!_biomesByType.TryGetValue(biomeType, out var biome))
+            var biome = _biomes.FirstOrDefault(x => x.BiomeType == biomeType);
+            if (biome == null)
                 return;
             
             ChangeBiome(biome);
         }
 
-        private void ChangeBiome(BiomeSO biome, bool first = false)
+        private void ChangeBiome(BiomeReference biome, bool first = false)
         {
             Debug.Log($"Switching biome to {biome.BiomeType}!");
             
             _biomeType = biome.BiomeType;
-            _biomeIntermediate.ChangeBiome(new BiomeChangeEvent(biome, first));
+            _biomeIntermediate.ChangeBiome(new BiomeChangeEvent(biome.BiomeSO, first));
+        }
+
+        public bool BiomeIsUnlocked(BiomeType? biomeType = null)
+        {
+            return _biomes.Any(x => x.BiomeType == (biomeType ?? _biomeType) && x.Unlocked);
         }
     }
 }

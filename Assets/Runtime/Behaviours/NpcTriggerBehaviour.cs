@@ -46,7 +46,11 @@ namespace Resat.Behaviours
             if (_spriteRenderer == null || _exclamationPoint?.PlayerCamera == null)
                 return;
             
-            _spriteRenderer.transform.forward = new Vector3(-_exclamationPoint.PlayerCamera.transform.forward.x, 0, -_exclamationPoint.PlayerCamera.transform.forward.z);
+            var vector = new Vector3(-_exclamationPoint.PlayerCamera.transform.forward.x, 0, -_exclamationPoint.PlayerCamera.transform.forward.z);
+            if (vector == Vector3.zero)
+                return;
+            
+            _spriteRenderer.transform.forward = vector;
         }
 
         public virtual void OnDialogueAnimationStarted()

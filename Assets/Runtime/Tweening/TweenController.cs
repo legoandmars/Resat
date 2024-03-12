@@ -43,7 +43,7 @@ namespace Resat.Tweening
             // Used for cancelling and retrying a color tween (eg if the user is moving between two biomes rapidly)
             if (_tweensByColorType.TryGetValue(invoker, out Tween existingTween))
             {
-                Debug.Log("Cancelling...");
+                // Debug.Log("Cancelling...");
                 existingTween.Cancel();
                 _tweensByColorType.Remove(invoker);
             }

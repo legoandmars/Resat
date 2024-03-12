@@ -61,6 +61,9 @@ namespace Resat.Cameras
         private CornerPanel _cameraViewportPanel = null!;
         
         [SerializeField]
+        private DialoguePanel _topNotificationPanel = null!;
+
+        [SerializeField]
         private CameraIntermediate _cameraIntermediate = null!;
 
         [Header("Resolution")]
@@ -98,6 +101,9 @@ namespace Resat.Cameras
         
         [SerializeField]
         private float _outroScaleInAnimationDuration = 1f;
+        
+        [SerializeField]
+        private float _notificationShowTime = 1f;
 
         [SerializeField]
         private Color _outroCutoutColor = Color.black;
@@ -263,6 +269,7 @@ namespace Resat.Cameras
             if (!biomeIsUnlocked)
             {
                 Debug.Log("nah. we not unlocked");
+                ShowTopNotification("An evil presence in this area overwhelms you.").Forget();
                 _cameraAudioController.PlaySoundEffect(SoundEffect.InvalidOperation);
                 return;
             }
@@ -272,6 +279,13 @@ namespace Resat.Cameras
             
             SetCameraState(CameraState.InView, "Enabling camera!");
             AnimateOpenCamera(force).Forget();
+        }
+
+        private async UniTask ShowTopNotification(string content)
+        {
+            await _topNotificationPanel.OpenWithTextScaling();
+            await UniTask.WaitForSeconds(_notificationShowTime);
+            await _topNotificationPanel.CloseWithTextScaling();
         }
         
         public void DisableCamera(bool soundEffects = true, bool force = false)
@@ -445,6 +459,8 @@ namespace Resat.Cameras
             
             if (_okhslController.OutputArrayTexture != null)
                 _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);
+
+            _topNotificationPanel.Close(true).Forget();
         }
 
         private void OnEnable()

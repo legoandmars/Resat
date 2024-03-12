@@ -22,7 +22,7 @@ namespace Resat.UI
 
         [Header("Settings")] 
         [SerializeField]
-        private CornerTweenSettings _tweenSettings = new();
+        protected CornerTweenSettings _tweenSettings = new();
 
         public async UniTask<bool> Close(bool instant = false, Action<float>? setFloat = null, Action<Vector2>? setVector = null)
         {

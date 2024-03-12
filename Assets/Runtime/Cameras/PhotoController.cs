@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Input;
@@ -70,6 +71,8 @@ namespace Resat.Cameras
         
         private CameraResolutionData _currentResolutionData = new();
         private bool _forceOverrideActive = false;
+        private OKHSLData? _previousOkhslData;
+        private List<ScreenshotData> _screenshots = new();
         
         private void SetResolution(CameraResolutionData resolutionData)
         {
@@ -181,17 +184,30 @@ namespace Resat.Cameras
 
             AnimateAfterPicture().Forget();
             
-            if (!_savePhotosToDisk) 
-                return;
-            
             // TODO: This assumes native res will always cleanly divide into the screenshot's native res
             var scaleMultiplier = new Vector2((float)_screenshotNativeResolution.x / (float)_currentResolutionData.NativeResolution.x, (float)_screenshotNativeResolution.y / (float)_currentResolutionData.NativeResolution.y);
             var screenshotResolution = new Vector2Int((int)(_currentResolutionData.Resolution.x * scaleMultiplier.x), (int)(_currentResolutionData.Resolution.y * scaleMultiplier.y));
             
             var screenshotResolutionData = new CameraResolutionData(screenshotResolution, _screenshotNativeResolution, _currentResolutionData.Center, FilterMode.Bilinear, RenderTextureReadWrite.sRGB);
-            _resatCamera.RenderScreenshot(screenshotResolutionData);
+            
+            var renderTexture = _resatCamera.RenderScreenshot(screenshotResolutionData, _savePhotosToDisk);
+
+            // serialize taken photo data
+            if (renderTexture != null)
+            {
+                HandlePictureData(renderTexture);
+            }
         }
 
+        private void HandlePictureData(RenderTexture renderTexture)
+        {
+            if (_previousOkhslData == null)
+                return;
+            
+            var screenshotData = new ScreenshotData(renderTexture, _previousOkhslData);
+            _screenshots.Add(screenshotData);
+        }
+        
         public void OnToggleCamera(InputAction.CallbackContext context)
         {
             if (!context.performed)
@@ -220,7 +236,8 @@ namespace Resat.Cameras
             _cameraPanelController.SetPreviewTexture(renderTexture);
             
             var okhslData = _okhslController.RunComputeShader(renderTexture);
-
+            _previousOkhslData = okhslData;
+            
             if (okhslData == null)
                 return;
             

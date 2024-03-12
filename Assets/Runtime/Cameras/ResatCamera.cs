@@ -41,7 +41,7 @@ namespace Resat.Cameras
         // 1920x1080 -> 1080x800 (centered, 1080x1080 fine)
         // 1920x1080 -> 1080x800 (offcenter, 1080x1080 fine)
         // 3840x2160 -> 2160x1600 (centered, highres screenshot, need to render directly to 2160x1600 texture)
-        public RenderTexture? Render(CameraResolutionData resolutionData)
+        public RenderTexture? Render(CameraResolutionData resolutionData, bool forceCreateNewTexture = false)
         {
             if (Camera == null)
                 return null;
@@ -53,8 +53,13 @@ namespace Resat.Cameras
                 _needsProjectionMatrixRecalculation = false;
                 RecalculateProjectionMatrix(Camera, resolutionData);
             }
-            
-            var renderTexture = GetCachedRenderTexture(resolutionData.Resolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
+
+            RenderTexture renderTexture;
+
+            if (forceCreateNewTexture)
+                renderTexture = CreateTextureForCamera(resolutionData.Resolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
+            else
+                renderTexture = GetCachedRenderTexture(resolutionData.Resolution, resolutionData.FilterMode, resolutionData.RenderTextureReadWrite);
 
             // Do the initial render at native res
             Camera.targetTexture = renderTexture;
@@ -115,18 +120,23 @@ namespace Resat.Cameras
             return m;
         }
         
-        public void RenderScreenshot(CameraResolutionData resolutionData)
+        public RenderTexture? RenderScreenshot(CameraResolutionData resolutionData, bool saveToDisk)
         {
             Debug.Log("Taking a screenshot!");
             string directory = Path.Join(Application.persistentDataPath, "Photos");
             Directory.CreateDirectory(directory);
 
             string path = Path.Join(directory, $"{GetUnixTimestamp()}.png");
-            var renderTexture = Render(resolutionData);
+            var renderTexture = Render(resolutionData, true);
             if (renderTexture == null)
-                return;
-            
-            SaveRenderTexture(renderTexture, path);
+                return null;
+
+            if (saveToDisk)
+            {
+                SaveRenderTexture(renderTexture, path);
+            }
+
+            return renderTexture;
         }
         
         private void SaveRenderTexture(RenderTexture renderTexture, string path)

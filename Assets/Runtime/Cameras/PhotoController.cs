@@ -498,9 +498,11 @@ namespace Resat.Cameras
         private void OnBiomeChanged(BiomeChangeEvent biomeChangeEvent)
         {
             var unlocked = _biomeController.BiomeIsUnlocked(biomeChangeEvent.Biome.BiomeType);
-            if (!unlocked)
+            if (!unlocked && _cameraState != CameraState.Minimized)
             {
                 Debug.Log("New biome is NOT unlocked!");
+                ShowTopNotification("An evil presence in this area overwhelms you.").Forget();
+                ToggleCameraExternal(false).Forget();
             }
         }
 

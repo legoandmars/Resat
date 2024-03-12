@@ -10,6 +10,9 @@ namespace Resat.UI
 
         public void SetTexture(RenderTexture renderTexture)
         {
+            if (_rawImage == null)
+                return;
+            
             _rawImage.texture = renderTexture;
         }
     }

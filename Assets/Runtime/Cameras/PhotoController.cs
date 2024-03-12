@@ -106,13 +106,6 @@ namespace Resat.Cameras
         private OKHSLData? _previousOkhslData;
         private List<ScreenshotData> _screenshots = new();
         
-        private void SetResolution(CameraResolutionData resolutionData)
-        {
-            _currentResolutionData = resolutionData;
-            _desaturationCamera.SetResolution(resolutionData);
-            _cameraPanelController.SetResolution(resolutionData);
-        }
-
         private void SetFieldOfView(float fieldOfView)
         {
             _fieldOfView = fieldOfView;
@@ -167,36 +160,72 @@ namespace Resat.Cameras
             await _tweenController.RunTween(_animationDuration, SetAnimationPercent);
         }
 
-        private async UniTask AnimateOpenCamera(bool force = true)
+        private async UniTask AnimateOpenCamera(bool force)
         {
-            var openCam = _cameraViewportPanel.Open(force, SetViewportOpenPercentage, SetViewportOpenVector);
+            var openCam = _cameraViewportPanel.Open(force, null, SetViewportOpenVector);
 
-            // we need to pull the side panel early
-            await UniTask.WaitForSeconds(_cameraViewportPanel.TweenSettings.Duration - _sidePanelAnimationDuration - 0.21f);
+            // we need to pull the side panel earlier than the tween's normal completion
+            if (!force)
+            {
+                await UniTask.WaitForSeconds(_cameraViewportPanel.TweenSettings.Duration - _sidePanelAnimationDuration - 0.21f);
+            }
+            
             await AnimateSidePanel(force);
 
             await openCam;
         }
         
-        private async UniTask AnimateCloseCamera(bool force = true)
+        private async UniTask AnimateCloseCamera(bool force)
         {
-            AnimateSidePanel(force, true);
-            await _cameraViewportPanel.Close(force, SetViewportClosePercentage, SetViewportOpenVector);
+            var sidePanel = AnimateSidePanel(force, true);
+            await _cameraViewportPanel.Close(force, null, SetViewportOpenVector);
+
+            await sidePanel;
         }
 
-        private async UniTask AnimateSidePanel(bool force = true, bool reverse = false)
+        private async UniTask AnimateSidePanel(bool force, bool reverse = false)
         {
             if (_topSidePanel == null)
                 return;
 
-            // TODO NON LINEAR
+            if (force)
+            {
+                _topSidePanel.localScale = new Vector3(1, reverse ? 0 : 1, 1);
+                return;
+            }
+            
+            // TODO NON LINEAR EASE
             await _tweenController.RunTween(_sidePanelAnimationDuration, (value) =>
             {
-                Debug.Log(reverse ? 1 - value : value);
                 _topSidePanel.localScale = new Vector3(1, reverse ? 1 - value : value, 1);
             });
         }
 
+        // this should force the camera to the new state regardless of what's happening
+        public async UniTask ToggleCameraExternal(bool active, bool tempDisableUserControl = false)
+        {
+            if (tempDisableUserControl)
+            {
+                _forceOverrideActive = active;
+            }
+            
+            if (_forceOverrideActive && !tempDisableUserControl)
+                return;
+            
+            _cameraAudioController.PlaySoundEffect(active ? SoundEffect.MenuOpen : SoundEffect.MenuClose);
+
+            if (active && _cameraState != CameraState.InView)
+            {
+                SetCameraState(CameraState.InView, "Enabling camera!");
+                await AnimateOpenCamera(false);
+            }
+            else if (_cameraState != CameraState.Minimized)
+            {
+                SetCameraState(CameraState.Minimized, "Disabling camera!");
+                await AnimateCloseCamera(false);
+            }
+        }
+        
         private void SetViewportOpenVector(Vector2 value)
         {
             var fakerd = new CameraResolutionData();
@@ -212,11 +241,6 @@ namespace Resat.Cameras
             _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
         }
 
-        private void SetViewportClosePercentage(float value) => SetViewportOpenPercentage(1 - value);
-        private void SetViewportOpenPercentage(float value)
-        {
-        }
-
         public void EnableCamera(bool soundEffects = true, bool force = false)
         {
             if (force)
@@ -225,14 +249,10 @@ namespace Resat.Cameras
             if (_forceOverrideActive && !force)
                 return;
             
-            SetResolution(_photoResolutionData);
-            
             if (soundEffects)
                 _cameraAudioController.PlaySoundEffect(SoundEffect.MenuOpen);
             
-            // TODO: Animation
             SetCameraState(CameraState.InView, "Enabling camera!");
-
             AnimateOpenCamera(force).Forget();
         }
         
@@ -244,17 +264,10 @@ namespace Resat.Cameras
             if (_forceOverrideActive && !force)
                 return;
 
-            SetResolution(_minimizedResolutionData);
-            
             if (soundEffects)
                 _cameraAudioController.PlaySoundEffect(SoundEffect.MenuClose);
 
-            // TODO: Animation
             SetCameraState(CameraState.Minimized, "Disabling camera!");
-            
-            // Set outside color
-           //  _desaturationCamera.SetOutsideCutoutColor(Color.white);
-            // _cameraViewportPanel.Close(force);
             AnimateCloseCamera(force).Forget();
         }
         
@@ -408,9 +421,9 @@ namespace Resat.Cameras
             _inputController.EnableCameraInput();
             
             if (_startWithCameraEnabled)
-                EnableCamera(false);
+                EnableCamera(false, true);
             else
-                DisableCamera(false);
+                DisableCamera(false, true);
             
             if (_okhslController.OutputArrayTexture != null)
                 _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);

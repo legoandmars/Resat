@@ -33,7 +33,8 @@ namespace Resat.Dialogue
 
         private NpcTriggerBehaviour? _npcBehaviour;
         private bool _inDialogue = false;
-        
+        private bool _forceDisableDialogue = false;
+
         private void Start()
         {
             _inputController.EnableDialogueInput();
@@ -53,8 +54,17 @@ namespace Resat.Dialogue
             _inputController.Input.Dialogue.RemoveCallbacks(this);
         }
 
+        public void ToggleDialogue(bool state)
+        {
+            _forceDisableDialogue = !state;
+            _npcIntermediate.ToggleDialogueAbility(state);
+        }
+        
         private void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)
         {
+            if (_forceDisableDialogue)
+                return;
+
             _npcBehaviour = npcBehaviour;
             
             Debug.Log("Focus changed!");
@@ -81,6 +91,9 @@ namespace Resat.Dialogue
 
         public void OnInteract(InputAction.CallbackContext context)
         {
+            if (_forceDisableDialogue)
+                return;
+            
             // on NPC interact
             if (!context.performed)
                 return;

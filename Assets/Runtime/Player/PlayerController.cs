@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Input;
 using Resat.Behaviours;
 using Resat.Input;
@@ -60,6 +61,32 @@ namespace Resat.Player
             _inputController.EnablePlayerInput();
         }
 
+        private void OnEnable()
+        {
+            _npcIntermediate.DialogueAbilityToggled += DialogueAbilityToggled;
+        }
+
+        private void OnDisable()
+        {
+            _npcIntermediate.DialogueAbilityToggled -= DialogueAbilityToggled;
+        }
+        
+        // hack to just re-send the npc when our ability to talk gets enabled
+        private async void DialogueAbilityToggled(bool state)
+        {
+            Debug.Log("wao");
+            Debug.Log(state);
+            Debug.Log(_focusedNpc);
+            
+            if (state)
+            {
+                // yeeaah it's that point in the jam
+                await UniTask.WaitForSeconds(.1f);
+                _npcIntermediate.ChangeNpcFocus(_focusedNpc);
+            }
+        }
+
+        
         void Update()
         {
             if (!_inputController.PlayerInputEnabled) 

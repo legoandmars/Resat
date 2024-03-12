@@ -34,6 +34,10 @@ namespace Resat.UI
                 // don't lerp
                 SetSize(Vector2.zero);
                 SetCornersSize(Vector2.zero);
+                
+                // call actions if needed
+                setFloat?.Invoke(1);
+                setVector?.Invoke(Vector2.zero);
                 return true;
             }
 
@@ -60,6 +64,11 @@ namespace Resat.UI
                 // don't lerp
                 SetSize(_tweenSettings.Size);
                 SetCornersSize(Vector2.one);
+                
+                // call actions if needed
+                setFloat?.Invoke(1);
+                setVector?.Invoke(_tweenSettings.Size);
+                
                 return true;
             }
             

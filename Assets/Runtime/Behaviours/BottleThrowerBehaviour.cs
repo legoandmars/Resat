@@ -18,6 +18,9 @@ namespace Resat.Behaviours
         private PhotoController _photoController = null!;
         
         [SerializeField]
+        private DialogueController _dialogueController = null!;
+        
+        [SerializeField]
         private QuestController _questController = null!;
         
         [SerializeField]
@@ -116,8 +119,9 @@ namespace Resat.Behaviours
             // force cam
             Debug.Log("FORCING");
 
-            _photoController.EnableCamera(true, true);
-
+            _dialogueController.ToggleDialogue(false);
+            await _photoController.ToggleCameraExternal(true, true);
+            
             try
             {
                 await ThrowingLogic();
@@ -128,7 +132,8 @@ namespace Resat.Behaviours
                 Debug.Log(ex);
             }
             
-            _photoController.DisableCamera(true, true);
+            await _photoController.ToggleCameraExternal(false, true);
+            _dialogueController.ToggleDialogue(true);
         }
 
         private async UniTask ThrowingLogic()
@@ -136,30 +141,28 @@ namespace Resat.Behaviours
             // warmup a few sounds
             for (int i = 0; i < _warmupSoundCount; i++)
             {
-                await UniTask.WaitForSeconds(_firstStageDelay);
                 ThrowBottles(0).Forget();
+                await UniTask.WaitForSeconds(_firstStageDelay);
             }
 
             // first, second, third stage
             for (int i = 0; i < 3; i++)
             {
-                await UniTask.WaitForSeconds(_firstStageDelay);
                 ThrowBottles(1).Forget();
+                await UniTask.WaitForSeconds(_firstStageDelay);
             }
 
             for (int i = 0; i < 2; i++)
             {
-                await UniTask.WaitForSeconds(_secondStageDelay);
                 ThrowBottles(Random.Range(1, 3)).Forget();
+                await UniTask.WaitForSeconds(_secondStageDelay);
             }
 
             for (int i = 0; i < 4; i++)
             {
-                await UniTask.WaitForSeconds(_thirdStageDelay);
                 ThrowBottles(Random.Range(2, 5)).Forget();
+                await UniTask.WaitForSeconds(_thirdStageDelay);
             }
-
-            await UniTask.WaitForSeconds(_thirdStageDelay);
 
             var seenCount = _spawnedBottles.Where(x => !x.Seen).Count();
             Debug.Log("SEEN");

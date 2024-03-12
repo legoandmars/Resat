@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using Resat.Behaviours;
+using Resat.Cameras;
 using Resat.Dialogue;
 using Resat.Intermediates;
 using Resat.Models;
@@ -15,6 +16,9 @@ namespace Resat.UI
     {
         [SerializeField]
         private TextAnimationController _textAnimationController = null!;
+        
+        [SerializeField]
+        private PhotoController _photoController = null!;
 
         [SerializeField]
         private NpcIntermediate _npcIntermediate = null!;
@@ -60,7 +64,8 @@ namespace Resat.UI
         private CancellationTokenSource? _currentTokenSource;
         private CancellationTokenSource? _namePanelTokenSource;
         private bool _canContinueDialogue = false;
-        
+        private bool _forceDisableDialogue = false;
+
         // Disable dialogue panels on start
         private void Start()
         {
@@ -72,13 +77,6 @@ namespace Resat.UI
                 _interactionPromptPanel.Close(true).Forget();
         }
         
-        private void OnEnable()
-        {
-            _npcIntermediate.NpcFocusChanged += OnNpcFocusChanged;
-            _npcIntermediate.DialogueStarted += OnDialogueStarted;
-            _npcIntermediate.DialogueContinueRequested += OnDialogueContinueRequested;
-        }
-
         private void OnDialogueContinueRequested()
         {
             if (!_canContinueDialogue)
@@ -96,10 +94,25 @@ namespace Resat.UI
             }
         }
 
+        private void OnEnable()
+        {
+            _npcIntermediate.NpcFocusChanged += OnNpcFocusChanged;
+            _npcIntermediate.DialogueStarted += OnDialogueStarted;
+            _npcIntermediate.DialogueContinueRequested += OnDialogueContinueRequested;
+            _npcIntermediate.DialogueAbilityToggled += DialogueAbilityToggled;
+        }
+
         private void OnDisable()
         {
             _npcIntermediate.NpcFocusChanged -= OnNpcFocusChanged;
             _npcIntermediate.DialogueStarted -= OnDialogueStarted;
+            _npcIntermediate.DialogueContinueRequested -= OnDialogueContinueRequested;
+            _npcIntermediate.DialogueAbilityToggled -= DialogueAbilityToggled;
+        }
+
+        private void DialogueAbilityToggled(bool state)
+        {
+            _forceDisableDialogue = !state;
         }
 
         private async void OnDialogueStarted(DialogueStartedEvent dialogueStartedEvent)
@@ -112,7 +125,9 @@ namespace Resat.UI
             _namePanelTokenSource = new();
                 
             UniTask<bool> promptPanelSuccess = _interactionPromptPanel?.Close() ?? UniTask.FromResult(true);
+            UniTask cam = _photoController.ToggleCameraExternal(false); // clear cam at the same time we're collapsing the interaction prompt
             await UniTask.WaitForSeconds(_dialoguePanelStartDelay);
+            await cam;
             UniTask<bool> dialoguePanelSuccess = _dialoguePanel?.Open() ?? UniTask.FromResult(true);
             await UniTask.WaitForSeconds(_namePanelStartDelay);
             UniTask<bool> namePanelSuccess = _namePanel != null ? OpenWithText(_namePanel, dialogueStartedEvent.Npc.Name, _nameTextSpeed, _namePanelTokenSource.Token) : UniTask.FromResult(true);
@@ -243,6 +258,9 @@ namespace Resat.UI
 
         private async void OnNpcFocusChanged(NpcTriggerBehaviour? npcBehaviour)
         {
+            if (_forceDisableDialogue)
+                return;
+            
             // do other stuff here if necessary, before any panel stuff
             
             if (_interactionPromptPanel == null)

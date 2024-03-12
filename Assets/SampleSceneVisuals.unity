@@ -4477,9 +4477,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvasScaler: {fileID: 1333902650}
-  _mainPanel: {fileID: 1120471953}
-  _leftInfoPanel: {fileID: 0}
   _debugPanel: {fileID: 498701882}
+  _previewPanel: {fileID: 1256746646}
 --- !u!1 &643601647
 GameObject:
   m_ObjectHideFlags: 0
@@ -5583,7 +5582,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 252.33, y: -10}
+  m_AnchoredPosition: {x: 274.5, y: -10}
   m_SizeDelta: {x: 637.2, y: 69.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &718074522
@@ -5606,7 +5605,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '- 10.0%'
+  m_text: 10.0%
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9e8da8b4e8fafd44384b8652c9825047, type: 2}
   m_sharedMaterial: {fileID: 6360387569838958397, guid: 9e8da8b4e8fafd44384b8652c9825047, type: 2}
@@ -13500,7 +13499,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1805423708
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13537,6 +13536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _textAnimationController: {fileID: 161414588}
+  _photoController: {fileID: 678523065}
   _npcIntermediate: {fileID: 78213285}
   _dialoguePanel: {fileID: 847239621}
   _namePanel: {fileID: 613702692}
@@ -14304,6 +14304,7 @@ MonoBehaviour:
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
   _photoController: {fileID: 678523065}
+  _dialogueController: {fileID: 376274333}
   _questController: {fileID: 290105122}
   _actualPhotoCameraWithSmallViewport: {fileID: 2125634634}
   _cameraIntermediate: {fileID: 1421021507}
@@ -14313,7 +14314,7 @@ MonoBehaviour:
   _sideAngleRange: {x: -40, y: 35}
   _angleRange: {x: 45, y: 65}
   _soundDelay: 0.5
-  _warmupSoundCount: 3
+  _warmupSoundCount: 2
   _firstStageDelay: 2
   _secondStageDelay: 1.8
   _thirdStageDelay: 1.7
@@ -15358,9 +15359,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvasScaler: {fileID: 0}
-  _mainPanel: {fileID: 0}
-  _leftInfoPanel: {fileID: 0}
   _debugPanel: {fileID: 0}
+  _previewPanel: {fileID: 0}
 --- !u!225 &2039179681
 CanvasGroup:
   m_ObjectHideFlags: 0

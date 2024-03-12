@@ -17,6 +17,9 @@ namespace Resat.UI
         [SerializeField]
         public List<Image>? TopColorImages;
 
+        [SerializeField]
+        public TextureDebugPanel? TextureDebugPanel;
+        
         public void SetData(OKHSLData okhslData)
         {
             for (int i = 0; i < TopColorImages?.Count && i < okhslData.TopColors.Length; i++)
@@ -32,5 +35,28 @@ namespace Resat.UI
                 NewColorCountPercentageText.text = $"{okhslData.NewColorCoveragePercent:00.0}%";
         }
 
+        public void SetPreviewTexture(RenderTexture renderTexture)
+        {
+            if (TextureDebugPanel != null)
+            {
+                TextureDebugPanel.SetPreviewTexture(renderTexture);
+            }
+        }
+        
+        public void SetAnimationPercent(float animationPercent)
+        {
+            if (TextureDebugPanel != null)
+            {
+                TextureDebugPanel.SetAnimationPercent(animationPercent);
+            }
+        }
+        
+        public void ToggleAnimation(bool state)
+        {
+            if (TextureDebugPanel != null)
+            {
+                TextureDebugPanel.SetAnimationState(state);
+            }
+        }
     }
 }

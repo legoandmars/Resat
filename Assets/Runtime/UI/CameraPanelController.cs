@@ -33,6 +33,8 @@ namespace Resat.UI
         
         public void SetArrayTexture(RenderTexture renderTexture)
         {
+            // TODO: Remove old tex & only do this step if we really need 
+            _previewPanel.SetPreviewTexture(renderTexture);
             _debugPanel.SetArrayTexture(renderTexture);
         }
     }

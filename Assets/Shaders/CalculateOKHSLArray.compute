@@ -110,7 +110,18 @@ void CSGetGlobalTexture (uint3 id : SV_DispatchThreadID)
 [numthreads(8,8,1)]
 void CSGetMergedTexture (uint3 id : SV_DispatchThreadID)
 {
-    _OutputArrayTexture[id.xy] = MergeArrays(id);
+    float arrayValue =_OKHSLArray[GetIndexFromId(id)];
+    float globalValue = _GlobalOKHSLArray[GetIndexFromId(id)];
+
+    if (globalValue > 0)
+    {
+        _OutputArrayTexture[id.xy] = 0.75f; // 75% strength to denote global
+    }
+    else
+    {
+        _OutputArrayTexture[id.xy] = arrayValue;
+    }
+    //_OutputArrayTexture[id.xy] = MergeArrays(id);
 }
 
 

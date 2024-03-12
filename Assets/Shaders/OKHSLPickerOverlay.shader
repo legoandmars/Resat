@@ -4,6 +4,10 @@ Shader "Unlit/OKHSLPickerOverlay"
     {
         _Saturation ("Saturation", float) = 0.9
         _MainTex ("Overlay", 2D) = "white" {}
+        _AnimationPercent ("Post-photo animation timer", Range(0.0, 1.0)) = 1.0
+        _AnimationState ("Animating", Range(0.0, 1.0)) = 1.0
+        _PreviewColor ("Preview Color", Color) = (1,1,1,1)
+        _GlobalColor ("Global Color", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -38,7 +42,11 @@ Shader "Unlit/OKHSLPickerOverlay"
             sampler2D _MainTex;
             float4 _MainTex_ST;
             float _Saturation;
-
+            float _AnimationPercent;
+            float _AnimationState;
+            fixed4 _PreviewColor;
+            fixed4 _GlobalColor;
+            
             v2f vert (appdata v)
             {
                 v2f o;
@@ -52,7 +60,18 @@ Shader "Unlit/OKHSLPickerOverlay"
             {
                 float3 col = OKHSLtoRGB(float3(i.uv.x, _Saturation, i.uv.y));
                 float3 overlayCol = tex2D(_MainTex, i.uv);
-                float3 finalCol = lerp(col, overlayCol, overlayCol.r);
+
+                float3 finalCol = col;
+                if (overlayCol.r < 0.8f && overlayCol.r > 0.5f)
+                {
+                    // gobal
+                    finalCol = _GlobalColor;
+                }
+                else if (overlayCol.r > 0.9f)
+                {
+                    finalCol = lerp(_PreviewColor, _GlobalColor, lerp(0, _AnimationPercent, _AnimationState));
+                }
+                
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, finalCol);
                 return fixed4(finalCol.r, finalCol.g, finalCol.b, 1);

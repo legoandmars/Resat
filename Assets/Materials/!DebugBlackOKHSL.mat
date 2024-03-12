@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DebugBlackTransparent
+  m_Name: '!DebugBlackOKHSL'
   m_Shader: {fileID: 4800000, guid: 7f9160197289234448547db46671f4bc, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
@@ -72,6 +72,7 @@ Material:
     m_Ints: []
     m_Floats:
     - PixelSnap: 0
+    - _AnimationPercent: 1
     - _BlendOp: 0
     - _BumpScale: 1
     - _CameraFadingEnabled: 0
@@ -121,6 +122,8 @@ Material:
     - _ColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _GlobalColor: {r: 0, g: 0, b: 0, a: 1}
+    - _PreviewColor: {r: 1, g: 0.43867922, b: 0.43867922, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

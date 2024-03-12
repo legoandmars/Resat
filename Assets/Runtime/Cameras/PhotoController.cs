@@ -49,7 +49,7 @@ namespace Resat.Cameras
         private CameraAudioController _cameraAudioController = null!;
         
         [SerializeField]
-        private CameraPanelController _cameraPanelController = null!;
+        private CameraPreviewPanel _cameraPreviewPanel = null!;
 
         [SerializeField]
         private RectTransform? _topSidePanel;
@@ -143,6 +143,7 @@ namespace Resat.Cameras
         {
             _animationPercent = Mathf.Clamp01(animationPercent);
             _desaturationCamera.SetAnimationPercent(_animationPercent);
+            _cameraPreviewPanel.SetAnimationPercent(_animationPercent);
         }
 
         private void SetOutroAnimationPercent(float animationPercent)
@@ -170,11 +171,13 @@ namespace Resat.Cameras
         private async UniTask AnimateAfterPicture()
         {
             SetAnimationPercent(0f); // just in case, likely unnecessary
+            _cameraPreviewPanel.ToggleAnimation(true);
             SetCameraState(CameraState.TakingPhoto, "Taking photo!");
 
             await _tweenController.RunTween(_animationDuration, SetAnimationPercent);
 
             SetAnimationPercent(1f); // just in case, likely unnecessary
+            _cameraPreviewPanel.ToggleAnimation(false);
             SetCameraState(CameraState.InView, "Finished taking photo!");
         }
         
@@ -486,16 +489,13 @@ namespace Resat.Cameras
             if (renderTexture == null)
                 return;
 
-            // set debug camera preview 
-            _cameraPanelController.SetPreviewTexture(renderTexture);
-            
             var okhslData = _okhslController.RunComputeShader(renderTexture);
             _previousOkhslData = okhslData;
             
             if (okhslData == null)
                 return;
             
-            _cameraPanelController.SetData(okhslData);
+            _cameraPreviewPanel.SetData(okhslData);
         }
 
         private bool CanTakePhoto()
@@ -523,7 +523,7 @@ namespace Resat.Cameras
                 DisableCamera(false, true);
             
             if (_okhslController.OutputArrayTexture != null)
-                _cameraPanelController.SetArrayTexture(_okhslController.OutputArrayTexture);
+                _cameraPreviewPanel.SetPreviewTexture(_okhslController.OutputArrayTexture);
 
             _topNotificationPanel.CloseWithText("", _notificationTextSpeed, true).Forget();
 

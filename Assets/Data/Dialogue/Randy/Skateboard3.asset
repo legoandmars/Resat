@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Skateboard3
   m_EditorClassIdentifier: 
   Dialogue:
-  - You collected a third skateboard. This one really sucks.
+  - 'You collected a third skateboard. '
+  - Honestly, this one really sucks.
+  - You're getting pretty tired of looking at skateboards.
   ShowInteractPromptAfterDialogueComplete: 0
   StopShowingDialogueAfterwards: 1
-  NextDialogue: {fileID: 0}
+  NextDialogue: {fileID: 11400000, guid: 8248a0037f9ef194dbb25c41f142759f, type: 2}
   QuestRequirementToPass: {fileID: 0}

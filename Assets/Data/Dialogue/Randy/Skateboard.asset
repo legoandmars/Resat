@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Skateboard
   m_EditorClassIdentifier: 
   Dialogue:
-  - You collected a radical skateboard. An awesome giant skull is wrapping the entire
-    thing.
+  - You collected a radical skateboard.
+  - The design is awe-inspiring and vivid, more so than any other skateboard you've
+    ever seen.
   ShowInteractPromptAfterDialogueComplete: 0
   StopShowingDialogueAfterwards: 1
-  NextDialogue: {fileID: 0}
+  NextDialogue: {fileID: 11400000, guid: ef4f80f3483667541991f737dcb83222, type: 2}
   QuestRequirementToPass: {fileID: 0}

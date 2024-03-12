@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Skateboard2
   m_EditorClassIdentifier: 
   Dialogue:
-  - You collected another skateboard. The last one had a more vivid design.
+  - You collected another skateboard.
+  - The last skateboard's design was more vivid, but this one is alright.
   ShowInteractPromptAfterDialogueComplete: 0
   StopShowingDialogueAfterwards: 1
-  NextDialogue: {fileID: 0}
+  NextDialogue: {fileID: 11400000, guid: 2445214848d23db4999c400476b80c1a, type: 2}
   QuestRequirementToPass: {fileID: 0}

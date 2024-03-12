@@ -20,7 +20,7 @@ namespace Resat.Quests
 
         [SerializeField]
         public List<QuestReference> QuestReferences = new();
-        
+
         private void Start()
         {
             // disable initial objects
@@ -29,6 +29,7 @@ namespace Resat.Quests
             // start initial quest
             // TODO: if needed don't hardcode this to first
             StartQuest(QuestReferences.First());
+            StartQuest(QuestReferences[1]);
         }
 
         private void OnEnable()

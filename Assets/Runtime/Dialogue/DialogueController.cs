@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Input;
 using Resat.Behaviours;
 using Resat.Input;
@@ -23,6 +24,10 @@ namespace Resat.Dialogue
 
         [SerializeField]
         private NpcIntermediate _npcIntermediate = null!;
+
+        // hardcoded
+        [SerializeField]
+        private List<NpcTriggerBehaviour> _skateboardNpcs = new();
 
         private NpcTriggerBehaviour? _npcBehaviour;
         private bool _inDialogue = false;
@@ -115,6 +120,19 @@ namespace Resat.Dialogue
             if (dialogue.StopShowingDialogueAfterwards)
             {
                 _npcBehaviour.DisableInteractions();
+                
+                // very hardcoded skateboard...
+                if (_skateboardNpcs.Any(x => x == _npcBehaviour))
+                {
+                    foreach (var skateboardNpc in _skateboardNpcs)
+                    {
+                        if (skateboardNpc.Interactable && skateboardNpc.CurrentDialogue?.NextDialogue != null)
+                        {
+                            skateboardNpc.CurrentDialogue = skateboardNpc.CurrentDialogue.NextDialogue;
+                        }
+                    }
+                }
+                
                 return;
             }
             

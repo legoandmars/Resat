@@ -9,10 +9,11 @@ namespace Resat
     public class DesaturationCamera : MonoBehaviour
     {
         public Material? Material => _material;
+        public Color OutsideCutoutColor => _outsideCutoutColor;
         
         private static readonly int ScreenResolution = Shader.PropertyToID("_ScreenResolution");
         private static readonly int CutoutOffsetAndScale = Shader.PropertyToID("_CutoutOffsetAndScale");
-        private static readonly int OutsideCutoutColor = Shader.PropertyToID("_OutsideCutoutColor");
+        private static readonly int OutsideCutoutColorProperty = Shader.PropertyToID("_OutsideCutoutColor");
         private static readonly int AnimationPercent = Shader.PropertyToID("_AnimationPercent");
 
         [SerializeField]
@@ -34,7 +35,7 @@ namespace Resat
             if (overrideColor == null) 
                 overrideColor = _outsideCutoutColor;
             
-            _material.SetColor(OutsideCutoutColor, overrideColor.Value);
+            _material.SetColor(OutsideCutoutColorProperty, overrideColor.Value);
         }
         
         public void SetResolution(CameraResolutionData resolutionData)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AuraTween;
 using Cysharp.Threading.Tasks;
 using Input;
 using Resat.Audio;
@@ -39,6 +40,10 @@ namespace Resat.Cameras
         [SerializeField]
         private CameraPanelController _cameraPanelController = null!;
         
+        // atp i'm just directly interacting with UI elements, i need to get something out
+        [SerializeField]
+        private OutroPanel _outroPanel = null!;
+        
         [SerializeField]
         private CameraIntermediate _cameraIntermediate = null!;
 
@@ -65,6 +70,21 @@ namespace Resat.Cameras
         [Header("Animation")]
         [SerializeField]
         private float _animationDuration = 1f;
+        
+        [SerializeField]
+        private float _outroFadeAnimationDuration = 1f;
+        
+        [SerializeField]
+        private float _outroScaleAnimationDuration = 1f;
+
+        [SerializeField]
+        private Color _outroCutoutColor = Color.black;
+        
+        [SerializeField]
+        private Ease _outroFadeEase = Ease.Linear;
+
+        [SerializeField]
+        private bool _tempOutro = true;
 
         private CameraState _cameraState = CameraState.Minimized;
         private float _animationPercent = 0f;
@@ -94,6 +114,14 @@ namespace Resat.Cameras
             _desaturationCamera.SetAnimationPercent(_animationPercent);
         }
 
+        private void SetOutroAnimationPercent(float animationPercent)
+        {
+            // rgb lerp is fine since we're working in grayscale
+            Debug.Log(animationPercent);
+            var lerpedColor = Color.Lerp(_desaturationCamera.OutsideCutoutColor, _outroCutoutColor, animationPercent);
+            _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
+        }
+
         // DEBUGGING ONLY!!
         public void SetSize(Vector2Int main, Vector2Int native)
         {
@@ -120,6 +148,14 @@ namespace Resat.Cameras
             SetCameraState(CameraState.InView, "Finished taking photo!");
         }
         
+        private async UniTask AnimateAfterPictureOutro()
+        {
+            SetAnimationPercent(0f); // just in case, likely unnecessary
+            SetCameraState(CameraState.TakingPhoto, "Taking photo!");
+
+            await _tweenController.RunTween(_animationDuration, SetAnimationPercent);
+        }
+
         public void EnableCamera(bool soundEffects = true, bool force = false)
         {
             if (force)
@@ -182,7 +218,16 @@ namespace Resat.Cameras
             // serialize our new color data
             _okhslController.SerializeLastRender();
 
-            AnimateAfterPicture().Forget();
+            // else we do it in HandlePictureData
+            if (!_tempOutro)
+            {
+                AnimateAfterPicture().Forget();
+            }
+            else
+            {
+                // we want to disable input if we're doing an outro sequence
+                _inputController.DisablePlayerInput();
+            }
             
             // TODO: This assumes native res will always cleanly divide into the screenshot's native res
             var scaleMultiplier = new Vector2((float)_screenshotNativeResolution.x / (float)_currentResolutionData.NativeResolution.x, (float)_screenshotNativeResolution.y / (float)_currentResolutionData.NativeResolution.y);
@@ -195,17 +240,47 @@ namespace Resat.Cameras
             // serialize taken photo data
             if (renderTexture != null)
             {
-                HandlePictureData(renderTexture);
+                HandlePictureData(renderTexture).Forget();
             }
         }
 
-        private void HandlePictureData(RenderTexture renderTexture)
+        private async UniTask HandlePictureData(RenderTexture renderTexture)
         {
             if (_previousOkhslData == null)
                 return;
             
             var screenshotData = new ScreenshotData(renderTexture, _previousOkhslData);
             _screenshots.Add(screenshotData);
+
+            if (_tempOutro)
+            {
+                // finally play animation
+                await PlayOutro();
+            }
+
+            if (_screenshots.Count == 3)
+            {
+                _tempOutro = true;
+            }
+        }
+
+        private async UniTask PlayOutro()
+        {
+            // finally play animation
+            await AnimateAfterPictureOutro();
+
+            Debug.Log("Animation done, playing outro...");
+            
+            // run fade to black
+            await _tweenController.RunTween(_outroFadeAnimationDuration, SetOutroAnimationPercent, _outroFadeEase);
+            
+            // run transition to UI
+            _outroPanel.SetScreenshotData(_screenshots);
+            _outroPanel.SetActive(true);
+
+            await _outroPanel.AnimateScaleOut(_outroScaleAnimationDuration);
+            
+            // we done done
         }
         
         public void OnToggleCamera(InputAction.CallbackContext context)

@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BiomeType: 3
   DialogueBoxColor: {r: 0.07058824, g: 0, b: 0.21960784, a: 1}
-  SkyboxTopColor: {r: 1, g: 1, b: 1, a: 1}
-  SkyboxBottomColor: {r: 1, g: 1, b: 1, a: 1}
+  SkyboxTopColor: {r: 0.18431373, g: 0.15294118, b: 0.36078432, a: 1}
+  SkyboxBottomColor: {r: 0.4627451, g: 0.34901962, b: 0.5529412, a: 1}
+  LightingColor: {r: 0.9372549, g: 0.8392157, b: 1, a: 1}

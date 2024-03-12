@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
+  m_Name: BottleThrower
+  m_EditorClassIdentifier: 
+  Dialogue:
+  - This machine appears to be designed to throw objects at very high speeds.
+  - Annoyingly large bold letters asset that this invention is  "COPYRIGHT 2XXX GULCH
+    GEORGE, REGISTRATION PATENT TRADEMARK PENDING, ALL RIGHTS RESERVED"
+  - 'An inscription on the back reads: [I hope you''re ready for some bottle "shooting",
+    partner!]'
+  - The machine begins to whir.
+  ShowInteractPromptAfterDialogueComplete: 0
+  StopShowingDialogueAfterwards: 0
+  NextDialogue: {fileID: 0}
+  QuestRequirementToPass: {fileID: 0}

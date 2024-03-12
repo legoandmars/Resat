@@ -5,6 +5,7 @@ using Input;
 using Resat.Audio;
 using Resat.Colors;
 using Resat.Input;
+using Resat.Intermediates;
 using Resat.Models;
 using Resat.Tweening;
 using Resat.UI;
@@ -36,6 +37,9 @@ namespace Resat.Cameras
         
         [SerializeField]
         private CameraPanelController _cameraPanelController = null!;
+        
+        [SerializeField]
+        private CameraIntermediate _cameraIntermediate = null!;
 
         [Header("Resolution")]
         [SerializeField]
@@ -112,7 +116,7 @@ namespace Resat.Cameras
             SetCameraState(CameraState.InView, "Finished taking photo!");
         }
         
-        private void EnableCamera(bool soundEffects = true)
+        public void EnableCamera(bool soundEffects = true, bool force = false)
         {
             SetResolution(_photoResolutionData);
             
@@ -126,7 +130,7 @@ namespace Resat.Cameras
             _desaturationCamera.SetOutsideCutoutColor();
         }
         
-        private void DisableCamera(bool soundEffects = true)
+        public void DisableCamera(bool soundEffects = true, bool force = false)
         {
             SetResolution(_minimizedResolutionData);
             
@@ -156,6 +160,7 @@ namespace Resat.Cameras
             }
             
             // take a picture!
+            _cameraIntermediate.TakePhoto();
             _cameraAudioController.PlaySoundEffect(SoundEffect.CameraShutter);
             
             // serialize our new color data

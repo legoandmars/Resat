@@ -48,5 +48,15 @@ namespace Resat.Behaviours
             
             _spriteRenderer.transform.forward = new Vector3(-_exclamationPoint.PlayerCamera.transform.forward.x, 0, -_exclamationPoint.PlayerCamera.transform.forward.z);
         }
+
+        public virtual void OnDialogueAnimationStarted()
+        {
+            
+        } 
+
+        public virtual void OnDialogueAnimationEnded()
+        {
+            
+        } 
     }
 }

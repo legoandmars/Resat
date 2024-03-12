@@ -71,6 +71,12 @@ namespace Resat.Dialogue
             // Enable input
             _inputController.EnablePlayerInput();
             _inputController.EnableCameraInput();
+            
+            // Tell the NPC we've just ended the dialogue
+            if (_npcBehaviour != null)
+            {
+                _npcBehaviour.OnDialogueAnimationEnded();
+            }
         }
 
         public void OnInteract(InputAction.CallbackContext context)
@@ -110,6 +116,12 @@ namespace Resat.Dialogue
             _inputController.DisableCameraInput();
             
             _npcIntermediate.StartDialogue(new (dialogue, npc));
+            
+            // Tell the NPC we've just started the dialogue
+            if (_npcBehaviour != null)
+            {
+                _npcBehaviour.OnDialogueAnimationStarted();
+            }
         }
 
         private void AdvanceDialogueAfterFinished()

@@ -9,8 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70bf1f4f1d7842d5a81062a99c3eda83, type: 3}
-  m_Name: FindCowboyHat
+  m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
+  m_Name: RandyThanks
   m_EditorClassIdentifier: 
-  Name: FindCowboyHat
-  QuestType: 0
+  Dialogue:
+  - Wow, thanks dude!
+  ShowInteractPromptAfterDialogueComplete: 1
+  StopShowingDialogueAfterwards: 0
+  NextDialogue: {fileID: 0}
+  QuestRequirementToPass: {fileID: 0}

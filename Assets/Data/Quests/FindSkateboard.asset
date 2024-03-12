@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70bf1f4f1d7842d5a81062a99c3eda83, type: 3}
-  m_Name: FindCowboyHat
+  m_Name: FindSkateboard
   m_EditorClassIdentifier: 
-  Name: FindCowboyHat
+  Name: FindSkateboard
   QuestType: 0

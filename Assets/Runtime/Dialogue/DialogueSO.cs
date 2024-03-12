@@ -8,6 +8,7 @@ namespace Resat.Dialogue
     [CreateAssetMenu(fileName = "Dialogue", menuName = "ScriptableObjects/Dialogue", order = 1)]
     public class DialogueSO : ScriptableObject
     {
+        [TextArea(5, 3)]
         public List<string> Dialogue = new();
         public bool ShowInteractPromptAfterDialogueComplete = true;
         public bool StopShowingDialogueAfterwards = false;

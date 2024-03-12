@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70bf1f4f1d7842d5a81062a99c3eda83, type: 3}
-  m_Name: FindCowboyHat
+  m_Script: {fileID: 11500000, guid: d1312f3546a14bf995139cb2d3033f27, type: 3}
+  m_Name: RadicalRandy
   m_EditorClassIdentifier: 
-  Name: FindCowboyHat
-  QuestType: 0
+  Name: NPC
+  InitialDialogue: {fileID: 11400000, guid: 9d844537ac17219488b148e4ae2de8f1, type: 2}
+  TextAudio: {fileID: 11400000, guid: 34ffbe419dd08fd408341309f49e3bd8, type: 2}

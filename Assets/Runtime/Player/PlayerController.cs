@@ -82,15 +82,10 @@ namespace Resat.Player
 
             // Jump
             bool groundedPlayer = _characterController.isGrounded;
-            Vector3? groundNormal = null;
+            Vector3? groundNormal = GetGroundNormal();
 
-            // If grounded, calculate normal for better grounding check
-            if (groundedPlayer)
-            {
-                groundNormal = GetGroundNormal();
-            }
             bool groundMeetsAngle = GetAngleFromNormal(groundNormal) < _characterController.slopeLimit;
-            
+
             if (groundedPlayer && groundMeetsAngle)
                 _groundedTimer = 0.2f;
             if (_groundedTimer > 0)

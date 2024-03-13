@@ -12,7 +12,7 @@ namespace Resat.UI
         public RawImage? CameraImage;
 
         [SerializeField]
-        private Material _material;
+        private Material? _material;
         
         public void SetPreviewTexture(RenderTexture renderTexture)
         {

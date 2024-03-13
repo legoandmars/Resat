@@ -23,9 +23,6 @@ namespace Resat.Player
 
         [SerializeField]
         private Transform _raycastEmittingObject = null!;
-        
-        [SerializeField]
-        private Transform _groundCheckRaycastEmittingObject = null!;
 
         [SerializeField]
         private Collider _boxcastCollider = null!;

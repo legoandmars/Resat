@@ -250,7 +250,7 @@ namespace Resat.Colors
             // vibe check
             // var vibe = _vibeUtilites.GetVibe(GetOKHSLTopColorsFromPostProcessData(_postProcessArray, _topColorsCount));
 
-            return new OKHSLData(sortedTopColorArray, totalColorCount, totalColorCoverage, newColorCount, newColorCoverage);
+            return new OKHSLData(sortedTopColorArray, totalColorCount, totalColorCoverage, newColorCount, newColorCoverage, existingColorCount, (uint)(_okhslArraySize.x * _okhslArraySize.y) - existingColorCount);
         }
 
         // Made specifically to truncate and sort an array in one swoop

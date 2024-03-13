@@ -60,6 +60,11 @@ namespace Resat.Quests
         {
             return QuestReferences.Where(x => x.State == questState);
         }
+
+        public bool AllQuestsComplete()
+        {
+            return QuestReferences.All(x => x.State == QuestState.Completed);
+        }
         
         private void SetObjectState(SaturatedObjectData objectData, SaturatedObjectState objectState)
         {

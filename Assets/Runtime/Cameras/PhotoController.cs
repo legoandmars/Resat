@@ -6,6 +6,7 @@ using AuraTween;
 using Cysharp.Threading.Tasks;
 using Input;
 using Resat.Audio;
+using Resat.Behaviours;
 using Resat.Biomes;
 using Resat.Colors;
 using Resat.Input;
@@ -129,6 +130,9 @@ namespace Resat.Cameras
 
         [SerializeField]
         private bool _tempOutro = true;
+
+        [SerializeField]
+        private SunsetBehaviour? _sunsetBehaviour;
 
         private CameraState _cameraState = CameraState.Minimized;
         private float _animationPercent = 0f;
@@ -509,6 +513,12 @@ namespace Resat.Cameras
             
             if (okhslData == null)
                 return;
+            
+            // check for sunset
+            if (_sunsetBehaviour != null)
+            {
+                _sunsetBehaviour.UpdateOkhslData(okhslData!);
+            }
             
             _cameraPreviewPanel.SetData(okhslData);
         }

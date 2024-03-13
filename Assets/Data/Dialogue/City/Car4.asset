@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
+  m_Name: Car4
+  m_EditorClassIdentifier: 
+  Dialogue:
+  - As you pick up the final car part, the shimmer of a dollar coin inside the window
+    catches your eye.
+  - Oh, nevermind. It's just a quarter.
+  ShowInteractPromptAfterDialogueComplete: 0
+  StopShowingDialogueAfterwards: 1
+  NextDialogue: {fileID: 0}
+  QuestRequirementToPass: {fileID: 0}

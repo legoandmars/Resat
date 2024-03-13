@@ -91,6 +91,7 @@ Shader "Unlit/OKHSLPickerOverlay"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                i.uv.xy = float2(1 - i.uv.y, i.uv.x);
                 float3 tempCol = OKHSLtoRGB(float3(i.uv.x, _Saturation, i.uv.y));
                 float3 desatTempCol = OKHSLtoRGB(float3(i.uv.x, _BaseSaturation, i.uv.y + 0.05f)); // TODO: remove hard lightness cap
 /*                if (i.uv.y < 1.0f / 16.0f)

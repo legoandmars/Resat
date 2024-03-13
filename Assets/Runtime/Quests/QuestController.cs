@@ -35,6 +35,7 @@ namespace Resat.Quests
             StartQuest(QuestReferences[1]);
             StartQuest(QuestReferences[2]);
             StartQuest(QuestReferences[3]);
+            StartQuest(QuestReferences[4]);
         }
 
         private void OnEnable()

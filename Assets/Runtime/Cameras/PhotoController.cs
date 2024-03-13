@@ -62,6 +62,9 @@ namespace Resat.Cameras
         private CornerPanel _cameraViewportPanel = null!;
         
         [SerializeField]
+        private RectTransform _rightSidePanel = null!;
+        
+        [SerializeField]
         private DialoguePanel _topNotificationPanel = null!;
 
         [SerializeField]
@@ -99,6 +102,9 @@ namespace Resat.Cameras
         
         [SerializeField]
         private float _sidePanelAnimationDuration = 1f;
+        
+        [SerializeField]
+        private float _rightPanelAnimationDuration = 1f;
         
         [SerializeField]
         private float _outroFadeAnimationDuration = 1f;
@@ -192,7 +198,7 @@ namespace Resat.Cameras
         private async UniTask AnimateOpenCamera(bool force)
         {
             var openCam = _cameraViewportPanel.Open(force, null, SetViewportOpenVector);
-
+            // _previewImagePanel.Open(force, null);
             // we need to pull the side panel earlier than the tween's normal completion
             if (!force)
             {
@@ -207,6 +213,7 @@ namespace Resat.Cameras
         private async UniTask AnimateCloseCamera(bool force)
         {
             var sidePanel = AnimateSidePanel(force, true);
+            // _previewImagePanel.Close(force, null);
             await _cameraViewportPanel.Close(force, null, SetViewportOpenVector);
 
             await sidePanel;
@@ -221,14 +228,22 @@ namespace Resat.Cameras
             if (force)
             {
                 _topSidePanel.localScale = new Vector3(1, reverse ? 0 : 1, 1);
+                _rightSidePanel.localScale = new Vector3( reverse ? 0 : 1, 1, 1);
                 return;
             }
             
             // TODO NON LINEAR EASE
-            await _tweenController.RunTween(_sidePanelAnimationDuration, (value) =>
+            var tween1 = _tweenController.RunTween(_sidePanelAnimationDuration, (value) =>
             {
                 _topSidePanel.localScale = new Vector3(1, reverse ? 1 - value : value, 1);
             });
+            
+            await _tweenController.RunTween(_rightPanelAnimationDuration, (value) =>
+            {
+                _rightSidePanel.localScale = new Vector3(reverse ? 1 - value : value, 1, 1);
+            });
+
+            await tween1;
         }
 
         // this should force the camera to the new state regardless of what's happening

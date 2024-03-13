@@ -129,7 +129,7 @@ namespace Resat.Cameras
         private Ease _outroFadeEase = Ease.Linear;
 
         [SerializeField]
-        private bool _tempOutro = true;
+        private bool _tempOutro = false;
 
         [SerializeField]
         private SunsetBehaviour? _sunsetBehaviour;
@@ -386,6 +386,8 @@ namespace Resat.Cameras
             _okhslController.SerializeLastRender();
 
             // else we do it in HandlePictureData
+            _tempOutro = _sunsetBehaviour!.DoEndingCutscene();
+            
             if (!_tempOutro)
             {
                 AnimateAfterPicture().Forget();

@@ -1,4 +1,6 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using Resat.Biomes;
 using Resat.Cameras;
 using Resat.Models;
@@ -26,6 +28,12 @@ namespace Resat.Behaviours
         
         [SerializeField]
         private GameObject? _nonSunsetNpcs;
+
+        [SerializeField]
+        private List<NpcTriggerBehaviour> _endingNpcs = new();
+        
+        [SerializeField]
+        private Camera _actualPhotoCameraWithSmallViewport = null!;
 
         private bool _sunsetted = false;
         private OKHSLData? _okhslData;
@@ -102,6 +110,26 @@ namespace Resat.Behaviours
         {
             _okhslData = okhslData;
             CheckForSunsetCondition();
+        }
+
+        public bool DoEndingCutscene()
+        {
+            if (!_sunsetted)
+                return false;
+            
+            var planes = GeometryUtility.CalculateFrustumPlanes(_actualPhotoCameraWithSmallViewport);
+
+            // check npcs
+            foreach (var npc in _endingNpcs)
+            {
+                if (!(npc.SpriteRenderer != null && npc.SpriteRenderer.isVisible && npc.GetComponent<Collider>() != null &&
+                    GeometryUtility.TestPlanesAABB(planes, npc.GetComponent<Collider>().bounds)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

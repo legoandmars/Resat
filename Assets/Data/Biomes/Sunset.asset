@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9193f81c837c43868f246338c2adda7c, type: 3}
   m_Name: Sunset
   m_EditorClassIdentifier: 
-  BiomeType: 5
+  BiomeType: 6
   DialogueBoxColor: {r: 0, g: 0.18039216, b: 0, a: 1}
   SkyboxTopColor: {r: 1, g: 0.6392157, b: 0.2509804, a: 1}
   SkyboxBottomColor: {r: 0.86666673, g: 0.34901962, b: 0.2509804, a: 1}
-  LightingColor: {r: 1, g: 0.9581025, b: 0.759434, a: 1}
+  LightingColor: {r: 1, g: 0.972549, b: 0.84705883, a: 1}

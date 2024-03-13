@@ -13,7 +13,7 @@ namespace Resat.Models
         public BiomeType BiomeType;
         public bool Unlocked = false;
 
-        public BiomeReference(BiomeSO biomeSo, QuestSO requirementQuest, BiomeType biomeType, bool unlocked)
+        public BiomeReference(BiomeSO biomeSo, QuestSO? requirementQuest, BiomeType biomeType, bool unlocked)
         {
             BiomeSO = biomeSo;
             BiomeType = biomeType;

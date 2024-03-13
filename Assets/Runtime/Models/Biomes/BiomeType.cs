@@ -7,6 +7,7 @@
         Mesa,
         Mountains,
         City,
-        Forest
+        Forest,
+        Sunset
     }
 }

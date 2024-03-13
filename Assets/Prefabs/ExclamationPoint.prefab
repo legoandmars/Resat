@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4254231352334290351}
   - component: {fileID: 4254231352334290350}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ExclamationPointVisuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -26,6 +26,7 @@ namespace Resat.Biomes
         
         // private bool _transitioning = false;
         private BiomeType _biomeType;
+        private bool _canChangeBiomes = true;
         
         private void Start()
         {
@@ -59,6 +60,9 @@ namespace Resat.Biomes
 
         private void OnBiomeChangeRequested(BiomeType biomeType)
         {
+            if (!_canChangeBiomes)
+                return;
+            
             var biome = _biomes.FirstOrDefault(x => x.BiomeType == biomeType);
             if (biome == null)
                 return;
@@ -66,16 +70,27 @@ namespace Resat.Biomes
             ChangeBiome(biome);
         }
 
-        private void ChangeBiome(BiomeReference biome, bool first = false)
+        public void ChangeBiome(BiomeReference biome, bool first = false, bool overrideDisable = false)
         {
+            if (!_canChangeBiomes && !overrideDisable)
+                return;
+
             Debug.Log($"Switching biome to {biome.BiomeType}!");
             
             _biomeType = biome.BiomeType;
             _biomeIntermediate.ChangeBiome(new BiomeChangeEvent(biome.BiomeSO, first));
         }
 
+        public void DisableBiomeChanging()
+        {
+            _canChangeBiomes = false;
+        }
+        
         public bool BiomeIsUnlocked(BiomeType? biomeType = null)
         {
+            if (!_canChangeBiomes)
+                return true;
+            
             return _biomes.Any(x => x.BiomeType == (biomeType ?? _biomeType) && x.Unlocked);
         }
     }

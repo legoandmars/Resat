@@ -73,7 +73,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightingStrength: 0.429
+    - _LightingStrength: 0.421
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -89,7 +89,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission: {r: 0.41509432, g: 0.24747315, b: 0.064613745, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FakeLightingColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
     - _LightingColor: {r: 1, g: 1, b: 1, a: 1}

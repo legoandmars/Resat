@@ -316,7 +316,7 @@ namespace Resat.Cameras
             AnimateOpenCamera(force).Forget();
         }
 
-        private async UniTask ShowTopNotification(string content)
+        public async UniTask ShowTopNotification(string content)
         {
             var notificationCts = new CancellationTokenSource();
             if (_topNotificationCts != null)

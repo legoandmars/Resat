@@ -16,7 +16,8 @@ Shader "Unlit/OKHSLPickerOverlay"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
+        Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
         ZTest Off
         
@@ -35,6 +36,7 @@ Shader "Unlit/OKHSLPickerOverlay"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
+                float4 color : COLOR;
             };
 
             struct v2f
@@ -42,6 +44,7 @@ Shader "Unlit/OKHSLPickerOverlay"
                 float2 uv : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
+                float4 color : COLOR;
             };
 
             sampler2D _MainTex;
@@ -86,6 +89,7 @@ Shader "Unlit/OKHSLPickerOverlay"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
+                o.color = v.color;
                 return o;
             }
 
@@ -126,7 +130,7 @@ Shader "Unlit/OKHSLPickerOverlay"
                 
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, finalCol);
-                return fixed4(finalCol.r, finalCol.g, finalCol.b, 1);
+                return fixed4(finalCol.r, finalCol.g, finalCol.b, i.color.a);
             }
             ENDCG
         }

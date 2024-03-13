@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Resat.Models;
 using Resat.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Resat.UI
 {
@@ -26,11 +27,18 @@ namespace Resat.UI
         private List<ScreenshotPanel> _screenshotPanels = new();
 
         [SerializeField]
+        private Button _leftButton = null!;
+        
+        [SerializeField]
+        private Button _rightButton = null!;
+        
+        [SerializeField]
         private Ease _ease = Ease.Linear;
         
         private List<ScreenshotData> _screenshots = new();
         private int pageWidth = 4;
-
+        private int _currentPage = 0;
+        
         public void SetActive(bool active)
         {
             if (_canvasGroup == null)
@@ -53,14 +61,25 @@ namespace Resat.UI
 
         private void ApplyPage(int page)
         {
+            _currentPage = page;
+            
             // TODO proper sanity checks 
             int startIndex = pageWidth * page;
+            
+            // reset all first
+            foreach (var panel in _screenshotPanels)
+            {
+                panel.ResetValues();
+            }
             
             for (int i = 0; i + startIndex < _screenshots.Count && i < 4; i++)
             {
                 var screenshot = _screenshots[i + startIndex];
-                _screenshotPanels[i].SetTexture(screenshot.RenderTexture);
+                _screenshotPanels[i].SetScreenshotData(screenshot);
             }
+
+            _leftButton.gameObject.SetActive(startIndex != 0);
+            _rightButton.gameObject.SetActive(startIndex + 4 < _screenshots.Count);
         }
         
         public async UniTask AnimateScaleOut(float duration)
@@ -87,6 +106,16 @@ namespace Resat.UI
                 return;
             
             _scaledRectTransform.localScale = new Vector3(value, value, 1);
+        }
+
+        public void OnLeftButtonClick()
+        {
+            ApplyPage(_currentPage - 1);
+        }
+
+        public void OnRightButtonClick()
+        {
+            ApplyPage(_currentPage + 1);
         }
     }
 }

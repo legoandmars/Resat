@@ -4830,6 +4830,7 @@ GameObject:
   - component: {fileID: 536391020}
   - component: {fileID: 536391019}
   - component: {fileID: 536391018}
+  - component: {fileID: 536391021}
   m_Layer: 5
   m_Name: BackgroundPanel
   m_TagString: Untagged
@@ -4930,6 +4931,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 536391016}
   m_CullTransparentMesh: 1
+--- !u!225 &536391021
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536391016}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &539381653 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8485381188093176777, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
@@ -6772,8 +6785,12 @@ MonoBehaviour:
     Max: 0.018
   _outroCutoutColor: {r: 0, g: 0, b: 0, a: 1}
   _outroFadeEase: 9
-  _tempOutro: 0
+  _tempOutro: 1
   _sunsetBehaviour: {fileID: 876431037}
+  _otherCanvasGroups:
+  - {fileID: 536391021}
+  - {fileID: 706795441}
+  - {fileID: 1805423710}
 --- !u!1 &682005473
 GameObject:
   m_ObjectHideFlags: 0
@@ -7007,6 +7024,7 @@ GameObject:
   - component: {fileID: 706795438}
   - component: {fileID: 706795440}
   - component: {fileID: 706795439}
+  - component: {fileID: 706795441}
   m_Layer: 5
   m_Name: RightPanel
   m_TagString: Untagged
@@ -7078,6 +7096,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 706795437}
   m_CullTransparentMesh: 1
+--- !u!225 &706795441
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706795437}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &706816148
 GameObject:
   m_ObjectHideFlags: 0
@@ -10641,6 +10671,8 @@ MonoBehaviour:
   - {fileID: 1658466844}
   - {fileID: 78901509}
   - {fileID: 2048124447}
+  _leftButton: {fileID: 1219850833}
+  _rightButton: {fileID: 1570530732}
   _ease: 15
 --- !u!1 &1004039077
 GameObject:
@@ -12850,7 +12882,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1219850834}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 996966347}
+        m_TargetAssemblyTypeName: Resat.UI.OutroPanel, Resat
+        m_MethodName: OnLeftButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1219850834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16323,7 +16367,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1570530733}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 996966347}
+        m_TargetAssemblyTypeName: Resat.UI.OutroPanel, Resat
+        m_MethodName: OnRightButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1570530733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23619,6 +23675,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1805423708}
   - component: {fileID: 1805423709}
+  - component: {fileID: 1805423710}
   m_Layer: 5
   m_Name: DialoguePanelController
   m_TagString: Untagged
@@ -23680,6 +23737,18 @@ MonoBehaviour:
     Min: 0.05
     Max: 0.1
   _textCloseSpeedMultiplier: 6
+--- !u!225 &1805423710
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805423707}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1808070831 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2671933270501529137, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}

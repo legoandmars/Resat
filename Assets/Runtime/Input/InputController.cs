@@ -63,5 +63,11 @@ namespace Resat.Input
             Input.Camera.Disable();
             CameraInputEnabled = false;
         }
+        
+        public void DisableDialogueInput()
+        {
+            Input.Dialogue.Disable();
+            DialogueInputEnabled = false;
+        }
     }
 }

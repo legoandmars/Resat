@@ -51,16 +51,6 @@ namespace Resat.Debugging
                 return;
 
             return;
-            _okhslController.SetArraySize(new Vector2Int(2048, 2048));
-            _okhslController.enabled = false;
-            _okhslController.enabled = true;
-
-            int mult = 8;
-            _photoController.SetSize(new Vector2Int(272*mult, 200*mult), new Vector2Int(480*mult, 270*mult));
-            _photoController.enabled = false;
-            _photoController.enabled = true;
-            Debug.Log("stress testing");
-            // throw new System.NotImplementedException();
         }
 
         public void OnResaturatedView(InputAction.CallbackContext context)

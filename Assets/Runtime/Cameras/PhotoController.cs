@@ -134,6 +134,9 @@ namespace Resat.Cameras
         [SerializeField]
         private SunsetBehaviour? _sunsetBehaviour;
 
+        [SerializeField]
+        private List<CanvasGroup> _otherCanvasGroups = new();
+        
         private CameraState _cameraState = CameraState.Minimized;
         private float _animationPercent = 0f;
         private float _maximizedFieldOfView;
@@ -161,6 +164,10 @@ namespace Resat.Cameras
             // rgb lerp is fine since we're working in grayscale
             var lerpedColor = Color.Lerp(_desaturationCamera.OutsideCutoutColor, _outroCutoutColor, animationPercent);
             _desaturationCamera.SetOutsideCutoutColor(lerpedColor);
+            foreach (var canvasGroup in _otherCanvasGroups)
+            {
+                canvasGroup.alpha = 1.0f - animationPercent;
+            }
         }
 
         // DEBUGGING ONLY!!
@@ -386,7 +393,8 @@ namespace Resat.Cameras
             _okhslController.SerializeLastRender();
 
             // else we do it in HandlePictureData
-            _tempOutro = _sunsetBehaviour!.DoEndingCutscene();
+            if (!_tempOutro)
+                _tempOutro = _sunsetBehaviour!.DoEndingCutscene();
             
             if (!_tempOutro)
             {
@@ -396,6 +404,8 @@ namespace Resat.Cameras
             {
                 // we want to disable input if we're doing an outro sequence
                 _inputController.DisablePlayerInput();
+                _inputController.DisableCameraInput();
+                _inputController.DisableDialogueInput();
             }
             
             // TODO: This assumes native res will always cleanly divide into the screenshot's native res

@@ -32,13 +32,18 @@ namespace Resat.Quests
             // start initial quest
             // TODO: if needed don't hardcode this to first
             StartQuest(QuestReferences.First());
+        }
+
+        
+        private void UnlockOtherQuests()
+        {
             StartQuest(QuestReferences[1]);
             StartQuest(QuestReferences[2]);
             StartQuest(QuestReferences[3]);
             StartQuest(QuestReferences[4]);
             StartQuest(QuestReferences[5]);
         }
-
+        
         private void OnEnable()
         {
             _npcIntermediate.DialogueStopped += OnDialogueStopped;
@@ -199,6 +204,12 @@ namespace Resat.Quests
         {
             questReference.State = QuestState.Completed;
             OnQuestCompleted?.Invoke(questReference.QuestSO);
+
+            if (questReference == QuestReferences.First())
+            {
+                Debug.Log("initial quest done, enabling other quests...");
+                UnlockOtherQuests();
+            }
         }
     }
 }

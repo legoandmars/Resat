@@ -50,7 +50,7 @@ namespace Resat.Behaviours
         {
             await UniTask.WaitForSeconds(10f);
             
-            DoSunset();
+            // DoSunset();
         }
     }
 }

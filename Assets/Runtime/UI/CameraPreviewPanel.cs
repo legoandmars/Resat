@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Resat.Models;
 using TMPro;
 using UnityEngine;
@@ -28,11 +29,12 @@ namespace Resat.UI
                 var topColorImage = TopColorImages[i];
                 topColorImage.color = topColor.Color;
             }
-            
+
+            var percent = Single.IsNaN(okhslData.NewColorCoveragePercent) ? 0.0f : okhslData.NewColorCoveragePercent;
             if (NewColorCountText != null)
                 NewColorCountText.text = $"New Colors: {okhslData.NewColorCount}";
             if (NewColorCountPercentageText != null)
-                NewColorCountPercentageText.text = $"{okhslData.NewColorCoveragePercent:00.0}%";
+                NewColorCountPercentageText.text = $"{percent:00.0}%";
         }
 
         public void SetPreviewTexture(RenderTexture renderTexture)

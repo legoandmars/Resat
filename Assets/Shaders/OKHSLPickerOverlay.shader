@@ -8,6 +8,7 @@ Shader "Unlit/OKHSLPickerOverlay"
         _AnimationPercent ("Post-photo animation timer", Range(0.0, 1.0)) = 1.0
         _AnimationState ("Animating", Range(0.0, 1.0)) = 1.0
         _Speed ("UV speed", Float) = 1.0
+        _BaseSaturation ("Base Saturation", Float) = 1.0
         _PreviewColor ("Preview Color", Color) = (1,1,1,1)
         _GlobalColor ("Global Color", Color) = (1,1,1,1)
         _OutsideColor ("Outside Color", Color) = (1,1,1,1)
@@ -49,6 +50,7 @@ Shader "Unlit/OKHSLPickerOverlay"
             float4 _PreviewTex_ST;
             float4 _NoiseScale;
             float _Saturation;
+            float _BaseSaturation;
             float _Speed;
             float _AnimationPercent;
             float _AnimationState;
@@ -90,15 +92,24 @@ Shader "Unlit/OKHSLPickerOverlay"
             fixed4 frag (v2f i) : SV_Target
             {
                 float3 tempCol = OKHSLtoRGB(float3(i.uv.x, _Saturation, i.uv.y));
+                float3 desatTempCol = OKHSLtoRGB(float3(i.uv.x, _BaseSaturation, i.uv.y + 0.05f)); // TODO: remove hard lightness cap
+/*                if (i.uv.y < 1.0f / 16.0f)
+                {
+                    desatTempCol = OKHSLtoRGB(float3(i.uv.x, _BaseSaturation, i.uv.y + 0.03f));
+                }*/
+                float3 fullyDesatTempCol = OKHSLtoRGB(float3(i.uv.x, 0, i.uv.y + 0.2f));
+                
                 float4 col = float4(tempCol.r, tempCol.g, tempCol.b, 1);
+                float4 desatCol = float4(desatTempCol.r, desatTempCol.g, desatTempCol.b, 1);
+                float4 fullyDesatCol = float4(fullyDesatTempCol.r, fullyDesatTempCol.g, fullyDesatTempCol.b, 1);
 
                 // float2 noiseScale = float2(_NoiseScale.x, _NoiseScale.x / 4);
                 // i.uv.x += unity_gradientNoise(float2(32902, 320) + i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;
                 // i.uv.y += unity_gradientNoise(i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;
                 float4 overlayCol = tex2D(_MainTex, i.uv);
-                float4 previewCol = tex2D(_PreviewTex, i.uv * _PreviewTex_ST.xy + _PreviewTex_ST.zw + float2(_Time.y * _Speed, 0)) * _PreviewColor;
+                float4 previewCol = tex2D(_PreviewTex, i.uv * _PreviewTex_ST.xy + _PreviewTex_ST.zw + float2(_Time.y * _Speed, 0)) * fullyDesatCol;
 
-                float4 finalCol = lerp(col, _OutsideColor, _OutsideColor.a);
+                float4 finalCol = lerp(col, desatCol, desatCol.a);
                 if (overlayCol.r < 0.8f && overlayCol.r > 0.5f)
                 {
                     // gobal
@@ -108,7 +119,7 @@ Shader "Unlit/OKHSLPickerOverlay"
                 {
                     // works assuming we only need alpha
                     previewCol.a = lerp(previewCol.a, _GlobalColor.a, lerp(0, _AnimationPercent, _AnimationState));
-                    float4 interpolatedCol = lerp(previewCol * _PreviewColor, _GlobalColor, lerp(0, _AnimationPercent, _AnimationState));
+                    // float4 interpolatedCol = lerp(previewCol * _PreviewColor, _GlobalColor, lerp(0, _AnimationPercent, _AnimationState));
                     finalCol = lerp(col, previewCol, previewCol.a);
                 }
                 

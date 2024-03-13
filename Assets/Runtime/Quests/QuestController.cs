@@ -22,6 +22,9 @@ namespace Resat.Quests
         [SerializeField]
         public List<QuestReference> QuestReferences = new();
 
+        [SerializeField]
+        private ForceSaturationBehaviour? _bottleThrower;
+        
         public event Action<QuestSO>? OnQuestCompleted;
         
         private void Start()
@@ -32,6 +35,8 @@ namespace Resat.Quests
             // start initial quest
             // TODO: if needed don't hardcode this to first
             StartQuest(QuestReferences.First());
+
+            SetSaturationBehaviourState(_bottleThrower, false);
         }
 
         
@@ -42,6 +47,7 @@ namespace Resat.Quests
             StartQuest(QuestReferences[3]);
             StartQuest(QuestReferences[4]);
             StartQuest(QuestReferences[5]);
+            SetSaturationBehaviourState(_bottleThrower, true);
         }
         
         private void OnEnable()

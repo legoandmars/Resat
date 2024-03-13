@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Resat.Behaviours
@@ -17,6 +18,12 @@ namespace Resat.Behaviours
         [SerializeField]
         private Collider? _collider;
         
+        [SerializeField]
+        private ParticleSystem? _particleSystem;
+        
+        [SerializeField]
+        private ParticleSystemRenderer? _particleSystemRenderer;
+
         [SerializeField]
         private float _rotationAcceleration;
 
@@ -87,6 +94,28 @@ namespace Resat.Behaviours
         {
             _angle = angle;
             _actualAngle = _angle;
+        }
+
+        public async UniTask SetDestroyed()
+        {
+            if (Seen || Renderer == null || _particleSystem == null)
+                return;
+            
+            Seen = true;
+
+            await UniTask.Yield(); // wait for cam render first
+            
+            Renderer.enabled = false;
+            _particleSystem.Emit(15);
+        }
+
+        public void SetColor(Color color)
+        {
+            if (Renderer == null || _particleSystemRenderer == null)
+                return;
+
+            Renderer.material.color = color;
+            _particleSystemRenderer.material.color = color;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Resat.Audio;
 using Resat.Cameras;
@@ -68,7 +69,11 @@ namespace Resat.Behaviours
         [SerializeField]
         private DialogueSO? _completedDialogue;
 
+        [SerializeField]
+        private Color _baseBottleColor;
+        
         private bool _complete = false;
+        private bool _finishAnimation = false;
         
         private List<ThrownBottle> _spawnedBottles = new();
         
@@ -106,7 +111,9 @@ namespace Resat.Behaviours
                 if (bottle.Renderer != null && bottle.Renderer.isVisible && bottle.Collider != null &&
                     GeometryUtility.TestPlanesAABB(planes, bottle.Collider.bounds))
                 {
-                    bottle.Seen = true;
+                    bottle.SetDestroyed();
+                    
+                    // bottle.Seen = true;
                 }
             }
             
@@ -141,6 +148,8 @@ namespace Resat.Behaviours
 
         private async UniTask ThrowingLogic()
         {
+            _finishAnimation = false;
+            
             // warmup a few sounds
             for (int i = 0; i < _warmupSoundCount; i++)
             {
@@ -167,7 +176,14 @@ namespace Resat.Behaviours
                 await UniTask.WaitForSeconds(_thirdStageDelay);
             }
 
-            await UniTask.WaitForSeconds(5f);
+            var cancellationTokenSource = new CancellationTokenSource();
+            
+            ForceTimeout(cancellationTokenSource.Token).Forget();
+            WhileBottles(cancellationTokenSource.Token).Forget();
+            
+            await UniTask.WaitWhile(() => _finishAnimation == false);
+            cancellationTokenSource.Cancel();
+            
             var seenCount = _spawnedBottles.Where(x => !x.Seen).Count();
             Debug.Log("SEEN");
             Debug.Log(seenCount);
@@ -191,8 +207,23 @@ namespace Resat.Behaviours
                     Destroy(bottle);
                 }
             }
+            _spawnedBottles.Clear();
         }
 
+        private async UniTask ForceTimeout(CancellationToken cancellationToken)
+        {
+            await UniTask.WaitForSeconds(5f, cancellationToken: cancellationToken);
+            if (_finishAnimation == false)
+                _finishAnimation = true;
+        }
+
+        private async UniTask WhileBottles(CancellationToken cancellationToken)
+        {
+            await UniTask.WaitWhile(() => _spawnedBottles.Any(x => !x.Seen), PlayerLoopTiming.Update, cancellationToken);
+            if (_finishAnimation == false)
+                _finishAnimation = true;
+        }
+        
         private async UniTask ThrowBottles(int count)
         {
             if (_throwBottleAudioClip != null)
@@ -214,8 +245,17 @@ namespace Resat.Behaviours
             bottle!.gameObject.SetActive(true);
             bottle.SetSideAngle(Random.Range(_sideAngleRange.x, _sideAngleRange.y));
             bottle.SetAngle(Random.Range(_angleRange.x, _angleRange.y));
+            bottle.SetColor(RandomBottleColor());
             
             _spawnedBottles.Add(bottle);
+        }
+
+        private Color RandomBottleColor()
+        {
+            Color.RGBToHSV(_baseBottleColor, out float H, out float S, out float V);
+            H = Random.Range(0f, 1f);
+
+            return Color.HSVToRGB(H, S, V);
         }
     }
 }

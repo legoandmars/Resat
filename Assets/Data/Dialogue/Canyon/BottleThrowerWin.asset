@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BottleThrowerWin
   m_EditorClassIdentifier: 
   Dialogue:
-  - The bottle thrower is pleased with your performance.
+  - The object thrower is pleased with your performance.
   ShowInteractPromptAfterDialogueComplete: 0
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 0}

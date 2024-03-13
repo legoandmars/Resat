@@ -13,9 +13,16 @@ MonoBehaviour:
   m_Name: CowboyCarlFirstQuest
   m_EditorClassIdentifier: 
   Dialogue:
-  - Yeehaw! Welcome to the outback, partner! Thank you for saving me! Here's some
-    information I will give you!
-  - You should use your camera. NOW!
+  - Yeehaw! Welcome to the outback, partner!
+  - Thank you kindly for saving me! In return I've got some info that might be of
+    use to ya.
+  - That special camera you've got? You can activate it by pressing TAB. Alls it
+    takes is a quick click after that!
+  - That not enough for ya? Spice up your photos with a quick zoom on the Scroll
+    Wheel. You can always reset it by clickin' the Scroll Wheel, 'course.
+  - Say, this place is lookin' mighty drab. Go ahead and try takin' a few pictures,
+    I got a feeling it might brighten the place up! Long as you're near a friendly
+    face, at least.
   ShowInteractPromptAfterDialogueComplete: 1
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 0}

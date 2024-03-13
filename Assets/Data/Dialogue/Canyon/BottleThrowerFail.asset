@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BottleThrowerFail
   m_EditorClassIdentifier: 
   Dialogue:
-  - The bottle thrower is displeased with your performance. It begins to whir again.
+  - The object thrower is displeased with your performance. It begins to whir again.
   ShowInteractPromptAfterDialogueComplete: 0
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 0}

@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: RandyThanks
   m_EditorClassIdentifier: 
   Dialogue:
-  - Wow, thanks dude!
+  - Wow, gnarly dude! I'm feelin radical again!
+  - Check this out!
+  - '*does an insane trick, the likes of which would be impossible to convey through
+    an animation*'
   ShowInteractPromptAfterDialogueComplete: 1
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 0}

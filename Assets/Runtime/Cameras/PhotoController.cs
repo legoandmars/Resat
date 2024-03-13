@@ -195,7 +195,11 @@ namespace Resat.Cameras
 
             SetAnimationPercent(1f); // just in case, likely unnecessary
             _cameraPreviewPanel.ToggleAnimation(false);
-            SetCameraState(CameraState.InView, "Finished taking photo!");
+
+            if (_cameraState == CameraState.TakingPhoto)
+            {
+                SetCameraState(CameraState.InView, "Finished taking photo!");
+            }
         }
         
         private async UniTask AnimateAfterPictureOutro()

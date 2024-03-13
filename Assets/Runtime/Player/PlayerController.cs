@@ -74,10 +74,6 @@ namespace Resat.Player
         // hack to just re-send the npc when our ability to talk gets enabled
         private async void DialogueAbilityToggled(bool state)
         {
-            Debug.Log("wao");
-            Debug.Log(state);
-            Debug.Log(_focusedNpc);
-            
             if (state)
             {
                 // yeeaah it's that point in the jam

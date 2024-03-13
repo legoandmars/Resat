@@ -1,4 +1,5 @@
-﻿using Resat.Environment;
+﻿#if UNITY_EDITOR
+using Resat.Environment;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -51,3 +52,4 @@ namespace Resat.Biomes.Editor
         }
     }
 }
+#endif

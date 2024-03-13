@@ -109,6 +109,9 @@ namespace Resat.Behaviours
                     bottle.Seen = true;
                 }
             }
+            
+            Debug.Log("Remaining bottles:");
+            Debug.Log(_spawnedBottles.Where(x => !x.Seen).Count());
         }
 
         private async UniTask StartThrowing()

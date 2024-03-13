@@ -1897,7 +1897,7 @@ MonoBehaviour:
   - BiomeSO: {fileID: 11400000, guid: 863d4bd6e529cb843922238ca2061b13, type: 2}
     RequirementQuest: {fileID: 11400000, guid: 95c1e0494ae6f5647ab37124b89f2407, type: 2}
     BiomeType: 0
-    Unlocked: 1
+    Unlocked: 0
   - BiomeSO: {fileID: 11400000, guid: 140cf369fd111574fbe6b6eedb62e282, type: 2}
     RequirementQuest: {fileID: 11400000, guid: 607fc76150a3be74096b8b4d3ca7b96b, type: 2}
     BiomeType: 1
@@ -7610,7 +7610,7 @@ MonoBehaviour:
   _defaultFieldOfView: 60
   _fieldOfViewRange: {x: 30, y: 85}
   _fieldOfViewScrollSpeed: -0.02
-  _savePhotosToDisk: 0
+  _savePhotosToDisk: 1
   _startWithCameraEnabled: 0
   _animationDuration: 0.4
   _sidePanelAnimationDuration: 0.15
@@ -7624,7 +7624,7 @@ MonoBehaviour:
     Max: 0.018
   _outroCutoutColor: {r: 0, g: 0, b: 0, a: 1}
   _outroFadeEase: 9
-  _tempOutro: 1
+  _tempOutro: 0
   _sunsetBehaviour: {fileID: 876431037}
   _otherCanvasGroups:
   - {fileID: 536391021}
@@ -19393,7 +19393,7 @@ MonoBehaviour:
   _jumpHeight: 1.25
   _fallSpeed: 15
   _slideFriction: 0.5
-  _npcInteractionDistance: 10
+  _npcInteractionDistance: 6
   _npcLayerMask:
     serializedVersion: 2
     m_Bits: 640
@@ -26102,7 +26102,7 @@ MonoBehaviour:
   _nameTextSpeed:
     Min: 0.05
     Max: 0.1
-  _textCloseSpeedMultiplier: 6
+  _textCloseSpeedMultiplier: 20
 --- !u!225 &1805423710
 CanvasGroup:
   m_ObjectHideFlags: 0

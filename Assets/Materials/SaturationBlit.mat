@@ -88,6 +88,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GradientSettings: {r: 2, g: 2, b: 2, a: 0.25}
     - _OutsideCutoutColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ScreenResolution: {r: 1427, g: 803, b: 0, a: 0}
+    - _ScreenResolution: {r: 1426, g: 802, b: 0, a: 0}
     - _Smoothstep: {r: 2, g: 2, b: 2, a: 0.25}
   m_BuildTextureStacks: []

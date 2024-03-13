@@ -107,8 +107,8 @@ namespace Resat.Player
             bool groundedPlayer = _characterController.isGrounded;
             Vector3? groundNormal = GetGroundNormal();
 
-            bool groundMeetsAngle = GetAngleFromNormal(groundNormal) < _characterController.slopeLimit;
-
+            //bool groundMeetsAngle = GetAngleFromNormal(groundNormal) < _characterController.slopeLimit;
+            bool groundMeetsAngle = true;
             if (groundedPlayer && groundMeetsAngle)
                 _groundedTimer = 0.2f;
             if (_groundedTimer > 0)

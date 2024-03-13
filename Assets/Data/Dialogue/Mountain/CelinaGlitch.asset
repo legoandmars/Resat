@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
+  m_Name: CelinaGlitch
+  m_EditorClassIdentifier: 
+  Dialogue:
+  - ASVSHDSIODVHASOflagDVOIHNAIOVHSAOIDSclimbingDOFVIHSOIVDAHAOSDIVHScapture
+  - DVASVASDJASDVPOASDVJOPwhatDVOSHNAVHASIOHVADSOIgaming
+  ShowInteractPromptAfterDialogueComplete: 1
+  StopShowingDialogueAfterwards: 0
+  NextDialogue: {fileID: 11400000, guid: 3005bb155dd01ce42955e674a31b2d7d, type: 2}
+  QuestRequirementToPass: {fileID: 11400000, guid: d4f736797e4a03e40a0f9dfa43206f36, type: 2}

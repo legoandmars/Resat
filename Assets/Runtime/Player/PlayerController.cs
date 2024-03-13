@@ -28,6 +28,9 @@ namespace Resat.Player
         private Transform _groundCheckRaycastEmittingObject = null!;
 
         [SerializeField]
+        private Collider _boxcastCollider = null!;
+
+        [SerializeField]
         private Camera _camera = null!;
         
         [SerializeField]
@@ -154,10 +157,11 @@ namespace Resat.Player
 
         private Vector3? GetGroundNormal()
         {
-            var hits = Physics.RaycastNonAlloc(_groundCheckRaycastEmittingObject.position, -Vector3.up, _raycastResults, Mathf.Infinity);
+            var hits = Physics.BoxCastNonAlloc(_boxcastCollider.bounds.center, _boxcastCollider.bounds.size, Vector2.down, _raycastResults);
             if (hits == 0)
                 return null;
 
+            Debug.Log(_raycastResults[0].collider.name);
             return _raycastResults[0].normal;
             // return Vector3.Angle(_raycastResults[0].normal, Vector3.up);
         }

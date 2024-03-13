@@ -49,6 +49,7 @@ MonoBehaviour:
   _spriteOne: {fileID: 21300000, guid: 7b3932333aa4eac42bc68e27ae809622, type: 3}
   _spriteTwo: {fileID: 21300000, guid: ab37e55f252d9f246a2474d800c34fd0, type: 3}
   _speed: 1.25
+  _describbleSpeed: 0.6
 --- !u!1 &2160553827505371211
 GameObject:
   m_ObjectHideFlags: 0

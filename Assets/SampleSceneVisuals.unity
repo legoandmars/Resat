@@ -1148,6 +1148,10 @@ PrefabInstance:
       propertyPath: _spriteRenderer
       value: 
       objectReference: {fileID: 1385568055}
+    - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
+      propertyPath: _describbleDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: db4f81180cde43a42b336be19b1eb01d, type: 2}
     - target: {fileID: 1968945989850639583, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: m_Name
       value: GeorgeTrigger
@@ -1229,6 +1233,10 @@ PrefabInstance:
       propertyPath: _spriteRenderer
       value: 
       objectReference: {fileID: 110941018}
+    - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
+      propertyPath: _describbleDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: a290729479df2144d8f2e1c15e971e2e, type: 2}
     - target: {fileID: 1968945989850639583, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: m_Name
       value: MarkTrigger
@@ -2028,6 +2036,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 82552491bf2a65c4ea5b2693d2952a31, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!114 &187820753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3069,6 +3079,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 25d12e24e24612d40a907e36a0986ebb, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!114 &298549098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3156,6 +3168,10 @@ PrefabInstance:
       propertyPath: _spriteRenderer
       value: 
       objectReference: {fileID: 317533891}
+    - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
+      propertyPath: _describbleDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: 18217496131f0754482b991bdbf4b513, type: 2}
     - target: {fileID: 1968945989850639583, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: m_Name
       value: CarTrigger
@@ -3587,6 +3603,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 43e207084e8e9a9489ad7692bda1db79, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!114 &408824946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3985,6 +4003,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 3a37a9f9a62cb234aa4402e372d4c293, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!114 &483508787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5253,6 +5273,10 @@ PrefabInstance:
       propertyPath: _spriteRenderer
       value: 
       objectReference: {fileID: 905010634}
+    - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
+      propertyPath: _describbleDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: 479bceb7522c62249b86e348369c9658, type: 2}
     - target: {fileID: 1968945989850639583, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: m_Name
       value: RadicalTrigger
@@ -7404,6 +7428,10 @@ PrefabInstance:
       propertyPath: _spriteRenderer
       value: 
       objectReference: {fileID: 776189462}
+    - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
+      propertyPath: _describbleDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: 3005bb155dd01ce42955e674a31b2d7d, type: 2}
     - target: {fileID: 1968945989850639583, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: m_Name
       value: MountainTrigger
@@ -8418,6 +8446,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 6e3739275b25b214d875154703cf91ec, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!1 &940936821
 GameObject:
   m_ObjectHideFlags: 0
@@ -9466,6 +9496,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 981cb335fe3834945bf2f72c1f8d30b0, type: 2}
+    - target: {fileID: 8700725330082129686, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8710704850632801911, guid: 30bb8ff357bede341b00c6854eab2d40, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -13710,6 +13744,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: e6b08b49d35c9f84ba74c9aeb7f317a8, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!114 &1398485412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15888,7 +15924,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1638195596}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.72, y: 0, z: 50.15}
+  m_LocalPosition: {x: -34.49, y: 0, z: -61.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16569,6 +16605,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 2253b43a233c4f0488f928d7a8fad182, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!114 &1720056130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18581,6 +18619,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 7ab584dc3bb136740a0e8ed2592bfd51, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
   _photoController: {fileID: 678523065}
   _dialogueController: {fileID: 376274333}
   _questController: {fileID: 290105122}
@@ -21691,6 +21731,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1641432003}
     m_Modifications:
+    - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
+      propertyPath: _describbleDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: 23a0b0881a9b0ee419a9cd1eca101f4d, type: 2}
     - target: {fileID: 1968945990576916798, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _playerCamera
       value: 
@@ -21779,6 +21823,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 059640184ddcb894daa35fd9e6dc11f7, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!4 &2044956086168641863
 Transform:
   m_ObjectHideFlags: 0
@@ -22341,6 +22387,8 @@ MonoBehaviour:
   _npcSO: {fileID: 11400000, guid: 6fb4ffafa2998bb4ea127d5c9b776097, type: 2}
   _exclamationPoint: {fileID: 0}
   _spriteRenderer: {fileID: 0}
+  _scribbleBehaviour: {fileID: 0}
+  _describbleDialogue: {fileID: 0}
 --- !u!65 &6823995823664473221
 BoxCollider:
   m_ObjectHideFlags: 0

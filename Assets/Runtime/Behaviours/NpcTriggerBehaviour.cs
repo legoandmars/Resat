@@ -20,11 +20,18 @@ namespace Resat.Behaviours
 
         [SerializeField]
         private SpriteRenderer? _spriteRenderer;
+
+        [SerializeField]
+        private ScribbleBehaviour? _scribbleBehaviour;
+
+        [SerializeField]
+        public DialogueSO? _describbleDialogue;
         
         [NonSerialized]
         public DialogueSO? CurrentDialogue;
 
         private bool _interactable = true;
+        private bool _describbled = false;
         
         private void Awake()
         {
@@ -55,7 +62,16 @@ namespace Resat.Behaviours
 
         public virtual void OnDialogueAnimationStarted()
         {
+            if (_describbleDialogue == null || _describbleDialogue != CurrentDialogue || _describbled)
+                return;
             
+            Debug.Log("It's describblin' time.");
+            _describbled = true;
+
+            if (_scribbleBehaviour != null)
+            {
+                _scribbleBehaviour.Describble();
+            }
         } 
 
         public virtual void OnDialogueAnimationEnded()

@@ -168,6 +168,17 @@
                 },
                 {
                     "name": "",
+                    "id": "83e4420f-9f9b-48f9-89df-5435c9883cbf",
+                    "path": "<Mouse>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TakePicture",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "2ee22190-52a3-4a6e-936c-f8151129c37c",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
@@ -249,6 +260,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "DebugSpawn",
+                    "type": "Button",
+                    "id": "93f42d46-49c8-4437-a60a-7dfc6e666d6d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -304,6 +324,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ResetGlobalArray",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "25c30013-67dc-442f-beb0-43f2f6c1be06",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugSpawn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

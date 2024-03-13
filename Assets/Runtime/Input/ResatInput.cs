@@ -192,6 +192,17 @@ namespace Input
                 },
                 {
                     ""name"": """",
+                    ""id"": ""83e4420f-9f9b-48f9-89df-5435c9883cbf"",
+                    ""path"": ""<Mouse>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TakePicture"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""2ee22190-52a3-4a6e-936c-f8151129c37c"",
                     ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",
@@ -273,6 +284,15 @@ namespace Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DebugSpawn"",
+                    ""type"": ""Button"",
+                    ""id"": ""93f42d46-49c8-4437-a60a-7dfc6e666d6d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -328,6 +348,17 @@ namespace Input
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ResetGlobalArray"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25c30013-67dc-442f-beb0-43f2f6c1be06"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugSpawn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -402,6 +433,7 @@ namespace Input
             m_Debugging_DesaturatedView = m_Debugging.FindAction("DesaturatedView", throwIfNotFound: true);
             m_Debugging_ResaturatedView = m_Debugging.FindAction("ResaturatedView", throwIfNotFound: true);
             m_Debugging_ResetGlobalArray = m_Debugging.FindAction("ResetGlobalArray", throwIfNotFound: true);
+            m_Debugging_DebugSpawn = m_Debugging.FindAction("DebugSpawn", throwIfNotFound: true);
             // Dialogue
             m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
             m_Dialogue_Interact = m_Dialogue.FindAction("Interact", throwIfNotFound: true);
@@ -604,6 +636,7 @@ namespace Input
         private readonly InputAction m_Debugging_DesaturatedView;
         private readonly InputAction m_Debugging_ResaturatedView;
         private readonly InputAction m_Debugging_ResetGlobalArray;
+        private readonly InputAction m_Debugging_DebugSpawn;
         public struct DebuggingActions
         {
             private @ResatInput m_Wrapper;
@@ -613,6 +646,7 @@ namespace Input
             public InputAction @DesaturatedView => m_Wrapper.m_Debugging_DesaturatedView;
             public InputAction @ResaturatedView => m_Wrapper.m_Debugging_ResaturatedView;
             public InputAction @ResetGlobalArray => m_Wrapper.m_Debugging_ResetGlobalArray;
+            public InputAction @DebugSpawn => m_Wrapper.m_Debugging_DebugSpawn;
             public InputActionMap Get() { return m_Wrapper.m_Debugging; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -637,6 +671,9 @@ namespace Input
                 @ResetGlobalArray.started += instance.OnResetGlobalArray;
                 @ResetGlobalArray.performed += instance.OnResetGlobalArray;
                 @ResetGlobalArray.canceled += instance.OnResetGlobalArray;
+                @DebugSpawn.started += instance.OnDebugSpawn;
+                @DebugSpawn.performed += instance.OnDebugSpawn;
+                @DebugSpawn.canceled += instance.OnDebugSpawn;
             }
 
             private void UnregisterCallbacks(IDebuggingActions instance)
@@ -656,6 +693,9 @@ namespace Input
                 @ResetGlobalArray.started -= instance.OnResetGlobalArray;
                 @ResetGlobalArray.performed -= instance.OnResetGlobalArray;
                 @ResetGlobalArray.canceled -= instance.OnResetGlobalArray;
+                @DebugSpawn.started -= instance.OnDebugSpawn;
+                @DebugSpawn.performed -= instance.OnDebugSpawn;
+                @DebugSpawn.canceled -= instance.OnDebugSpawn;
             }
 
             public void RemoveCallbacks(IDebuggingActions instance)
@@ -747,6 +787,7 @@ namespace Input
             void OnDesaturatedView(InputAction.CallbackContext context);
             void OnResaturatedView(InputAction.CallbackContext context);
             void OnResetGlobalArray(InputAction.CallbackContext context);
+            void OnDebugSpawn(InputAction.CallbackContext context);
         }
         public interface IDialogueActions
         {

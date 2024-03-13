@@ -2,6 +2,7 @@
 using Resat.Cameras;
 using Resat.Colors;
 using Resat.Input;
+using Resat.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,12 +22,17 @@ namespace Resat.Debugging
         [SerializeField]
         private OKHSLController _okhslController = null!;
 
+        [SerializeField]
+        private GameObject? _debugSpawnThing;
+
+        [SerializeField]
+        private PlayerController? _playerController;
         public void OnDefaultCamView(InputAction.CallbackContext context)
         {
             if (!context.performed || _desaturationCamera.Material == null)
                 return;
             
-            _desaturationCamera.Material.EnableKeyword("DISABLE_SHOW_OKHSL_VIEW");
+            // _desaturationCamera.Material.EnableKeyword("DISABLE_SHOW_OKHSL_VIEW");
             // throw new System.NotImplementedException();
         }
 
@@ -35,7 +41,7 @@ namespace Resat.Debugging
             if (!context.performed || _desaturationCamera.Material == null)
                 return;
             
-            _desaturationCamera.Material.DisableKeyword("DISABLE_SHOW_OKHSL_VIEW");
+            // _desaturationCamera.Material.DisableKeyword("DISABLE_SHOW_OKHSL_VIEW");
             // throw new System.NotImplementedException();
         }
 
@@ -44,6 +50,7 @@ namespace Resat.Debugging
             if (!context.performed) 
                 return;
 
+            return;
             _okhslController.SetArraySize(new Vector2Int(2048, 2048));
             _okhslController.enabled = false;
             _okhslController.enabled = true;
@@ -70,14 +77,25 @@ namespace Resat.Debugging
                 return;
             
             // throw new System.NotImplementedException();
-            _okhslController.ClearGlobalArray();
+            // _okhslController.ClearGlobalArray();
+        }
+
+        public void OnDebugSpawn(InputAction.CallbackContext context)
+        {
+            if (!context.performed || _debugSpawnThing == null || _playerController == null)
+                return;
+
+            var newThing = Instantiate(_debugSpawnThing);
+            newThing.SetActive(true);
+            newThing.transform.position = _playerController.transform.GetChild(0).position + new Vector3(0, 2.5f, 0);
+            // debug spawn
         }
 
         private void Start()
         {
-#if UNITY_EDITOR
+// #if UNITY_EDITOR
             _inputController.EnableDebugInput();
-#endif
+// #endif
         }
         
         private void OnEnable()

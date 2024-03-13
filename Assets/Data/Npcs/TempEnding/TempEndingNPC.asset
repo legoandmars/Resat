@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1312f3546a14bf995139cb2d3033f27, type: 3}
   m_Name: TempEndingNPC
   m_EditorClassIdentifier: 
-  Name: TemporaryEndingNPC
+  Name: NPC
   InitialDialogue: {fileID: 11400000, guid: 93322cd13d549b24f8e8064352946de5, type: 2}
   TextAudio: {fileID: 11400000, guid: 34ffbe419dd08fd408341309f49e3bd8, type: 2}

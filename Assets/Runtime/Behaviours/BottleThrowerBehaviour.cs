@@ -167,6 +167,7 @@ namespace Resat.Behaviours
                 await UniTask.WaitForSeconds(_thirdStageDelay);
             }
 
+            await UniTask.WaitForSeconds(5f);
             var seenCount = _spawnedBottles.Where(x => !x.Seen).Count();
             Debug.Log("SEEN");
             Debug.Log(seenCount);

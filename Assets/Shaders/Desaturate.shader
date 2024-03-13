@@ -9,6 +9,7 @@ Shader "Unlit/Desaturate"
         _AnimationPercent ("Post-photo animation timer", Range(0.0, 1.0)) = 1.0
         _GradientSettings ("Gradient (Mult, Power, MinScale, MaxScale)", Vector) = (2,2,2,1)
         [Toggle(DISABLE_SHOW_OKHSL_VIEW)] _DisableShowOKHSLView("Disable Debug OKHSL View", Float) = 0 // should be 1 in prod
+        _PulseSpeed("Color pulse speed", Float) = 0
     }
     SubShader
     {
@@ -46,6 +47,7 @@ Shader "Unlit/Desaturate"
             float4 _CutoutOffsetAndScale;
             float4 _OutsideCutoutColor;
             float _AnimationPercent;
+            float _PulseSpeed;
             float4 _GradientSettings;
             
             StructuredBuffer<int> _GlobalOKHSLBuffer;
@@ -122,6 +124,15 @@ Shader "Unlit/Desaturate"
                 // adjusts all colors outside the camera viewport
                 float4 multiplier = lerp(float4(1,1,1,1), _OutsideCutoutColor, 1 - cut);
 
+                // pulse speed
+                // float flashAmount = (1 - sin(_Time.y * _PulseSpeed)) * 0.5f;
+                // float flashAmount = (max(sin(_Time.y * _PulseSpeed), 0.5f) * 2) - 1;
+                // float flashAmount = (max(sin(_Time.y * _PulseSpeed), 0.3333333f) * 1.5f) - 0.5f;
+                // float flashAmount = (max(sin(_Time.y * _PulseSpeed), 0.2f) * 1.25f) - 0.25f;
+                // float flashAmount = (max(sin(_Time.y * _PulseSpeed), -0.25f) * 0.8f) + 0.2f;
+                float flashAmount = (max(sin(_Time.y * _PulseSpeed), -0.5f) * (2.0f / 3.0f)) + (1.0f / 3.0f);
+
+                cut = lerp(cut, 0, flashAmount);
                 float finalLerp = lerp(cut, 1, desaturationLerp);
 
                 // finally, add force desaturation/resaturation masks

@@ -108,6 +108,8 @@ Shader "Unlit/OKHSLPickerOverlay"
                 float4 desatCol = float4(desatTempCol.r, desatTempCol.g, desatTempCol.b, 1);
                 float4 fullyDesatCol = float4(fullyDesatTempCol.r, fullyDesatTempCol.g, fullyDesatTempCol.b, 1);
 
+                col = float4(1,0,0,1);
+                desatCol = float4(0,0,1,1);
                 // float2 noiseScale = float2(_NoiseScale.x, _NoiseScale.x / 4);
                 // i.uv.x += unity_gradientNoise(float2(32902, 320) + i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;
                 // i.uv.y += unity_gradientNoise(i.uv * noiseScale + _Time.y * _NoiseScale.z) * _NoiseScale.w;

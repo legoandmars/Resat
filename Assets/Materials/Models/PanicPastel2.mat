@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FlowerRed 4
+  m_Name: PanicPastel2
   m_Shader: {fileID: 4800000, guid: 3cbbc62f33e732948830e0400e7c876d, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 0026c2e011a851346bc7ffc720be7040, type: 3}
+        m_Texture: {fileID: 2800000, guid: 00ba2e3d32da9424fbc130e101c21f9d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -71,7 +71,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightingStrength: 0.075
+    - _LightingStrength: 0.514
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1

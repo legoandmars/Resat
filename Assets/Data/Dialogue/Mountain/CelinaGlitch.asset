@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Dialogue:
   - ASVSHDSIODVHASOflagDVOIHNAIOVHSAOIDSclimbingDOFVIHSOIVDAHAOSDIVHScapture
-  - DVASVASDJASDVPOASDVJOPwhatDVOSHNAVHASIOHVADSOIgaming
+  - DVASVASDJASDVPOASDVJOPboulderDVOSHNAVHASIOHVADSOIgamingSDVISVJAOSVJASDVOI
   ShowInteractPromptAfterDialogueComplete: 1
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 11400000, guid: 3005bb155dd01ce42955e674a31b2d7d, type: 2}

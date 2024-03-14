@@ -10,15 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 482cfc0dd5834d388d3f6ca87571c381, type: 3}
-  m_Name: GulchThanks
+  m_Name: CanyonEnding
   m_EditorClassIdentifier: 
   Dialogue:
-  - Well I'll be.. I've never seen such fine shooting skills in all my years I've
-    been studying this canyon.
-  - I was so impressed I snapped out of it! And you snapped some great photos too...
-  - You know, I invented that machine. Once this is all said and done with, I can
-    license you the patent if you wanna give it a shot at home!
-  - WAIT WHERE ARE YOU GOING
+  - Thanks for helping out with all that color stuff! Thankfully, I think i've come
+    up with a solution to keep the evil vanquished forever, available as a yearly
+    subscription.
+  - WAIT WHERE IS EVERYONE GOING
   ShowInteractPromptAfterDialogueComplete: 1
   StopShowingDialogueAfterwards: 0
   NextDialogue: {fileID: 0}

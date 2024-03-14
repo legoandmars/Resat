@@ -5374,7 +5374,7 @@ PrefabInstance:
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _npcSO
       value: 
-      objectReference: {fileID: 11400000, guid: 8d2da89d664577749a2c29352334514b, type: 2}
+      objectReference: {fileID: 11400000, guid: 5507df11e0fefd84797506d91414f621, type: 2}
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _describbleDialogue
       value: 
@@ -5856,7 +5856,7 @@ PrefabInstance:
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _npcSO
       value: 
-      objectReference: {fileID: 11400000, guid: 8d2da89d664577749a2c29352334514b, type: 2}
+      objectReference: {fileID: 11400000, guid: 125f53bf8ad0bf84c9aadc632a09b7aa, type: 2}
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _spriteRenderer
       value: 
@@ -11400,7 +11400,7 @@ PrefabInstance:
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _npcSO
       value: 
-      objectReference: {fileID: 11400000, guid: 8d2da89d664577749a2c29352334514b, type: 2}
+      objectReference: {fileID: 11400000, guid: f0cc7dd308789da44971443dfdb971f1, type: 2}
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _spriteRenderer
       value: 
@@ -11953,7 +11953,7 @@ PrefabInstance:
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _npcSO
       value: 
-      objectReference: {fileID: 11400000, guid: 8d2da89d664577749a2c29352334514b, type: 2}
+      objectReference: {fileID: 11400000, guid: 5397fee14e1d4f74999fae3001bbfdc7, type: 2}
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _spriteRenderer
       value: 
@@ -27279,7 +27279,7 @@ PrefabInstance:
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _npcSO
       value: 
-      objectReference: {fileID: 11400000, guid: 8d2da89d664577749a2c29352334514b, type: 2}
+      objectReference: {fileID: 11400000, guid: dbe053cafddaf0d4b8c6223e1cc1340e, type: 2}
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _spriteRenderer
       value: 
@@ -33811,7 +33811,7 @@ PrefabInstance:
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _npcSO
       value: 
-      objectReference: {fileID: 11400000, guid: 8d2da89d664577749a2c29352334514b, type: 2}
+      objectReference: {fileID: 11400000, guid: d267f8cce53c0b245b1b3841a1c26aa2, type: 2}
     - target: {fileID: 1968945989850639568, guid: 1e8ae0fcf8b8f0940bda03da0384a6d0, type: 3}
       propertyPath: _spriteRenderer
       value: 
@@ -38168,7 +38168,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2098448828}
   m_LocalRotation: {x: -0, y: -0, z: -0.000000029802319, w: 1}
-  m_LocalPosition: {x: -73.127, y: 2.955, z: 8.555}
+  m_LocalPosition: {x: -73.127, y: 5.443, z: 8.555}
   m_LocalScale: {x: 0.99999994, y: 1, z: 0.9999998}
   m_ConstrainProportionsScale: 0
   m_Children:

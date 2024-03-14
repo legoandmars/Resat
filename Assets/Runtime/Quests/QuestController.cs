@@ -78,17 +78,17 @@ namespace Resat.Quests
             bool permanentActive = objectState == SaturatedObjectState.Permanent;
             
             SetSaturationBehaviourState(objectData.SaturatedObject, normalActive);
-            SetSaturationBehaviourState(objectData.PermanentObjectWhenComplete, permanentActive);
+            SetSaturationBehaviourState(objectData.PermanentObjectWhenComplete, permanentActive, true);
         }
 
         // TODO: Lerp
-        private void SetSaturationBehaviourState(ForceSaturationBehaviour? saturationBehaviour, bool active)
+        private void SetSaturationBehaviourState(ForceSaturationBehaviour? saturationBehaviour, bool active, bool isPermanent = false)
         {
             if (saturationBehaviour == null)
                 return;
             
             saturationBehaviour.SetActive(active);
-            if (active)
+            if (active && !isPermanent)
                 _forceSaturationBuffer.AddRenderers(saturationBehaviour.Renderers, saturationBehaviour.Resaturate);
             else
                 _forceSaturationBuffer.RemoveRenderers(saturationBehaviour.Renderers, saturationBehaviour.Resaturate);

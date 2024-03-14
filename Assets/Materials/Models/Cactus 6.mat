@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Cactus 5
+  m_Name: Cactus 6
   m_Shader: {fileID: 4800000, guid: 3cbbc62f33e732948830e0400e7c876d, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -73,7 +73,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightingStrength: 0.692
+    - _LightingStrength: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -88,9 +88,9 @@ Material:
     - _UseDetailTexture: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.3145992, g: 0.461, b: 0, a: 1}
+    - _Color: {r: 0, g: 0.519, b: 0.48440003, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FakeLightingColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
-    - _LightingColor: {r: 0.519, g: 0.51035, b: 0, a: 1}
+    - _LightingColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

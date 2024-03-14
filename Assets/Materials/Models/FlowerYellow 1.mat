@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Cactus 5
-  m_Shader: {fileID: 4800000, guid: 3cbbc62f33e732948830e0400e7c876d, type: 3}
+  m_Name: FlowerYellow 1
+  m_Shader: {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -36,10 +36,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -62,35 +58,23 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BoostShadows: 0
     - _BumpScale: 1
-    - _CullMode: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DisableShowOKHSLView: 0
     - _DstBlend: 0
-    - _Gloss: 0.51
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightingStrength: 0.692
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ShadowBoostCutoff: 1
-    - _ShadowBoostStrength: 1
     - _SmoothnessTextureChannel: 0
-    - _Specular: 2.5
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _UseDetailTexture: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.3145992, g: 0.461, b: 0, a: 1}
-    - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _Color: {r: 0.86965674, g: 1, b: 0.18396229, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FakeLightingColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
-    - _LightingColor: {r: 0.519, g: 0.51035, b: 0, a: 1}
   m_BuildTextureStacks: []

@@ -33,6 +33,9 @@ namespace Resat.UI
         private Button _rightButton = null!;
         
         [SerializeField]
+        private MoreInfoPanel _moreInfoPanel = null!;
+        
+        [SerializeField]
         private Ease _ease = Ease.Linear;
         
         private List<ScreenshotData> _screenshots = new();
@@ -116,6 +119,23 @@ namespace Resat.UI
         public void OnRightButtonClick()
         {
             ApplyPage(_currentPage + 1);
+        }
+
+        public void OnExitScreenshotDataClick()
+        {
+            _moreInfoPanel.gameObject.SetActive(false);
+        }
+
+        public void OnEnterScreenshotDataClick(int index)
+        {
+            var assigned = _screenshotPanels[index];
+            var screenshotData = assigned.ScreenshotData;
+
+            if (screenshotData == null)
+                return;
+            
+            _moreInfoPanel.SetScreenshotData(screenshotData);
+            _moreInfoPanel.gameObject.SetActive(true);
         }
     }
 }

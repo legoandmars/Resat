@@ -143,6 +143,7 @@ namespace Resat.Cameras
         private CameraResolutionData _currentResolutionData = new();
         private bool _forceOverrideActive = false;
         private OKHSLData? _previousOkhslData;
+        private RenderTexture? _previousOkhslTexture;
         private List<ScreenshotData> _screenshots = new();
         private CancellationTokenSource? _topNotificationCts;
         
@@ -429,10 +430,13 @@ namespace Resat.Cameras
 
         private async UniTask HandlePictureData(RenderTexture renderTexture)
         {
-            if (_previousOkhslData == null)
+            if (_previousOkhslData == null || _previousOkhslTexture == null)
                 return;
             
-            var screenshotData = new ScreenshotData(renderTexture, _previousOkhslData);
+            // remove texture from cache
+            _resatCamera.RemoveTextureFromCache(_previousOkhslTexture);
+            
+            var screenshotData = new ScreenshotData(renderTexture, _previousOkhslTexture, _previousOkhslData);
             _screenshots.Add(screenshotData);
 
             if (_tempOutro)
@@ -524,6 +528,7 @@ namespace Resat.Cameras
             if (renderTexture == null)
                 return;
 
+            _previousOkhslTexture = renderTexture;
             var okhslData = _okhslController.RunComputeShader(renderTexture);
             _previousOkhslData = okhslData;
             

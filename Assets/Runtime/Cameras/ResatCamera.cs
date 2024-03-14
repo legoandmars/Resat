@@ -176,6 +176,15 @@ namespace Resat.Cameras
 
             return renderTexture;
         }
+
+        public void RemoveTextureFromCache(RenderTexture renderTexture)
+        {
+            var resolution = new Vector2Int(renderTexture.width, renderTexture.height);
+            if (_renderTexturesByResolution.ContainsKey(resolution))
+            {
+                _renderTexturesByResolution.Remove(resolution);
+            }
+        }
         
         private RenderTexture CreateTextureForCamera(Vector2Int resolution, FilterMode filterMode, RenderTextureReadWrite renderTextureReadWrite)
         {

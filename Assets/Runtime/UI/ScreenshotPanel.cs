@@ -6,6 +6,8 @@ namespace Resat.UI
 {
     public class ScreenshotPanel : MonoBehaviour
     {
+        public ScreenshotData? ScreenshotData => _screenshotData;
+        
         [SerializeField]
         private RawImage? _rawImage;
 

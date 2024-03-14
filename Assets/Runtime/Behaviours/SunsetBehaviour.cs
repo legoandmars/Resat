@@ -93,14 +93,15 @@ namespace Resat.Behaviours
 
         public void CheckForSunsetCondition()
         {
+            int minColors = 64;
             if (_sunsetted || _questController == null || _okhslData == null)
                 return;
 
-            if (_okhslData.ColorsLeft != 0)
+            if (_okhslData.ColorsLeft > minColors)
                 return;
             
             bool questsCompleted = _questController.AllQuestsComplete();
-            if (questsCompleted && _okhslData.ColorsLeft == 0)
+            if (questsCompleted && _okhslData.ColorsLeft <= minColors)
             {
                 DoSunset();
             }

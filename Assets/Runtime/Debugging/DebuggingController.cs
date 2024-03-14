@@ -75,9 +75,9 @@ namespace Resat.Debugging
             if (!context.performed || _debugSpawnThing == null || _playerController == null)
                 return;
 
-            var newThing = Instantiate(_debugSpawnThing);
-            newThing.SetActive(true);
-            newThing.transform.position = _playerController.transform.GetChild(0).position + new Vector3(0, 2.5f, 0);
+            //var newThing = Instantiate(_debugSpawnThing);
+            //newThing.SetActive(true);
+            //newThing.transform.position = _playerController.transform.GetChild(0).position + new Vector3(0, 2.5f, 0);
             // debug spawn
         }
 

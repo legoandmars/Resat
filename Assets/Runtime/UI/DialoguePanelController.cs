@@ -187,7 +187,7 @@ namespace Resat.UI
             _namePanelTokenSource = null;
             
             // kill text first so UI outro is consistent
-            var dialogueTextUnanimate = _textAnimationController.UnanimateText(_dialoguePanel.Text.text, _dialoguePanel.Text, _dialogueTextSpeed * _textCloseSpeedMultiplier);
+            var dialogueTextUnanimate = _textAnimationController.UnanimateText(_dialoguePanel.Text.text, _dialoguePanel.Text, _dialogueTextSpeed * _textCloseSpeedMultiplier * 2.5f);
             var nameTextUnanimate = _textAnimationController.UnanimateText(_namePanel.Text.text, _namePanel.Text, _nameTextSpeed * _textCloseSpeedMultiplier);
 
             UniTask<bool> namePanelSuccess = _namePanel.Close();
@@ -249,7 +249,7 @@ namespace Resat.UI
                 }
                 else
                 {
-                    await _textAnimationController.AnimateText(content, dialoguePanel.Text, textAnimationSpeed.Value, null, cancellationToken);
+                    await _textAnimationController.AnimateTextSmoothCancel(content, dialoguePanel.Text, textAnimationSpeed.Value, null, cancellationToken);
                 }
             }
             
